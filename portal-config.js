@@ -2,7 +2,7 @@
 // This key is public by design. NEVER put a service_role or secret key here.
 // Without configuration, portal.html displays a safe "not configured" screen.
 window.FE_PORTAL_CONFIG = {
-  url: "",
+  url: "https://vulbpjayunvlpftgfzyf.supabase.co",
   anonKey: "",
   redirectUrl: "https://flamencoevents.github.io/Flamenco-Events-app/portal.html"
 };
