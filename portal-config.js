@@ -3,6 +3,6 @@
 // Without configuration, portal.html displays a safe "not configured" screen.
 window.FE_PORTAL_CONFIG = {
   url: "https://vulbpjayunvlpftgfzyf.supabase.co",
-  anonKey: "",
+  anonKey: "sb_publishable_wVLeUVBKBDMVDPXYdZdfkg_Q-C4AK37",
   redirectUrl: "https://flamencoevents.github.io/Flamenco-Events-app/portal.html"
 };
