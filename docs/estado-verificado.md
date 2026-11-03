@@ -56,3 +56,13 @@ El 3 de noviembre se ejecutó remotamente el presupuesto ficticio 9999926 v1 des
 Evidencia de ejecución y limpieza: https://github.com/flamencoevents/flamenco-events-appscript/actions/runs/41671668881
 
 Esto sustituye la anotación anterior de ausencia de prueba entre servicios. Sigue pendiente conectar la lectura del presupuesto y su versión exactos desde Sheets, además de las verificaciones restantes del flujo comercial completo.
+
+## Lectura exacta desde Sheets verificada
+
+Prueba remota del 3 noviembre: Apps Script leyó FE_Cola, clave X26-P000004-v1, y transfirió sus importes sin recalcular: total 520 €, reserva 0 €, modalidad no_vat_quote. Primera respuesta recorded y repetición already_recorded; consulta directa confirma un único registro y external_reference con libro, pestaña y clave exactos.
+
+Receptor v4 desplegado y conservado en GitHub: acepta referencias explícitas de prueba y valida el origen. El lector exige copia FE3 generada, coincidencia de número/revisión/clave y autorización expresa; no presupone aceptación comercial. No se modificó Google Sheets ni las fórmulas. Se conserva la solicitud técnica admin_test, sin eventos. El ejecutor temporal se retiró y el editor se restauró.
+
+Evidencia: https://github.com/flamencoevents/flamenco-events-appscript/actions/runs/41673007792
+
+Todo sigue en modo prueba. No hay disparadores de importación ni se ha activado la sincronización general. La modalidad efectivo100 queda pendiente de correspondencia en la facturación de la app; se bloquea en vez de inferir una modalidad incorrecta.
