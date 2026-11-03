@@ -19,3 +19,4 @@ jobs:
         with:
           deno-version: v2.x
       - run: deno check supabase/functions/invite-accepted-client/index.ts
+      - run: deno check supabase/functions/assign-sales-role/index.ts
