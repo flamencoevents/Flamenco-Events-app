@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#171311"><title>Equipo · Flamenco Events</title>
+<style>
+:root{color-scheme:dark;--bg:#171311;--panel:#231c19;--line:#554237;--gold:#dcba82;--fg:#f6eee4;--sub:#cbb7a8}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px system-ui,-apple-system,sans-serif}header{padding:20px 5%;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}header strong,h1,h2{font-family:Georgia,serif;font-weight:400}header strong{font-size:27px;color:var(--gold)}main{max-width:1120px;margin:auto;padding:24px 16px 80px}h1{font-size:2.2rem}h2{color:var(--gold)}nav{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0}.panel{border:1px solid var(--line);background:var(--panel);border-radius:13px;padding:19px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.muted{color:var(--sub)}button,input,select,textarea{font:inherit}button{background:var(--gold);color:#211711;border:0;border-radius:8px;padding:11px 14px;font-weight:650;cursor:pointer}button.alt{background:#3a2e27;color:var(--fg);border:1px solid var(--line)}button:disabled{opacity:.55;cursor:wait}input,textarea,select{display:block;width:100%;background:#302722;color:var(--fg);border:1px solid #725d4f;padding:11px;border-radius:8px;margin:7px 0 12px}label{display:block;margin:10px 0}textarea{min-height:85px}small{color:var(--sub)}.error{border-left:4px solid #ea9b83;padding:12px;background:#432923}.success{border-left:4px solid #86b994;padding:12px;background:#20352b}.inline{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.inline button{margin-bottom:8px}.hidden{display:none!important}a{color:var(--gold)}@media(max-width:550px){header strong{font-size:21px}h1{font-size:1.8rem}}</style></head>
+<body><header><div><strong>Flamenco Events</strong><div><small>Gestión de equipo · Acceso restringido</small></div></div><div class="inline"><button class="alt" id="language">EN</button><button class="alt hidden" id="logout">Salir</button></div></header>
+<main><div id="notice" role="status" aria-live="polite"></div><section id="login"><h1>Acceso del equipo</h1><div class="panel"><p>Solo para personal comercial y administración autorizados.</p><form id="login-form"><label>Correo electrónico<input type="email" name="email" required autocomplete="email"></label><button type="submit">Recibir enlace seguro</button></form></div></section><section id="workspace" class="hidden"><h1 id="heading">Panel del equipo</h1><p class="muted" id="identity"></p><div id="metrics" class="grid"></div><nav aria-label="Secciones"><button class="alt" data-tab="enquiries">Solicitudes</button><button class="alt" data-tab="events">Eventos</button><button class="alt" data-tab="messages">Mensajes</button></nav><div id="content"></div></section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./portal-config.js"></script>
+<script>
+'use strict';
+const cfg=window.FE_PORTAL_CONFIG;
+const db=cfg?.url&&cfg?.anonKey?window.supabase.createClient(cfg.url,cfg.anonKey):null;
+let user=null,role=null,leads=[],events=[],messages=[],activeTab='enquiries',lang='es';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const i18n={es:{heading:'Panel del equipo',leads:'Solicitudes',events:'Eventos',messages:'Mensajes',logout:'Salir'},en:{heading:'Team dashboard',leads:'Enquiries',events:'Events',messages:'Messages',logout:'Sign out'}};
+function notice(msg,bad=false){$('notice').innerHTML='<p class="'+(bad?'error':'success')+'">'+esc(msg)+'</p>'}
+function card(text){return '<div class="panel">'+text+'</div>'}
+function date(x){return x?new Date(x).toLocaleDateString(lang==='es'?'es-ES':'en-GB'): '—'}
+async function read(table,cols='*'){const x=await db.from(table).select(cols);if(x.error)throw x.error;return x.data||[]}
+async function refresh(){if(!db){$('login').innerHTML=card('La conexión todavía no está configurada.');return}try{
+const auth=await db.auth.getUser();user=auth.data?.user||null;if(!user){$('login').classList.remove('hidden');$('workspace').classList.add('hidden');$('logout').classList.add('hidden');return}
+const profile=await db.from('profiles').select('role').eq('id',user.id).maybeSingle();
+if(profile.error)throw profile.error;role=profile.data?.role;
+if(!['admin','sales'].includes(role)){await db.auth.signOut();user=null;notice('Acceso denegado: esta página es exclusivamente para el equipo.',true);return}
+$('login').classList.add('hidden');$('workspace').classList.remove('hidden');$('logout').classList.remove('hidden');
+$('identity').textContent=user.email+' · '+role;
+[leads,events,messages]=await Promise.all([read('enquiries'),read('events'),read('event_messages')]);
+render();
+}catch(e){notice(e.message||'Error al cargar datos',true)}}
+function render(){if(!user)return;
+$('heading').textContent=i18n[lang].heading;
+$('language').textContent=lang==='es'?'EN':'ES';$('logout').textContent=i18n[lang].logout;
+document.querySelector('[data-tab="enquiries"]').textContent=i18n[lang].leads;
+document.querySelector('[data-tab="events"]').textContent=i18n[lang].events;
+document.querySelector('[data-tab="messages"]').textContent=i18n[lang].messages;
+$('metrics').innerHTML=card('<strong>'+leads.filter(x=>x.stage==='new').length+'</strong><p>Solicitudes nuevas</p>')+
+card('<strong>'+events.filter(x=>x.event_date&&x.event_date>=new Date().toISOString().slice(0,10)).length+'</strong><p>Próximos eventos</p>')+
+card('<strong>'+events.filter(x=>x.status==='contract_pending').length+'</strong><p>Contratos pendientes</p>')+
+card('<strong>'+messages.length+'</strong><p>Mensajes registrados</p>');
+const out=$('content');
+if(activeTab==='enquiries')out.innerHTML='<h2>Seguimiento comercial</h2>'+(!leads.length?card('Sin solicitudes registradas.'):leads.map(l=>card('<h3>'+esc(l.contact_name)+'</h3><p>'+esc(l.service||'')+' · '+esc(l.venue||'')+' · '+esc(l.event_date||'')+'</p><p>'+esc(l.contact_email||'')+' · '+esc(l.contact_phone||'')+'</p><p>Estado: <b>'+esc(l.stage)+'</b></p><p class="muted">'+esc(l.notes||'')+'</p><p>Llamada: '+date(l.call_completed_at)+' · Aprobación: '+date(l.approved_at)+'</p><div class="inline">'+(l.stage==='new'?'<button data-action="called" data-id="'+esc(l.id)+'">Registrar llamada realizada</button>':'')+(l.stage==='called'?'<button data-action="approved" data-id="'+esc(l.id)+'">Autorizar presupuesto revisado</button>':'')+'</div>')).join(''));
+else if(activeTab==='events')out.innerHTML='<h2>Eventos del equipo</h2>'+(!events.length?card('Todavía no hay eventos registrados.'):events.map(e=>card('<h3>'+esc(e.title)+'</h3><p>'+esc(e.event_date||'')+' · '+esc(e.venue||'')+'</p><p>Estado: '+esc(e.status)+'</p><p>Formación: '+esc(e.performance||'—')+'</p><p>Repertorio: '+esc(e.repertoire||'—')+'</p><p>Vestuario: '+esc(e.wardrobe||'—')+'</p><p>Horarios: '+esc(e.schedule_notes||'—')+'</p><button class="alt" data-action="view" data-id="'+esc(e.id)+'">Ver conversación</button><div id="thread-'+esc(e.id)+'"></div>')).join(''));
+else out.innerHTML='<h2>Mensajería</h2>'+(!messages.length?card('Sin mensajes registrados.'):messages.slice().sort((a,b)=>b.created_at.localeCompare(a.created_at)).map(m=>card('<small>'+esc(m.event_id)+' · '+date(m.created_at)+'</small><p>'+esc(m.message)+'</p>')).join(''));
+}
+async function action(e){const b=e.target.closest('[data-action]');if(!b)return;const id=b.dataset.id;const act=b.dataset.action;b.disabled=true;try{
+if(act==='view'){const list=messages.filter(x=>x.event_id===id);$('thread-'+id).innerHTML='<h3>Conversación</h3>'+list.map(m=>card('<small>'+date(m.created_at)+'</small><p>'+esc(m.message)+'</p>')).join('')+'<form data-message-event="'+esc(id)+'"><textarea required maxlength="3000" name="message" aria-label="Mensaje"></textarea><button>Enviar respuesta</button></form>';return}
+const l=leads.find(x=>x.id===id);if(!l)throw Error('Solicitud no encontrada');
+if(act==='called'&&l.stage==='new'){const x=await db.from('enquiries').update({stage:'called',call_completed_at:new Date().toISOString()}).eq('id',id).eq('stage','new');if(x.error)throw x.error;notice('Llamada registrada. Comprueba que se ha realizado realmente.')}
+else if(act==='approved'&&l.stage==='called'){const x=await db.from('enquiries').update({stage:'approved',approved_at:new Date().toISOString()}).eq('id',id).eq('stage','called');if(x.error)throw x.error;notice('Autorización registrada. El presupuesto NO ha sido enviado automáticamente.')}
+await refresh();
+}catch(err){notice(err.message,true)}finally{b.disabled=false}}
+async function sendMessage(e){const f=e.target.closest('[data-message-event]');if(!f)return;e.preventDefault();const message=f.elements.message.value.trim();if(!message)return;const btn=f.querySelector('button');btn.disabled=true;const x=await db.from('event_messages').insert({event_id:f.dataset.messageEvent,author_id:user.id,message});if(x.error){notice(x.error.message,true);btn.disabled=false;return}notice('Respuesta enviada');await refresh()}
+$('content').addEventListener('click',action);$('content').addEventListener('submit',sendMessage);
+$('login-form').addEventListener('submit',async e=>{e.preventDefault();if(!db)return;const b=e.target.querySelector('button');b.disabled=true;const {error}=await db.auth.signInWithOtp({email:e.target.elements.email.value,options:{emailRedirectTo:cfg.redirectUrl?.replace('portal.html','staff.html')||location.href.split('#')[0]}});notice(error?error.message:'Revisa tu correo para acceder.',!!error);b.disabled=false});
+$('logout').addEventListener('click',async()=>{await db.auth.signOut();user=null;role=null;leads=[];events=[];messages=[];await refresh()});
+$('language').addEventListener('click',()=>{lang=lang==='es'?'en':'es';if(user)render();else $('language').textContent=lang==='es'?'EN':'ES'});
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{activeTab=b.dataset.tab;render()}));
+if(db){db.auth.onAuthStateChange(()=>{queueMicrotask(refresh)});refresh()}else refresh();
+</script></body></html>
