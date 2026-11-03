@@ -39,3 +39,12 @@ Almacén `event-documents`: privado, solo PDF, límite 10 MB. Se revisaron sus p
 - Receptor `ingest-accepted-quote` v2 desplegado: exige solicitudes `admin_test` y `is_test=true` en modo prueba, rechaza JSON nulo y falla si no puede verificar la configuración.
 - Ocho pruebas del adaptador Apps Script y ocho del receptor pasan con servicios simulados; las cuatro pruebas previas del portal también pasan. Estas pruebas no demuestran una conexión real entre Google Apps Script y Supabase.
 - Pruebas SQL ampliadas ejecutadas con éxito, con ROLLBACK; sin comunicaciones a clientes ni datos de prueba persistidos.
+
+## Activación del perfil comercial de Azahara
+
+- Verificados directamente `email_confirmed_at` y `last_sign_in_at` para `azahara88molero@gmail.com`.
+- Perfil cambiado de `client` a `sales` mediante `assign_sales_role_atomic`, con la autorización de Nacho en este chat y un registro en `role_change_audit`. La cuenta de Nacho conserva `admin`.
+- Prueba SQL bajo `authenticated` con el UUID real de Azahara: `is_staff()=true`, `is_admin()=false`, consultas de solicitudes, eventos y avisos permitidas; bloqueados la escalada a administrador, los cambios en `app_runtime` y la invocación del RPC de asignación de roles. Prueba revertida con ROLLBACK.
+- `app_runtime.test_mode` sigue activo. No se enviaron correos ni se crearon solicitudes o eventos.
+- Volvieron a pasar las 12 pruebas del portal y del receptor. No se ha comprobado visualmente el panel con la sesión personal de Azahara.
+- Las anotaciones anteriores sobre su identidad pendiente o su rol `client` describen un estado anterior y quedan sustituidas por esta verificación.
