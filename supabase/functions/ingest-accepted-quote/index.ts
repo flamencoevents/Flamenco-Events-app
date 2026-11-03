@@ -10,7 +10,7 @@ function respond(status: number, body: Record<string, unknown>) {
   });
 }
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const budget = /^(?:[0-9]{5,7})$/;
+const budget = /^(?:[0-9]{5,7}|X[0-9]{2}-P[0-9]{6})$/;
 const modes = new Set(["no_vat_quote", "individual_reservation", "business_full_invoice"]);
 function money(v: unknown): number | null {
   if (typeof v !== "number" || !Number.isFinite(v) || v < 0 ||
@@ -61,6 +61,13 @@ Deno.serve(async (request: Request) => {
     return respond(422, { error: "Invalid accepted quotation data" });
   }
 
+  if (typeof quoteNumber === "string" && quoteNumber.startsWith("X") && data.is_test !== true)
+    return respond(422, { error: "Test quotation reference requires explicit test flag" });
+  const reference = data.source_reference;
+  const expectedReference = "sheet:12djLXZ7he8Znhp8ngNn_VvBPiV9-gzWR1HGtGycV0RY:FE_Cola:" + quoteNumber + "-v" + version;
+  if (reference != null && reference !== expectedReference)
+    return respond(422, { error: "Invalid source reference" });
+
   const db = createClient(url, serviceKey, { auth: { persistSession:false, autoRefreshToken:false } });
   const enquiry = await db.from("enquiries")
     .select("id,source,stage,call_completed_at,approved_at,quote_sent_at").eq("id",enquiryId).maybeSingle();
@@ -77,14 +84,14 @@ Deno.serve(async (request: Request) => {
   }
 
   const existing = await db.from("accepted_quote_terms").select(
-    "enquiry_id,total_payable_eur,deposit_payable_eur,billing_mode"
+    "enquiry_id,total_payable_eur,deposit_payable_eur,billing_mode,external_reference"
   ).eq("quote_number",quoteNumber).eq("version",Number(version)).maybeSingle();
   if (existing.error) return respond(500, { error: "Unable to verify existing record" });
   if (existing.data) {
     const x = existing.data;
     if (x.enquiry_id===enquiryId && Number(x.total_payable_eur)===amount &&
         (x.deposit_payable_eur==null?null:Number(x.deposit_payable_eur))===deposit &&
-        x.billing_mode===billingMode) return respond(200, { state:"already_recorded" });
+        x.billing_mode===billingMode && (reference == null || x.external_reference === reference)) return respond(200, { state:"already_recorded" });
     return respond(409, { error: "Conflicting quotation number or version" });
   }
 
@@ -96,7 +103,7 @@ Deno.serve(async (request: Request) => {
     deposit_payable_eur: deposit,
     billing_mode: billingMode,
     source_system:"appscript",
-    external_reference:"appscript:" + quoteNumber,
+    external_reference:reference ?? ("appscript:" + quoteNumber),
   });
   if (saved.error) {
     if (saved.error.code==="23505") return respond(409,{error:"Quotation already imported; check records"});
