@@ -30,13 +30,14 @@ DO $test$ DECLARE n integer; BEGIN
  IF n<>0 THEN RAISE EXCEPTION 'Other client saw payment details';END IF;
 END $test$;
 SELECT set_config('request.jwt.claim.sub','c0000000-0000-4000-8000-000000000073',true);
-DO $test$ DECLARE denied boolean:=false; BEGIN
+DO $test$ DECLARE affected integer:=0; BEGIN
  BEGIN
   UPDATE public.event_payment_schedule SET status='received',received_at=now(),
     confirmed_by='c0000000-0000-4000-8000-000000000073';
- EXCEPTION WHEN insufficient_privilege THEN denied:=true;
+  GET DIAGNOSTICS affected=ROW_COUNT;
+ EXCEPTION WHEN insufficient_privilege THEN affected:=0;
  END;
- IF NOT denied THEN RAISE EXCEPTION 'Sales marked payment received'; END IF;
+ IF affected<>0 THEN RAISE EXCEPTION 'Sales marked payment received'; END IF;
 END $test$;
 SELECT set_config('request.jwt.claim.sub','a0000000-0000-4000-8000-000000000071',true);
 UPDATE public.event_payment_schedule SET status='received',received_at=now(),
