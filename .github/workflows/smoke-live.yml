@@ -16,6 +16,15 @@ jobs:
           status="$(curl -fsSL --max-time 20 -o /tmp/fe-catalogue.html -w '%{http_code}' https://flamencoevents.github.io/Flamenco-Events-app/servicios.html)"
           test "$status" = "200"
           grep -q 'Flamenco Events' /tmp/fe-catalogue.html
+      - name: Private portal and staff pages serve expected HTML
+        run: |
+          set -euo pipefail
+          base=https://flamencoevents.github.io/Flamenco-Events-app
+          for file in portal.html admin.html staff.html; do
+            status="$(curl -fsSL --max-time 25 -o "/tmp/$file" -w '%{http_code}' "$base/$file")"
+            test "$status" = "200"
+            grep -q "Flamenco Events" "/tmp/$file"
+          done
       - name: Client invitation endpoint rejects unauthenticated calls
         run: |
           set -euo pipefail
