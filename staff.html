@@ -9,7 +9,7 @@
 'use strict';
 const cfg=window.FE_PORTAL_CONFIG;
 const db=cfg?.url&&cfg?.anonKey?window.supabase.createClient(cfg.url,cfg.anonKey):null;
-let user=null,role=null,leads=[],events=[],messages=[],tasks=[],notifications=[],requests=[],activeTab='enquiries',lang='es';
+let user=null,role=null,leads=[],events=[],messages=[],tasks=[],notifications=[],requests=[],documents=[],activeTab='enquiries',lang='es';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const i18n={es:{heading:'Panel del equipo',leads:'Solicitudes',events:'Eventos',messages:'Mensajes',logout:'Salir'},en:{heading:'Team dashboard',leads:'Enquiries',events:'Events',messages:'Messages',logout:'Sign out'}};
@@ -24,7 +24,7 @@ if(profile.error)throw profile.error;role=profile.data?.role;
 if(!['admin','sales'].includes(role)){await db.auth.signOut();user=null;notice('Acceso denegado: esta página es exclusivamente para el equipo.',true);return}
 $('login').classList.add('hidden');$('workspace').classList.remove('hidden');$('logout').classList.remove('hidden');
 $('identity').textContent=user.email+' · '+role;
-[leads,events,messages,tasks,notifications,requests]=await Promise.all([read('enquiries'),read('events'),read('event_messages'),read('event_tasks'),read('notifications'),read('event_change_requests')]);
+[leads,events,messages,tasks,notifications,requests,documents]=await Promise.all([read('enquiries'),read('events'),read('event_messages'),read('event_tasks'),read('notifications'),read('event_change_requests'),read('event_documents')]);
 render();
 }catch(e){notice(e.message||'Error al cargar datos',true)}}
 function render(){if(!user)return;
@@ -43,7 +43,7 @@ else if(activeTab==='events')out.innerHTML='<h2>Eventos del equipo</h2>'+(!event
 else if(activeTab==='messages')out.innerHTML='<h2>Mensajería</h2>'+(!messages.length?card('Sin mensajes registrados.'):messages.slice().sort((a,b)=>b.created_at.localeCompare(a.created_at)).map(m=>card('<small>'+esc(m.event_id)+' · '+date(m.created_at)+'</small><p>'+esc(m.message)+'</p>')).join(''));else if(activeTab==='tasks')out.innerHTML='<h2>Tareas de coordinación</h2>'+(!tasks.length?card('Sin tareas registradas.'):tasks.map(t=>card('<p>'+esc(t.title)+' · '+(t.completed?'Completada':'Pendiente')+'</p>'+(t.completed?'':'<button data-action="complete" data-id="'+esc(t.id)+'">Marcar completada</button>'))).join(''));else if(activeTab==='requests')out.innerHTML='<h2>Solicitudes de cambios</h2>'+(!requests.length?card('Sin solicitudes de cambios.'):requests.map(q=>card('<strong>'+esc(q.topic)+' · '+esc(q.status)+'</strong><p>'+esc(q.details)+'</p>'+(q.status==='pending'?'<button data-action="approveRequest" data-id="'+esc(q.id)+'">Aprobar</button> <button class="alt" data-action="rejectRequest" data-id="'+esc(q.id)+'">Rechazar</button>':''))).join(''));else out.innerHTML='<h2>Notificaciones</h2>'+(!notifications.length?card('No hay avisos.'):notifications.slice().sort((a,b)=>b.created_at.localeCompare(a.created_at)).map(n=>card('<small>'+date(n.created_at)+' · '+esc(n.category)+'</small><p>'+esc(n.body)+'</p>'+(!n.read_at?'<button data-action="markread" data-id="'+esc(n.id)+'">Marcar leído</button>':''))).join(''));
 }
 async function action(e){const b=e.target.closest('[data-action]');if(!b)return;const id=b.dataset.id;const act=b.dataset.action;b.disabled=true;try{
-if(act==='approveRequest'||act==='rejectRequest'){const x=await db.from('event_change_requests').update({status:act==='approveRequest'?'approved':'rejected',reviewed_at:new Date().toISOString()}).eq('id',id).eq('status','pending');if(x.error)throw x.error;notice('Solicitud revisada');await refresh();return}if(act==='complete'){const x=await db.from('event_tasks').update({completed:true}).eq('id',id);if(x.error)throw x.error;notice('Tarea completada');await refresh();return}
+if(act==='document'){const x=await db.storage.from('event-documents').createSignedUrl(b.dataset.path,60);if(x.error)throw x.error;window.open(x.data.signedUrl,'_blank','noopener');return}if(act==='approveRequest'||act==='rejectRequest'){const x=await db.from('event_change_requests').update({status:act==='approveRequest'?'approved':'rejected',reviewed_at:new Date().toISOString()}).eq('id',id).eq('status','pending');if(x.error)throw x.error;notice('Solicitud revisada');await refresh();return}if(act==='complete'){const x=await db.from('event_tasks').update({completed:true}).eq('id',id);if(x.error)throw x.error;notice('Tarea completada');await refresh();return}
 if(act==='markread'){const x=await db.from('notifications').update({read_at:new Date().toISOString()}).eq('id',id);if(x.error)throw x.error;notice('Aviso leído');await refresh();return}
 if(act==='view'){const list=messages.filter(x=>x.event_id===id);$('thread-'+id).innerHTML='<h3>Conversación</h3>'+list.map(m=>card('<small>'+date(m.created_at)+'</small><p>'+esc(m.message)+'</p>')).join('')+'<form data-message-event="'+esc(id)+'"><textarea required maxlength="3000" name="message" aria-label="Mensaje"></textarea><button>Enviar respuesta</button></form>';return}
 const l=leads.find(x=>x.id===id);if(!l)throw Error('Solicitud no encontrada');
@@ -54,7 +54,7 @@ await refresh();
 async function sendMessage(e){const f=e.target.closest('[data-message-event]');if(!f)return;e.preventDefault();const message=f.elements.message.value.trim();if(!message)return;const btn=f.querySelector('button');btn.disabled=true;const x=await db.from('event_messages').insert({event_id:f.dataset.messageEvent,author_id:user.id,message});if(x.error){notice(x.error.message,true);btn.disabled=false;return}notice('Respuesta enviada');await refresh()}
 $('content').addEventListener('click',action);$('content').addEventListener('submit',sendMessage);
 $('login-form').addEventListener('submit',async e=>{e.preventDefault();if(!db)return;const b=e.target.querySelector('button');b.disabled=true;const {error}=await db.auth.signInWithOtp({email:e.target.elements.email.value,options:{emailRedirectTo:cfg.redirectUrl?.replace('portal.html','staff.html')||location.href.split('#')[0]}});notice(error?error.message:'Revisa tu correo para acceder.',!!error);b.disabled=false});
-$('logout').addEventListener('click',async()=>{await db.auth.signOut();user=null;role=null;leads=[];events=[];messages=[];tasks=[];notifications=[];requests=[];await refresh()});
+$('logout').addEventListener('click',async()=>{await db.auth.signOut();user=null;role=null;leads=[];events=[];messages=[];tasks=[];notifications=[];requests=[];documents=[];await refresh()});
 $('language').addEventListener('click',()=>{lang=lang==='es'?'en':'es';if(user)render();else $('language').textContent=lang==='es'?'EN':'ES'});
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{activeTab=b.dataset.tab;render()}));
 if(db){db.auth.onAuthStateChange(()=>{queueMicrotask(refresh)});refresh()}else refresh();
