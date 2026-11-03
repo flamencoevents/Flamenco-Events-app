@@ -15,6 +15,7 @@ DO $$ DECLARE data jsonb; one uuid; two uuid; n integer; BEGIN
  IF one<>two OR NOT EXISTS(SELECT 1 FROM public.enquiries WHERE id=one AND stage='new' AND source='public_test' AND is_test AND consented_at IS NOT NULL) THEN RAISE EXCEPTION 'Intake or idempotency failed'; END IF;
  IF EXISTS(SELECT 1 FROM public.accepted_quote_terms WHERE enquiry_id=one) OR EXISTS(SELECT 1 FROM public.events WHERE enquiry_id=one) THEN RAISE EXCEPTION 'Intake created commercial records'; END IF;
  BEGIN PERFORM public.submit_public_test_enquiry(gen_random_uuid(),repeat('a',64),repeat('c',64),data-'consent');RAISE EXCEPTION 'Missing consent allowed';EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+ BEGIN PERFORM public.submit_public_test_enquiry(gen_random_uuid(),repeat('a',64),repeat('c',64),jsonb_set(data,'{consent}','null'));RAISE EXCEPTION 'Null consent allowed';EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
  FOR n IN 1..3 LOOP
   BEGIN
    PERFORM public.submit_public_test_enquiry(gen_random_uuid(),repeat('a',64),repeat('d',64),data);

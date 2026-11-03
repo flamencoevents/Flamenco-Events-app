@@ -9,6 +9,7 @@
  }
  async function mount(db,role,id='commercial-workflow'){
   const host=document.getElementById(id);if(!host||!['admin','sales'].includes(role))return;
+  const ticket=crypto.randomUUID();host.dataset.workflowTicket=ticket;const session=await db.auth.getUser();const actorId=session.data?.user?.id;if(!actorId){host.innerHTML='';return;}
   host.innerHTML='<p>Cargando presupuestos y eventos…</p>';
   const [leads,quotes,events,profiles,docs]=await Promise.all([
    db.from('enquiries').select('id,contact_name,stage,is_test').order('created_at',{ascending:false}),
@@ -17,6 +18,7 @@
    role==='admin'?db.from('profiles').select('id,display_name,role'):Promise.resolve({data:[]}),
    db.from('event_documents').select('id,event_id,kind,version,storage_path')
   ]);
+  const current=await db.auth.getUser();if(host.dataset.workflowTicket!==ticket)return;if(current.data?.user?.id!==actorId){host.innerHTML='';return;}
   const error=[leads,quotes,events,profiles,docs].find(x=>x.error)?.error;
   if(error){host.textContent='No se pudo cargar el seguimiento: '+error.message;return;}
   const option=(v,label)=>'<option value="'+escape(v)+'">'+escape(label)+'</option>';

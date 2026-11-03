@@ -43,3 +43,8 @@ test('Document import is admin-only and uploads only exact-version PDF bytes pri
  for(const role of ['sales','client']){const e=env({actorRole:role,document:true});assert.equal((await e.request('import-event-document',{event_id:e.eventId,kind:'quotation'})).status,403);assert.equal(e.uploads.length,0);}
  const e=env({actorRole:'admin',document:true});const r=await e.request('import-event-document',{event_id:e.eventId,kind:'quotation'});assert.equal(r.status,200);assert.equal(e.uploads.length,1);assert.match(e.uploads[0].path,new RegExp('^'+e.eventId+'/quotation-v1-'));assert.equal(e.tables.event_documents.length,1);assert.equal(e.tables.events[0].status,undefined);
 });
+
+test('Changed PDF for the same event/type/version is rejected before another upload',async()=>{
+ const e=env({actorRole:'admin',document:true});e.tables.event_documents.push({id:'existing-pdf',event_id:e.eventId,kind:'quotation',version:1,storage_path:e.eventId+'/previous.pdf'});
+ const r=await e.request('import-event-document',{event_id:e.eventId,kind:'quotation'});assert.equal(r.status,409);assert.equal(e.uploads.length,0);
+});

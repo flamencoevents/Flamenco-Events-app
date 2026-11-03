@@ -22,4 +22,4 @@ La sincronización general sigue desactivada. GENERADO no equivale a aceptado, y
 node --test tests/bridge-receiver.test.cjs tests/edge-workflow.test.cjs tests/portal.test.cjs tests/workflow-ui.test.cjs
 ```
 
-24 pruebas locales con dobles para Edge/UI; `supabase/tests/continuation-rollback.sql` prueba permisos y secuencia en la base real mediante identidades ficticias y ROLLBACK. `supabase/tests/security-rollback.sql` conserva la batería anterior. Evidencias reales, límites y siguiente acción en [docs/estado-verificado.md](docs/estado-verificado.md).
+25 pruebas locales con dobles para Edge/UI; `supabase/tests/continuation-rollback.sql` prueba permisos y secuencia en la base real mediante identidades ficticias y ROLLBACK. `supabase/tests/security-rollback.sql` conserva la batería anterior. Evidencias reales, límites y siguiente acción en [docs/estado-verificado.md](docs/estado-verificado.md).

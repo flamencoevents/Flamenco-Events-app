@@ -16,9 +16,9 @@ Deno.serve(route(async request=>{
  let bytes;try{bytes=Uint8Array.from(atob(file.pdf_base64),x=>x.charCodeAt(0));}catch{throw new Problem(422,'Archivo no válido');}
  if(bytes.length>10485760||new TextDecoder().decode(bytes.slice(0,5))!=='%PDF-')throw new Problem(422,'El documento no es un PDF válido de hasta 10 MB');
  const digest=await hash(file.pdf_base64),path=ev.data.id+'/'+b.kind+'-v'+choice.version+'-'+digest+'.pdf';
- const old=await db.from('event_documents').select('id').eq('event_id',ev.data.id).eq('storage_path',path).maybeSingle();
+ const old=await db.from('event_documents').select('id,storage_path').eq('event_id',ev.data.id).eq('kind',b.kind).eq('version',choice.version).maybeSingle();
  if(old.error)throw new Problem(500,'No se pudo comprobar el documento existente');
- if(old.data)return{state:'already_recorded',document_id:old.data.id};
+ if(old.data){if(old.data.storage_path!==path)throw new Problem(409,'Ya existe otro PDF para ese tipo y versión. Revisión administrativa necesaria');return{state:'already_recorded',document_id:old.data.id};}
  const uploaded=await db.storage.from('event-documents').upload(path,bytes,{contentType:'application/pdf',upsert:false});
  if(uploaded.error&&!['409','Duplicate'].includes(String(uploaded.error.statusCode||uploaded.error.error)))throw new Problem(500,'No se pudo almacenar el PDF privado');
  const saved=await db.from('event_documents').insert({event_id:ev.data.id,kind:b.kind,version:choice.version,storage_path:path}).select('id').single();

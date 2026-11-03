@@ -1,29 +1,30 @@
-# Hoja de ruta y pruebas de Flamenco Events App
+# Pruebas y continuidad
 
-## Flujo obligatorio
-1. El interesado llega desde Google, portales de boda, redes, web o WhatsApp.
-2. Solicita una propuesta y deja sus datos.
-3. Azahara contacta por teléfono y valida los requisitos.
-4. El equipo revisa, aprueba y envía el presupuesto.
-5. Tras aceptar el presupuesto, se invita al cliente a Mi evento.
-6. Cliente y equipo coordinan contrato, repertorio, vestuario, horario y contactos.
-7. La reserva solo se considera formalmente confirmada cuando se cumplen las condiciones pactadas.
+MODO PRUEBA; solo datos ficticios. Evidencia y límites actuales en [estado-verificado.md](estado-verificado.md).
 
-## Reglas
-- Sin llamada y aprobación no se envía presupuesto.
-- La solicitud no activa automáticamente el acceso privado.
-- La cuenta de cada cliente solo permite consultar su evento.
-- Los cambios solicitados por el cliente son propuestas hasta validación del equipo.
-- No guardar PDFs privados ni datos reales en GitHub Pages.
-- Mantener el proyecto de presupuestos existente separado y estable.
+## Superado
 
-## Pruebas antes de producción
-- Probar con dos usuarios que uno no ve el evento del otro.
-- Confirmar que no se pueden autoasignar permisos de personal.
-- Verificar que el presupuesto no pasa a enviado sin llamada y aprobación.
-- Probar mensajes, cierre de sesión y enlaces de autenticación.
-- Comprobar acceso desde Safari iPhone y Chrome Android en español e inglés.
-- Verificar almacenamiento privado de contratos y cumplimiento RGPD.
+- App: 25 pruebas locales de roles, renderizado de importes, firma, selección exacta, cambio de copia, autorización, cuotas, importación privada y conflicto de PDF.
+- Apps Script: 20 pruebas del puente más baterías económicas/formulario/contratos/WhatsApp existentes.
+- SQL transaccional con ROLLBACK: consentimiento nulo/ausente, cuotas, idempotencia, secuencia, evento, efectivo, roles y RLS de dos clientes.
+- HTTP con identidades ficticias: captación repetida sin duplicados, secuencia comercial, rechazo de privilegios, aislamiento de eventos/presupuestos y errores de integración.
+- Pages publicado; formulario y accesos sin sesión comprobados en navegador.
 
-## Pendiente
-Crear Supabase de empresa; aplicar schema.sql y migración 001; configurar Auth y almacenamiento privado; construir panel de equipo; integrar el motor de presupuestos solo después de validar la seguridad.
+## Continuación bloqueada por autenticación personal
+
+Renovar clasp y el secreto privado CLASPRC_JSON; ejecutar publicación del workflow existente. El intento 41732895411 se detuvo por invalid_rapt sin subir ni publicar código.
+
+## Ensayo siguiente tras publicar
+
+1. Utilizar una solicitud ficticia cuya secuencia y aceptación estén registradas como simulación.
+2. Seleccionar X26-P900001-v1, revisión 1, clave exacta, pestaña FE_App_Pruebas.
+3. Leer 1210 total, IVA guardado 210 y reserva 0. Sin autorización no debe importar.
+4. Autorizar una vez y repetir: un solo registro. No activar sincronización general.
+5. Previsualizar una copia ficticia; cambiarla de forma controlada y reversible; aprobación antigua debe fallar. Restaurar la copia al terminar.
+6. Preparar evento desde versión concreta; comprobar contract_pending, marca prueba y reserva formal bloqueada.
+7. Incorporar un PDF autorizado de prueba y comprobar lectura propia/denegación ajena sobre un objeto existente. Probar versión conflictiva sin sobrescribir.
+8. Revisar paneles con sesiones personales y Safari iPhone/Chrome Android. No enviar comunicaciones ni activar clientes reales.
+
+## Decisiones pendientes
+
+Requisitos finales de reserva, caso de anticipo cero y captación real con privacidad/consentimientos revisados. No ejecutar schema.sql histórico ni repetir migraciones ya aplicadas. SMTP y perfil comercial de Azahara ya estaban comprobados; no reconfigurarlos sin evidencia de problema.
