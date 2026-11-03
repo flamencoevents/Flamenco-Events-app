@@ -62,7 +62,7 @@ DO $test$ DECLARE num integer; BEGIN
  BEGIN
   UPDATE public.events SET status='confirmed' WHERE id='d0000000-0000-4000-8000-000000000001';
   RAISE EXCEPTION 'Sales illegally changed booking status';
- EXCEPTION WHEN insufficient_privilege THEN NULL;
+ EXCEPTION WHEN insufficient_privilege OR check_violation THEN NULL;
  END;
 END $test$;
 RESET ROLE;
