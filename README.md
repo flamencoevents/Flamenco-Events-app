@@ -25,7 +25,7 @@ La aceptación comercial y la reserva formal son estados distintos. El flujo obl
 
 ## Comprobaciones
 
-- `node --test tests/portal.test.cjs`: navegación de los tres roles y sintaxis de scripts públicos.
+- `node --test tests/portal.test.cjs tests/bridge-receiver.test.cjs`: navegación de los tres roles y sintaxis de scripts públicos.
 - `supabase/tests/security-rollback.sql`: pruebas de permisos reales con clientes y comercial ficticios, dentro de una transacción que termina con ROLLBACK. Ejecutar únicamente en el entorno de pruebas identificado. Incluye el UUID del administrador actual para simular sus políticas; no proporciona credenciales ni acceso por sí mismo.
 - Seguridad: revisar también `docs/estado-verificado.md`.
 

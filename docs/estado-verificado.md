@@ -29,3 +29,13 @@ Almacén `event-documents`: privado, solo PDF, límite 10 MB. Se revisaron sus p
 - Hay varias direcciones de correo asociadas a Azahara. No se ha escogido una por suposición, creado una cuenta ni enviado una invitación.
 - La interfaz de reserva ya existente exige contrato firmado y revisión administrativa. Los requisitos finales del negocio aún deben documentarse antes de habilitar reservas reales; en pruebas permanece bloqueada.
 - No se ha probado reconstruir una base vacía con las migraciones recuperadas. Se preserva el historial aplicado; la herramienta Supabase CLI no está instalada en este entorno.
+
+## Continuación · integración y coordinación
+
+- Correo de Azahara confirmado por Nacho: `azahara88molero@gmail.com`; invitación creada y pendiente de verificación en la última consulta. No se han concedido aún permisos comerciales.
+- Aviso horario configurado para comunicar a Nacho cuando se verifique el correo y exista un primer acceso.
+- Añadida edición de repertorio, vestuario, horarios y contacto en el panel del equipo. Pruebas SQL confirman que comercial puede coordinar y sigue sin poder modificar campos comerciales protegidos.
+- Preparado `AppBridge.js` en el repositorio privado de Apps Script, con firma HMAC y autorización manual. Desactivado por defecto; pendiente de secreto compartido, activación controlada, despliegue de Apps Script y prueba entre servicios. No se han conectado disparadores automáticos ni modificado cálculos.
+- Receptor `ingest-accepted-quote` v2 desplegado: exige solicitudes `admin_test` y `is_test=true` en modo prueba, rechaza JSON nulo y falla si no puede verificar la configuración.
+- Ocho pruebas del adaptador Apps Script y ocho del receptor pasan con servicios simulados; las cuatro pruebas previas del portal también pasan. Estas pruebas no demuestran una conexión real entre Google Apps Script y Supabase.
+- Pruebas SQL ampliadas ejecutadas con éxito, con ROLLBACK; sin comunicaciones a clientes ni datos de prueba persistidos.

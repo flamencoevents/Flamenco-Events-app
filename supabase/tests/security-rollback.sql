@@ -45,6 +45,16 @@ INSERT INTO public.event_documents(event_id,kind,storage_path) VALUES
 ('00000000-0000-4000-8000-000000000301','quotation','00000000-0000-4000-8000-000000000301/test.pdf'),
 ('00000000-0000-4000-8000-000000000302','quotation','00000000-0000-4000-8000-000000000302/test.pdf'),
 ('00000000-0000-4000-8000-000000000301','contract','00000000-0000-4000-8000-000000000301/draft.pdf');
+SELECT set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000103',true);
+UPDATE public.events SET repertoire='PRUEBA repertorio',wardrobe='PRUEBA vestuario',schedule_notes='PRUEBA horario' WHERE title='PRUEBA A';
+DO $$ BEGIN
+ IF NOT EXISTS(SELECT 1 FROM public.events WHERE title='PRUEBA A' AND repertoire='PRUEBA repertorio') THEN RAISE EXCEPTION 'Sales coordination update failed'; END IF;
+ BEGIN
+ UPDATE public.events SET title='Forbidden sales mutation' WHERE title='PRUEBA A';
+ RAISE EXCEPTION 'Sales changed protected commercial fields';
+ EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END $$;
+SELECT set_config('request.jwt.claim.sub','6b550638-b44e-49da-8c0d-1a9c04fffe09',true);
 DO $$ BEGIN
  BEGIN
  UPDATE public.events SET status='confirmed',reservation_reviewed_at=now(),reservation_review_note='PRUEBA no formalizable' WHERE title='PRUEBA A';

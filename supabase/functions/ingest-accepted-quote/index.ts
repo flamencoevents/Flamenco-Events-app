@@ -46,6 +46,7 @@ Deno.serve(async (request: Request) => {
 
   let data: Record<string, unknown>;
   try { data = JSON.parse(raw); } catch { return respond(400, { error: "Invalid JSON" }); }
+  if (!data || typeof data !== "object" || Array.isArray(data)) return respond(400, { error: "Invalid JSON object" });
   const enquiryId = data.enquiry_id, quoteNumber = data.quote_number;
   const amount = money(data.total_payable_eur);
   const deposit = data.deposit_payable_eur == null ? null : money(data.deposit_payable_eur);
@@ -62,11 +63,17 @@ Deno.serve(async (request: Request) => {
 
   const db = createClient(url, serviceKey, { auth: { persistSession:false, autoRefreshToken:false } });
   const enquiry = await db.from("enquiries")
-    .select("id,stage,call_completed_at,approved_at,quote_sent_at").eq("id",enquiryId).maybeSingle();
+    .select("id,source,stage,call_completed_at,approved_at,quote_sent_at").eq("id",enquiryId).maybeSingle();
   if (enquiry.error) return respond(500, { error: "Cannot verify commercial workflow" });
   if (!enquiry.data || enquiry.data.stage!=="accepted" || !enquiry.data.call_completed_at ||
       !enquiry.data.approved_at || !enquiry.data.quote_sent_at) {
     return respond(409, { error: "Quotation not accepted through approved workflow" });
+  }
+
+  const runtime = await db.from("app_runtime").select("test_mode").eq("singleton", true).single();
+  if (runtime.error || !runtime.data) return respond(503, { error: "Cannot verify test mode" });
+  if (runtime.data.test_mode && (data.is_test !== true || enquiry.data.source !== "admin_test")) {
+    return respond(409, { error: "MODO PRUEBA: only explicitly fictitious admin_test enquiries can be imported" });
   }
 
   const existing = await db.from("accepted_quote_terms").select(
