@@ -12,3 +12,16 @@ test('Signed null and arrays return controlled errors',async()=>{const e=env();f
 test('Commercial acceptance required even with valid signature',async()=>{const e=env({stage:'approved'});assert.equal((await e.run(payload())).status,409);assert.equal(e.inserts.length,0)});
 test('Identical retry is idempotent, conflicting amount rejected',async()=>{const p=payload(),e=env({existing:p});assert.equal((await e.run(p)).status,200);assert.equal((await e.run({...p,total_payable_eur:101})).status,409);assert.equal(e.inserts.length,0)});
 test('Browser submissions rejected',async()=>{const e=env();assert.equal((await e.run(payload(),{headers:{origin:'https://example.invalid'}})).status,403);assert.equal(e.inserts.length,0)});
+
+test('Sheet test reference preserves origin and requires explicit fictitious flag',async()=>{
+ const p={...payload(),quote_number:'X26-P000004',source_reference:'sheet:12djLXZ7he8Znhp8ngNn_VvBPiV9-gzWR1HGtGycV0RY:FE_Cola:X26-P000004-v1'};
+ const e=env();assert.equal((await e.run(p)).status,201);
+ assert.equal(e.inserts[0].external_reference,p.source_reference);
+ const bad=env({testMode:false});assert.equal((await bad.run({...p,is_test:false})).status,422);assert.equal(bad.inserts.length,0);
+});
+test('Source mismatches are rejected on initial import and identical-value retry',async()=>{
+ const p={...payload(),source_reference:'sheet:12djLXZ7he8Znhp8ngNn_VvBPiV9-gzWR1HGtGycV0RY:FE_Cola:9999926-v1'};
+ const e=env();assert.equal((await e.run({...p,source_reference:'sheet:wrong'})).status,422);assert.equal(e.inserts.length,0);
+ const conflict=env({existing:{...p,external_reference:'appscript:9999926'}});
+ assert.equal((await conflict.run(p)).status,409);
+});
