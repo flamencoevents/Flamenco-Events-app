@@ -9,9 +9,12 @@ INSERT INTO public.profiles(id,role) VALUES
  ('a0000000-0000-4000-8000-000000000001','client'),
  ('b0000000-0000-4000-8000-000000000002','client'),
  ('c0000000-0000-4000-8000-000000000003','sales');
-INSERT INTO public.events(id,client_id,title) VALUES
- ('d0000000-0000-4000-8000-000000000001','a0000000-0000-4000-8000-000000000001','Fixture A'),
- ('d0000000-0000-4000-8000-000000000002','b0000000-0000-4000-8000-000000000002','Fixture B');
+INSERT INTO public.enquiries(id,contact_name,contact_email,stage,call_completed_at,approved_at,quote_sent_at) VALUES
+ ('e0000000-0000-4000-8000-000000000001','Fixture A','fe-test-a@example.invalid','accepted',now(),now(),now()),
+ ('e0000000-0000-4000-8000-000000000002','Fixture B','fe-test-b@example.invalid','accepted',now(),now(),now());
+INSERT INTO public.events(id,client_id,enquiry_id,title) VALUES
+ ('d0000000-0000-4000-8000-000000000001','a0000000-0000-4000-8000-000000000001','e0000000-0000-4000-8000-000000000001','Fixture A'),
+ ('d0000000-0000-4000-8000-000000000002','b0000000-0000-4000-8000-000000000002','e0000000-0000-4000-8000-000000000002','Fixture B');
 INSERT INTO public.event_documents(event_id,kind,storage_path)
 VALUES ('d0000000-0000-4000-8000-000000000001','quotation','d0000000-0000-4000-8000-000000000001/fixture-a.pdf'),
  ('d0000000-0000-4000-8000-000000000002','quotation','d0000000-0000-4000-8000-000000000002/fixture-b.pdf');
