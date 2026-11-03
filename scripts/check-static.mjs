@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import vm from 'node:vm';
-const pages=['index.html','portal.html','staff.html','admin.html'];
+const pages=['index.html','portal.html','staff.html','admin.html','servicios.html'];
 let errors=0;
 for(const name of pages){
   const html=fs.readFileSync(name,'utf8');
