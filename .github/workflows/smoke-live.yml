@@ -1,0 +1,28 @@
+name: Check live public page and protected endpoints
+on:
+  push:
+    branches:
+      - 'feature/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  live-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Public catalogue serves HTML
+        run: |
+          set -euo pipefail
+          status="$(curl -fsSL --max-time 20 -o /tmp/fe-catalogue.html -w '%{http_code}' https://flamencoevents.github.io/Flamenco-Events-app/servicios.html)"
+          test "$status" = "200"
+          grep -q 'Flamenco Events' /tmp/fe-catalogue.html
+      - name: Client invitation endpoint rejects unauthenticated calls
+        run: |
+          set -euo pipefail
+          status="$(curl -sS --max-time 20 -X POST -H 'Content-Type: application/json' -d '{}' -o /tmp/invite.json -w '%{http_code}' https://vulbpjayunvlpftgfzyf.supabase.co/functions/v1/invite-accepted-client)"
+          test "$status" = "401" || test "$status" = "403"
+      - name: Role management endpoint rejects unauthenticated calls
+        run: |
+          set -euo pipefail
+          status="$(curl -sS --max-time 20 -X POST -H 'Content-Type: application/json' -d '{}' -o /tmp/role.json -w '%{http_code}' https://vulbpjayunvlpftgfzyf.supabase.co/functions/v1/assign-sales-role)"
+          test "$status" = "401" || test "$status" = "403"
