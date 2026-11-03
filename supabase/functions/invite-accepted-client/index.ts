@@ -18,7 +18,7 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 Deno.serve(async (request: Request) => {
   const origin = request.headers.get("origin");
   if (origin && origin !== allowedOrigin) return reply(403, { error: "Origin not allowed" });
-  if (request.method === "OPTIONS") return reply(204, {});
+  if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (request.method !== "POST") return reply(405, { error: "Method not allowed" });
 
   const token = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
