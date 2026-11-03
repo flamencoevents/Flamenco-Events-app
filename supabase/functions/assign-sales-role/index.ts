@@ -56,21 +56,14 @@ Deno.serve(async (req: Request) => {
   if (previous?.role === "admin") return reply(403, { error: "Administrators cannot be modified here" });
   if (previous?.role === body.role) return reply(200, { status: "unchanged" });
 
-  const assigned = await db.from("profiles").upsert({
-    id: body.user_id, role: body.role,
-  }, { onConflict: "id" });
-  if (assigned.error) return reply(500, { error: "Role update failed" });
-
-  const recorded = await db.from("role_change_audit").insert({
-    actor_id: actor.id,
-    target_id: body.user_id,
-    old_role: previous?.role || null,
-    new_role: body.role,
+  // The service-role-only RPC performs the profile update and audit in one transaction.
+  const { data: outcome, error: assignmentError } = await db.rpc("assign_sales_role_atomic", {
+    p_actor: actor.id,
+    p_target: body.user_id,
+    p_new_role: body.role,
   });
-  if (recorded.error) {
-    // Fail closed: remove any newly assigned commercial role before notifying success.
-    await db.from("profiles").update({ role: previous?.role || "client" }).eq("id", body.user_id);
-    return reply(500, { error: "Audit failed; role assignment requires reconciliation" });
+  if (assignmentError) {
+    return reply(500, { error: "Role assignment rejected by database", detail: assignmentError.code });
   }
-  return reply(200, { status: "changed", role: body.role });
+  return reply(200, { status: outcome, role: body.role });
 });
