@@ -48,3 +48,11 @@ Almacén `event-documents`: privado, solo PDF, límite 10 MB. Se revisaron sus p
 - `app_runtime.test_mode` sigue activo. No se enviaron correos ni se crearon solicitudes o eventos.
 - Volvieron a pasar las 12 pruebas del portal y del receptor. No se ha comprobado visualmente el panel con la sesión personal de Azahara.
 - Las anotaciones anteriores sobre su identidad pendiente o su rol `client` describen un estado anterior y quedan sustituidas por esta verificación.
+
+## Transferencia real de prueba desde Apps Script verificada
+
+El 3 de noviembre se ejecutó remotamente el presupuesto ficticio 9999926 v1 desde Google Apps Script contra el receptor firmado de Supabase. Primer envío `recorded`, segundo idéntico `already_recorded`. La consulta posterior confirma un único registro, total 1000 € y reserva 300 €, con origen `appscript` y solicitud `admin_test` identificada como PRUEBA INTEGRACIÓN APP. No se crearon eventos ni se activó la sincronización general. El editor de Apps Script se restauró y el despliegue temporal de prueba se retiró. Se conserva el dato ficticio para revisión. La base mantiene modo prueba.
+
+Evidencia de ejecución y limpieza: https://github.com/flamencoevents/flamenco-events-appscript/actions/runs/41671668881
+
+Esto sustituye la anotación anterior de ausencia de prueba entre servicios. Sigue pendiente conectar la lectura del presupuesto y su versión exactos desde Sheets, además de las verificaciones restantes del flujo comercial completo.
