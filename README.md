@@ -1,21 +1,34 @@
 # Flamenco Events App
 
-## Estado actual
-- `index.html`: demo pública con datos ficticios guardados en el navegador.
-- `portal.html`: espacio cliente bilingüe preparado para autenticación Supabase; deshabilitado hasta configurarlo.
-- `portal-config.js`: configuración vacía deliberadamente, sin secretos.
-- `supabase/schema.sql`: base de datos y políticas de acceso por cliente/equipo.
+Aplicación estática publicada mediante GitHub Pages con Supabase para autenticación, datos y documentos privados.
 
-## Pendiente antes de usar con clientes
-1. Crear proyecto Supabase gestionado por Flamenco Events.
-2. Revisar y ejecutar el SQL, habilitar acceso por email y configurar redirecciones.
-3. Añadir solo URL y clave *pública* del proyecto en portal-config.js; jamás claves secretas.
-4. Dar de alta a Azahara como staff desde una operación administrativa segura.
-5. Probar con dos cuentas que ningún cliente puede leer eventos o mensajes de otro.
-6. Implementar panel administrativo protegido para activar clientes tras aceptar presupuesto.
-7. Incorporar documentos PDF exclusivamente en almacenamiento privado con enlaces temporales.
-8. Incorporar endpoint de solicitud con límites anti-spam, protección y consentimiento.
-9. Verificar RGPD, cláusulas, encargados de tratamiento y política de conservación.
-10. Nunca conectar la demo local al entorno real de clientes.
+## Estado verificado · 3 noviembre 2026
 
-La aceptación comercial no equivale por sí sola a reserva confirmada; pueden faltar contrato y señal.
+- `portal.html`: entrada por enlace de correo para cuentas existentes; dirige administradores a `admin.html`, comerciales a `staff.html` y mantiene clientes en su portal.
+- `admin.html`: solicitudes ficticias, usuarios, eventos aceptados, documentos, contratos y seguimiento de pagos. Las invitaciones a clientes y la confirmación formal están desactivadas durante las pruebas.
+- `staff.html`: seguimiento comercial secuencial, revisión de datos de la solicitud, eventos, documentos, tareas, mensajes, propuestas y avisos internos.
+- `index.html`: demostración con almacenamiento local. Su formulario NO registra solicitudes en Supabase.
+- `servicios.html`: catálogo público.
+- `portal-config.js`: exclusivamente URL, clave pública y redirección. No contiene credenciales privadas.
+
+## Modo prueba
+
+`public.app_runtime.test_mode = true` es el bloqueo del servidor. Las sesiones normales solo pueden leerlo. La función `invite-accepted-client` rechaza invitaciones mientras esté activo; la base de datos rechaza reservas confirmadas o completadas. No desactivarlo sin instrucción expresa del propietario. La invitación de equipo permanece disponible para una dirección previamente verificada por administración; no se ha enviado ninguna durante este trabajo.
+
+La aceptación comercial y la reserva formal son estados distintos. El flujo obligatorio es nueva solicitud → llamada → autorización → envío registrado → aceptación comprobada. Registrar un envío NO envía un correo ni un presupuesto.
+
+## Base de datos y funciones
+
+`supabase/migrations/` conserva las 33 migraciones aplicadas, con sus versiones reales recuperadas de Supabase. Los dos scripts preparatorios anteriores están conservados en `supabase/legacy/`; `supabase/schema.sql` es una referencia histórica y NO representa por sí sola el esquema actual. No volver a ejecutar las migraciones ya aplicadas sobre la misma base.
+
+`supabase/functions/` contiene las cuatro funciones desplegadas, recuperadas del proyecto. Solo `invite-accepted-client` se ha actualizado en esta revisión. Los secretos permanecen en el servidor y no están incluidos.
+
+## Comprobaciones
+
+- `node --test tests/portal.test.cjs`: navegación de los tres roles y sintaxis de scripts públicos.
+- `supabase/tests/security-rollback.sql`: pruebas de permisos reales con clientes y comercial ficticios, dentro de una transacción que termina con ROLLBACK. Ejecutar únicamente en el entorno de pruebas identificado. Incluye el UUID del administrador actual para simular sus políticas; no proporciona credenciales ni acceso por sí mismo.
+- Seguridad: revisar también `docs/estado-verificado.md`.
+
+## Pendiente
+
+Captación pública protegida contra abuso; conexión completa de Apps Script con la app; definición final de requisitos de reserva; identidad de correo de Azahara; comprobación visual con sesiones de los tres roles. No activar clientes reales hasta completar la validación.
