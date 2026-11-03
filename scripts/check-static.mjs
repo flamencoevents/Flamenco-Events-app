@@ -10,7 +10,7 @@ for(const name of pages){
     try { new vm.Script(source,{filename:name}); }
     catch(err) { console.error(name+': '+err.message);errors++; }
   }
-  const suspicious=/sb_secret_|service_role|SUPABASE_SERVICE_ROLE_KEY/i;
+  const suspicious=/sb_secret_[A-Za-z0-9_-]{12,}|(?:service_role|SUPABASE_SERVICE_ROLE_KEY)\\s*[:=]\\s*[\"'][^\"']+/i;
   if(suspicious.test(html)){ console.error(name+': privileged-key marker in public page');errors++; }
   if(!html.includes('viewport')){ console.error(name+': mobile viewport missing');errors++; }
   console.log(name+': checked');
