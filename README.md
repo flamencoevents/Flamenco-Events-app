@@ -1,21 +1,27 @@
 # Flamenco Events App
 
-## Estado actual
-- `index.html`: demo pública con datos ficticios guardados en el navegador.
-- `portal.html`: espacio cliente bilingüe preparado para autenticación Supabase; deshabilitado hasta configurarlo.
-- `portal-config.js`: configuración vacía deliberadamente, sin secretos.
-- `supabase/schema.sql`: base de datos y políticas de acceso por cliente/equipo.
+Aplicación de coordinación privada de eventos y captación pública.
 
-## Pendiente antes de usar con clientes
-1. Crear proyecto Supabase gestionado por Flamenco Events.
-2. Revisar y ejecutar el SQL, habilitar acceso por email y configurar redirecciones.
-3. Añadir solo URL y clave *pública* del proyecto en portal-config.js; jamás claves secretas.
-4. Dar de alta a Azahara como staff desde una operación administrativa segura.
-5. Probar con dos cuentas que ningún cliente puede leer eventos o mensajes de otro.
-6. Implementar panel administrativo protegido para activar clientes tras aceptar presupuesto.
-7. Incorporar documentos PDF exclusivamente en almacenamiento privado con enlaces temporales.
-8. Incorporar endpoint de solicitud con límites anti-spam, protección y consentimiento.
-9. Verificar RGPD, cláusulas, encargados de tratamiento y política de conservación.
-10. Nunca conectar la demo local al entorno real de clientes.
+## Componentes
+- `index.html`: página pública; no almacenar datos privados de eventos aquí.
+- `portal.html`: acceso de clientes, mensajes, documentos privados y propuestas.
+- `staff.html`: gestión comercial, tareas, avisos y revisión de solicitudes.
+- `admin.html`: panel administrativo de lectura protegido por rol.
+- `portal-config.js`: únicamente URL y clave pública Supabase.
+- `supabase/migrations/`: migraciones incrementales.
 
-La aceptación comercial no equivale por sí sola a reserva confirmada; pueden faltar contrato y señal.
+## Flujos protegidos
+El presupuesto requiere llamada comercial y aprobación de Azahara. Aceptación de presupuesto y reserva formal son estados distintos. Los perfiles se asignan únicamente mediante administración verificada.
+
+## Estado de despliegue
+El entorno público sigue sirviendo la rama principal. Los nuevos paneles están en rama de desarrollo y **no están validados para clientes reales**. Las migraciones hasta `documents_and_change_requests` se aplicaron al proyecto Supabase.
+
+## Antes de producción
+1. Confirmar administrador y comercial con identidades verificadas.
+2. Comprobar aislamiento RLS con dos usuarios de prueba en sesiones diferentes.
+3. Verificar sesiones, enlaces mágicos y acceso documental.
+4. Revisar advertencias de Supabase Auth, RGPD y conservación de datos.
+5. Pasar pruebas móvil, navegación, accesibilidad y errores.
+6. Integrar Apps Script sin modificar el motor de presupuestos sin reversión.
+
+No usar documentos reales hasta completar los controles.
