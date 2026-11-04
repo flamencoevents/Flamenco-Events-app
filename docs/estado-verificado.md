@@ -2,6 +2,24 @@
 
 **MODO PRUEBA ACTIVO.** No se han contactado clientes, enviado presupuestos/contratos ni invitado clientes reales. La sincronización general continúa desactivada. Nacho conserva la única administración; Azahara conserva el único perfil sales tras retirar identidades técnicas.
 
+## Documentos y contratos · avance del 4 noviembre 2026
+
+- Apps Script publicado en **versión 45**, workflow https://github.com/flamencoevents/flamenco-events-appscript/actions/runs/41788989944. El flujo contractual ya no selecciona la última revisión: si existen varias filas/revisiones GENERADO, exige `/contrato NÚMERO vN`. Comprueba número, revisión, clave y copia FE3, y rechaza copias no ficticias mientras siga prueba. Una única revisión continúa siendo compatible con el comando anterior. Los comandos con revisión mal escrita devuelven instrucciones.
+- Se han conservado las tres plantillas Canva aprobadas; se verificaron sus metadatos sin modificarlas ni exportarlas. Nombres observados: Particular sin IVA (3 páginas), Empresa con IVA e IRPF (3) y Particular con reserva facturada (4). Esta revisión de metadatos no certifica todo su contenido jurídico.
+- PDF técnico creado con datos exclusivamente ficticios, rotulado SIN VALIDEZ COMERCIAL NI CONTRACTUAL; 2663 bytes. Drive confirma shared=false y solo permiso de propietario. Vinculado únicamente a FE_App_Pruebas!J2, fila X26-P900001-v1, conservando el resto de la fila y las fórmulas. Archivo: `1CyKLInq2bsYgRwz5CVtTmfnWVoF-Y_B6`. Huella SHA-256: `c985adb2ad644eb392ae4ba57c395e490c4ab230cc0ae4a37ad3c6bfaeb03f1d`.
+- Nueva comprobación documental previa en `import-event-document`: un miembro del equipo puede comprobar el archivo exacto; devuelve tamaño, versión y huella, **sin bytes PDF, URL ni escrituras**. La incorporación real continúa exigiendo administrador. La pestaña técnica se rechaza fuera de modo prueba.
+- HTTP real con identidad comercial ficticia: Drive → Apps Script firmado → Supabase devolvió 200 y la misma huella/tamaño que el archivo local. El intento comercial de importar devolvió 403 y la petición sin sesión 401. El bucket continúa privado y con cero objetos: esto verifica lectura e integridad de origen, **no importación ni descarga cliente de un PDF ya almacenado**.
+- La identidad técnica de esta comprobación quedó bloqueada, sin contraseña utilizable y sin rol comercial; su perfil se conserva como PRUEBA DOCUMENTAL DESACTIVADA · NO ASIGNAR. El intento de eliminarla no se ejecutó porque expiró la confirmación; se aplicó la alternativa de desactivación sin ampliar permisos. El servidor ahora impide asignar identidades bloqueadas o eliminadas a eventos.
+- Nueva migración `20261104073434`: el contrato toma el número del presupuesto enlazado al evento, rechaza otro número y otra revisión PDF; comienza en borrador y exige proveedor, fecha y referencia para registrar firma. No se han cambiado las condiciones de reserva ni las fórmulas.
+- `supabase/tests/documents-contracts-rollback.sql` pasó en la base real con roles SQL simulados: número incorrecto, revisión PDF incorrecta, inserción sin borrador, firma incompleta, alteración de contrato firmado, reserva en prueba e identidad bloqueada. Solo utilizó metadatos ficticios, sin PDF real ni firma real, y terminó ROLLBACK. También volvió a pasar continuation-rollback.sql.
+- 28 pruebas locales de la app superadas. Apps Script: 20 pruebas del puente y baterías existentes, ampliada la de contratos con revisión explícita, ambigüedad, borrador, copia alterada, marca ficticia y sintaxis de comando.
+
+### Paso personal imprescindible para continuar el ensayo documental
+
+Entrar como Nacho en https://flamencoevents.github.io/Flamenco-Events-app/admin.html. En el evento **PRUEBA · Efectivo 100 % · X26-P900001**, pulsar **Incorporar PDF del presupuesto**. El origen y el PDF ya están preparados. Esta acción requiere su sesión personal: no se han creado otros administradores ni rutas de prueba que eludan la autorización.
+
+Después se podrá comprobar por HTTP un objeto privado realmente existente con dos clientes ficticios, manteniendo sus asignaciones limitadas al ensayo y retirándolas después. No confundir ese paso con confirmar reserva o publicar un contrato.
+
 ## Prueba real completada · 4 noviembre 2026
 
 - Publicación correcta del commit `5dc578dfefd3e03a6509e7324effd99cb1cf4773` en la implementación existente de Apps Script, **versión 44**. Workflow: https://github.com/flamencoevents/flamenco-events-appscript/actions/runs/41786601991. Subida de 13 archivos, pruebas y publicación superadas. El bloqueo de autenticación Google está resuelto.
@@ -23,8 +41,8 @@
 | Receptor firmado | ingest-accepted-quote v5 activa | Pruebas con dobles: firma, conflictos, impuestos, origen y repetición. Las dos importaciones históricas reales siguen intactas, más la nueva importación ficticia de efectivo. |
 | Preparación del evento | RPC y UI publicados | Tres eventos ficticios preparados usando el RPC con rol administrativo simulado en SQL sobre la base real. Idempotencia y reserva bloqueada comprobadas con ROLLBACK. Sin cliente asignado al finalizar. |
 | Paneles | admin, staff y portal publicados | Roles y aislamiento por HTTP con sesiones Auth ficticias; pruebas locales de navegación y presentación. Browser sin sesión muestra exclusivamente acceso privado. No se ha comprobado visualmente una sesión personal de Nacho/Azahara. |
-| Documentos | import-event-document v2 activa; bucket privado existente | Importación PDF exacta, validación y rechazo de conflicto probados con dobles; RLS de metadatos probado en SQL. HTTP rechaza comercial y no firma objeto ajeno/inexistente. No equivale a probar descarga de un PDF real existente. |
-| Apps Script | Commit 5dc578dfefd3e03a6509e7324effd99cb1cf4773 publicado en versión 44 | Workflow 41786601991 superado. Lectura firmada desde esa implementación y transferencia a Supabase comprobadas con datos ficticios. |
+| Documentos | import-event-document v4 activa; preflight de equipo y copia solo administrativa | Lectura real e integridad de PDF privado de Drive verificadas. La copia al bucket y descarga cliente de objeto existente requieren el paso personal indicado arriba. |
+| Apps Script | Versión 45 publicada; selección contractual explícita | Workflow 41788989944 superado; puente firmado conservado. Las nuevas reglas contractuales se comprobaron con dobles, sin emitir contratos reales. |
 
 App publicada: https://flamencoevents.github.io/Flamenco-Events-app/
 
@@ -40,7 +58,7 @@ Una solicitud aceptada permite seleccionar número, revisión y clave exactos de
 
 Preparar evento exige versión aceptada concreta. El evento queda contract_pending, sin cliente inicialmente y marcado PRUEBA. El cliente ve únicamente esa versión vinculada; no todas las revisiones de la solicitud. La asignación exige identidad cliente verificada y, en prueba, marca técnica de servidor. El comercial coordina repertorio/vestuario/horarios y tareas sin concederse administración ni cambiar propietario.
 
-Los documentos se copian desde la fila exacta a almacenamiento privado, nunca a GitHub Pages. Importación solo administrativa, PDF hasta 10 MB, sin enlaces Drive públicos ni regeneración Canva. Otro PDF para el mismo tipo/versión se rechaza antes de subirlo. En la revisión anterior no había cola FE_Contratos; su disponibilidad actual deberá comprobarse antes del ensayo documental. Las copias ficticias de efectivo no tienen PDF asociado; no se inventan documentos.
+Los documentos se copian desde la fila exacta a almacenamiento privado, nunca a GitHub Pages. Importación solo administrativa, PDF hasta 10 MB, sin enlaces Drive públicos ni regeneración Canva. Otro PDF para el mismo tipo/versión se rechaza antes de subirlo. En la revisión anterior no había cola FE_Contratos; su disponibilidad actual deberá comprobarse antes del ensayo documental. La copia ficticia v1 de efectivo ya tiene un PDF técnico privado asociado; la v2 no tiene PDF. No se generaron contratos ficticios en Canva.
 
 ## Evidencia anterior y regresiones
 
@@ -61,15 +79,15 @@ Las pruebas siguientes corresponden al 3 de noviembre salvo indicación expresa.
 | --- | --- | --- |
 | Prueba histórica firmada | 9999926 v1 · solicitud ca4ecea7-863f-4077-b5a9-20454aeb364b | Total 1000 / reserva 300, una condición aceptada; evento ficticio b27248d1-e4c4-489f-9f05-d448a373253c preparado. |
 | Lectura histórica real FE_Cola | X26-P000004 v1 · solicitud 63310bc3-2785-4ecd-8b31-525a29578dc1 | Total 520 / reserva 0, referencia de origen intacta; evento ficticio c7fccf50-5de1-458c-b3af-04a3bee6b45e preparado. Aceptación comercial simulada. |
-| Nueva pestaña FE_App_Pruebas | X26-P900001-v1 y -v2 | Copias ficticias FE3: 1210/0 e IVA210; 1331/0 e IVA231. Sin PDFs ni envíos. v1 importada desde Google, una sola vez; v2 solo previsualizada y no importada. |
+| Nueva pestaña FE_App_Pruebas | X26-P900001-v1 y -v2 | Copias ficticias FE3: 1210/0 e IVA210; 1331/0 e IVA231. v1 importada una sola vez y con PDF técnico privado preparado; v2 solo previsualizada y no importada. Sin envíos. |
 
 La pestaña técnica tiene cabeceras A:L equivalentes a FE_Cola, encabezado congelado y nota de prueba. Se verificaron valores/formatos por API; no se realizó inspección visual de Google Sheets con cuenta iniciada. No se alteraron FE_Cola, fórmulas ni documentos de origen. Las copias técnicas no forman parte de las colas automáticas.
 
 ## Pendientes reales y siguiente acción
 
-1. Con un PDF de prueba autorizado disponible, comprobar importación real y descarga de un objeto existente con clientes A/B. Verificar primero el estado actual de contratos/Drive/Canva, conservar diseños y documentos aprobados y evitar regeneración innecesaria. El circuito documental completo no está confirmado.
+1. Nacho debe ejecutar la incorporación del PDF preparado desde su sesión administrativa, según el paso personal indicado arriba. Después comprobar descarga propia y denegación ajena de un objeto existente con clientes A/B ficticios. La lectura e integridad Drive→Apps Script→Supabase ya están verificadas; el circuito de almacenamiento/descarga completo sigue pendiente.
 2. Nacho debe definir los requisitos de reserva formal, incluido el caso de reserva económica cero. La confirmación permanece bloqueada durante el modo prueba. Importar importes o aceptar comercialmente no confirma una reserva.
 3. Captación real requiere revisión de datos/contacto, información de privacidad y consentimientos del negocio. La implementación actual recoge exclusivamente consentimiento técnico ficticio. Faltan comprobaciones visuales con sesiones personales y móviles Safari/Android.
 4. Investigar si se repite el SOURCE_NOT_VERIFIED observado en una lectura paralela; la posterior lectura secuencial y el resto de operaciones fueron correctos. No se confirma todavía la causa de aquella respuesta.
 
-Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo service_role usa la cuota. El aviso existente de contraseñas filtradas deshabilitadas sigue pendiente de decisión de Auth. Se eliminaron índices duplicados y se indexó recorded_by, conservando restricciones únicas. Las tres migraciones nuevas siguen aplicadas. No se han leído ni incluido secretos en código o mensajes.
+Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo service_role usa la cuota. El aviso existente de contraseñas filtradas deshabilitadas sigue pendiente de decisión de Auth. Se eliminaron índices duplicados y se indexó recorded_by, conservando restricciones únicas. Las migraciones anteriores y la nueva protección contractual siguen aplicadas. No se han leído ni incluido secretos en código o mensajes.

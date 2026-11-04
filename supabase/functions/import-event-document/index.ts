@@ -11,6 +11,7 @@ Deno.serve(route(async request=>{
  const reference=terms.data.external_reference||'',prefix='sheet:12djLXZ7he8Znhp8ngNn_VvBPiV9-gzWR1HGtGycV0RY:';
  if(!reference.startsWith(prefix))throw new Problem(409,'El presupuesto no conserva un origen de Sheets verificable');
  const [source_sheet,source_key]=reference.slice(prefix.length).split(':');
+ if(!testMode&&source_sheet==='FE_App_Pruebas')throw new Problem(409,'Origen reservado a pruebas');
  const choice=selection({enquiry_id:ev.data.enquiry_id,quote_number:terms.data.quote_number,version:terms.data.version,source_sheet,source_key});
  const file=await scriptRead(b.kind==='quotation'?'quotation_document':'contract_document',choice);
  if(file.source_reference!==reference||typeof file.pdf_base64!=='string'||file.pdf_base64.length>14000000)throw new Problem(422,'Documento de otra versión o demasiado grande');

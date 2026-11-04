@@ -58,3 +58,8 @@ test('Document preview keeps client/anonymous isolation and rejects a mismatched
  const anon=env({actorRole:'sales',document:true});assert.equal((await anon.request('import-event-document',{operation:'preview',event_id:anon.eventId,kind:'quotation'},{auth:false})).status,401);
  const bad=env({actorRole:'sales',document:true});bad.tables.accepted_quote_terms[0].external_reference='sheet:other:FE_Cola:9999926-v1';assert.equal((await bad.request('import-event-document',{operation:'preview',event_id:bad.eventId,kind:'quotation'})).status,409);assert.equal(bad.network.length,0);
 });
+
+test('Technical document source cannot be used outside database test mode',async()=>{
+ const e=env({actorRole:'admin',testMode:false,document:true});e.tables.accepted_quote_terms[0].external_reference='sheet:12djLXZ7he8Znhp8ngNn_VvBPiV9-gzWR1HGtGycV0RY:FE_App_Pruebas:9999926-v1';
+ assert.equal((await e.request('import-event-document',{operation:'preview',event_id:e.eventId,kind:'quotation'})).status,409);assert.equal(e.network.length,0);
+});

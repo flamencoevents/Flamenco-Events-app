@@ -22,4 +22,7 @@ La sincronización general sigue desactivada. GENERADO no equivale a aceptado, y
 node --test tests/bridge-receiver.test.cjs tests/edge-workflow.test.cjs tests/portal.test.cjs tests/workflow-ui.test.cjs
 ```
 
-25 pruebas locales con dobles para Edge/UI; `supabase/tests/continuation-rollback.sql` prueba permisos y secuencia en la base real mediante identidades ficticias y ROLLBACK. `supabase/tests/security-rollback.sql` conserva la batería anterior. Evidencias reales, límites y siguiente acción en [docs/estado-verificado.md](docs/estado-verificado.md).
+28 pruebas locales con dobles para Edge/UI; `supabase/tests/continuation-rollback.sql` prueba permisos y secuencia en la base real mediante identidades ficticias y ROLLBACK. `supabase/tests/security-rollback.sql` conserva la batería anterior. Evidencias reales, límites y siguiente acción en [docs/estado-verificado.md](docs/estado-verificado.md).
+
+
+El equipo puede comprobar el PDF de origen sin recibir el archivo ni escribir datos. La incorporación al bucket privado exige la cuenta administrativa de Nacho. El PDF ficticio ya está preparado para X26-P900001-v1; siguiente paso y límites en docs/estado-verificado.md. Los contratos deben corresponder al número y revisión aceptados del evento; no se elige automáticamente la última revisión en WhatsApp.
