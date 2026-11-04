@@ -1,5 +1,10 @@
 # Estado verificado · 3 noviembre 2026
 
+## Última comprobación · 4 noviembre 2026
+
+Tras indicar Nacho que había renovado la autorización, se lanzó la publicación del commit 4bd74760260efb5464ef058671507b169a152d44. Workflow: https://github.com/flamencoevents/flamenco-events-appscript/actions/runs/41785981868. Sintaxis, pruebas y preparación privada superadas; Google volvió a devolver invalid_grant / invalid_rapt al consultar despliegues. La publicación se omitió antes de clasp push. No se modificaron editor ni implementación de WhatsApp, no se crearon cuentas técnicas ni se importaron datos nuevos. app_runtime.test_mode continúa true. No se ha podido confirmar que GitHub esté utilizando una credencial renovada válida; siguiente paso: cerrar sesión de clasp, autenticar de nuevo la misma cuenta autorizada y sustituir privadamente CLASPRC_JSON con el archivo recién generado. No compartir credenciales por chat.
+
+
 **MODO PRUEBA ACTIVO.** No se han contactado clientes, enviado presupuestos/contratos ni invitado clientes reales. La sincronización general continúa desactivada. Nacho conserva la única administración; Azahara conserva el único perfil sales tras retirar identidades técnicas.
 
 ## Código, despliegue y comportamiento
