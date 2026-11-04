@@ -6,7 +6,7 @@ App estática en GitHub Pages, con Supabase Auth, datos bajo RLS y documentos pr
 - `portal.html`: acceso por correo para cuentas existentes, navegación por rol y documentos del evento propio.
 - `staff.html`: solicitudes, llamada, validación/autorización, registro de envío y aceptación, coordinación, tareas y avisos.
 - `admin.html`: gestión independiente de eventos propios; prepara evento desde una versión aceptada y controla acceso/documentos. Invitaciones cliente y reserva formal bloqueadas en prueba.
-- `workflow.js`: selección exacta de presupuesto/revisión/clave, revisión de importes y autorización explícita. La lectura Google requiere publicar el puente firmado de Apps Script; ver bloqueo vigente y evidencias en [docs/estado-verificado.md](docs/estado-verificado.md).
+- `workflow.js`: selección exacta de presupuesto/revisión/clave, revisión de importes y autorización explícita. El puente Apps Script v44 está publicado y la transferencia ficticia de efectivo está verificada; ver evidencias y límites en [docs/estado-verificado.md](docs/estado-verificado.md).
 
 Importes e impuestos se conservan desde la copia aprobada. `individual_full_invoice` representa el particular efectivo100 con IVA guardado y reserva cero; no se equipara a empresa ni presupone exención.
 
