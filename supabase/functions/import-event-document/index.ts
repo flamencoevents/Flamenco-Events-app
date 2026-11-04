@@ -1,6 +1,7 @@
 import {route,body,database,staff,runtime,accepted,scriptRead,selection,uuid,Problem,hash} from '../_shared/bridge.ts';
 Deno.serve(route(async request=>{
- const db=database();await staff(request,db,true);const b=await body(request);
+ const db=database(),b=await body(request),preview=b.operation==='preview';await staff(request,db,!preview);
+ if(b.operation!==undefined&&!['preview','import'].includes(b.operation))throw new Problem(422,'Operación documental no válida');
  if(!uuid(b.event_id)||!['quotation','contract'].includes(b.kind))throw new Problem(422,'Selecciona evento y tipo de documento');
  const ev=await db.from('events').select('id,enquiry_id,quote_terms_id,is_test').eq('id',b.event_id).single();
  if(ev.error||!ev.data?.quote_terms_id)throw new Problem(409,'El evento no tiene un presupuesto vinculado');
@@ -15,6 +16,8 @@ Deno.serve(route(async request=>{
  if(file.source_reference!==reference||typeof file.pdf_base64!=='string'||file.pdf_base64.length>14000000)throw new Problem(422,'Documento de otra versión o demasiado grande');
  let bytes;try{bytes=Uint8Array.from(atob(file.pdf_base64),x=>x.charCodeAt(0));}catch{throw new Problem(422,'Archivo no válido');}
  if(bytes.length>10485760||new TextDecoder().decode(bytes.slice(0,5))!=='%PDF-')throw new Problem(422,'El documento no es un PDF válido de hasta 10 MB');
+ const checksum=[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+ if(preview)return{state:'verified',event_id:ev.data.id,kind:b.kind,version:choice.version,size_bytes:bytes.length,sha256:checksum,stored:false,requires_admin:true};
  const digest=await hash(file.pdf_base64),path=ev.data.id+'/'+b.kind+'-v'+choice.version+'-'+digest+'.pdf';
  const old=await db.from('event_documents').select('id,storage_path').eq('event_id',ev.data.id).eq('kind',b.kind).eq('version',choice.version).maybeSingle();
  if(old.error)throw new Problem(500,'No se pudo comprobar el documento existente');

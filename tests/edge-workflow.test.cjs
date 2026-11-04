@@ -48,3 +48,13 @@ test('Changed PDF for the same event/type/version is rejected before another upl
  const e=env({actorRole:'admin',document:true});e.tables.event_documents.push({id:'existing-pdf',event_id:e.eventId,kind:'quotation',version:1,storage_path:e.eventId+'/previous.pdf'});
  const r=await e.request('import-event-document',{event_id:e.eventId,kind:'quotation'});assert.equal(r.status,409);assert.equal(e.uploads.length,0);
 });
+
+test('Team can verify a source PDF without receiving bytes, URLs or making storage/database writes',async()=>{
+ const e=env({actorRole:'sales',document:true});const r=await e.request('import-event-document',{operation:'preview',event_id:e.eventId,kind:'quotation'});const p=await r.json();
+ assert.equal(r.status,200);assert.equal(p.state,'verified');assert.equal(p.size_bytes,13);assert.match(p.sha256,/^[a-f0-9]{64}$/);assert.equal(p.stored,false);assert.equal(p.requires_admin,true);assert.equal(p.pdf_base64,undefined);assert.equal(p.url,undefined);assert.equal(e.uploads.length,0);assert.equal(e.writes.length,0);
+});
+test('Document preview keeps client/anonymous isolation and rejects a mismatched source before Google access',async()=>{
+ const client=env({actorRole:'client',document:true});assert.equal((await client.request('import-event-document',{operation:'preview',event_id:client.eventId,kind:'quotation'})).status,403);
+ const anon=env({actorRole:'sales',document:true});assert.equal((await anon.request('import-event-document',{operation:'preview',event_id:anon.eventId,kind:'quotation'},{auth:false})).status,401);
+ const bad=env({actorRole:'sales',document:true});bad.tables.accepted_quote_terms[0].external_reference='sheet:other:FE_Cola:9999926-v1';assert.equal((await bad.request('import-event-document',{operation:'preview',event_id:bad.eventId,kind:'quotation'})).status,409);assert.equal(bad.network.length,0);
+});
