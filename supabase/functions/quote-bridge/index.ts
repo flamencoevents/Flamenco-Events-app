@@ -1,7 +1,11 @@
 import {route,body,database,staff,runtime,selection,accepted,scriptRead,quotation,hash,settings,mac,Problem,uuid} from '../_shared/bridge.ts';
-import {catalogSelection,catalogPage} from '../_shared/source-catalog.ts';
+import {catalogSelection,catalogPage,detailSelection,sourceDetail} from '../_shared/source-catalog.ts';
 Deno.serve(route(async request=>{
  const db=database(),actor=await staff(request,db),b=await body(request),testMode=await runtime(db);
+ if(b.operation==='source_detail'){
+  const choice=detailSelection(b,testMode,actor.role);
+  return sourceDetail(await scriptRead('source_detail',choice),choice);
+ }
  if(b.operation==='source_catalog'){
   const choice=catalogSelection(b,testMode);
   return catalogPage(await scriptRead('source_catalog',choice),choice);
