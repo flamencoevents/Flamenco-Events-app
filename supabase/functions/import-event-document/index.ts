@@ -25,7 +25,8 @@ Deno.serve(route(async request=>{
  if(old.data){if(old.data.storage_path!==path)throw new Problem(409,'Ya existe otro PDF para ese tipo y versión. Revisión administrativa necesaria');return{state:'already_recorded',document_id:old.data.id};}
  const uploaded=await db.storage.from('event-documents').upload(path,bytes,{contentType:'application/pdf',upsert:false});
  if(uploaded.error&&!['409','Duplicate'].includes(String(uploaded.error.statusCode||uploaded.error.error)))throw new Problem(500,'No se pudo almacenar el PDF privado');
- const saved=await db.from('event_documents').insert({event_id:ev.data.id,kind:b.kind,version:choice.version,storage_path:path}).select('id').single();
+ const saved=await db.from('event_documents').insert({event_id:ev.data.id,kind:b.kind,version:choice.version,storage_path:path,sha256:checksum,source_reference:reference}).select('id').single();
  if(saved.error)throw new Problem(500,'PDF almacenado; metadatos pendientes de revisión');
  return{state:'recorded',document_id:saved.data.id,message:b.kind==='contract'?'PDF privado incorporado. Publicación del contrato pendiente de revisión.':'PDF privado incorporado'};
 }));
+
