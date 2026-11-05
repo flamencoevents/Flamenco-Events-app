@@ -62,7 +62,7 @@ Una solicitud aceptada permite seleccionar número, revisión y clave exactos de
 
 Preparar evento exige versión aceptada concreta. El evento queda contract_pending, sin cliente inicialmente y marcado PRUEBA. El cliente ve únicamente esa versión vinculada; no todas las revisiones de la solicitud. La asignación exige identidad cliente verificada y, en prueba, marca técnica de servidor. El comercial coordina repertorio/vestuario/horarios y tareas sin concederse administración ni cambiar propietario.
 
-Los documentos se copian desde la fila exacta a almacenamiento privado, nunca a GitHub Pages. Importación solo administrativa, PDF hasta 10 MB, sin enlaces Drive públicos ni regeneración Canva. Otro PDF para el mismo tipo/versión se rechaza antes de subirlo. En la revisión anterior no había cola FE_Contratos; su disponibilidad actual deberá comprobarse antes del ensayo documental. La copia ficticia v1 de efectivo ya tiene un PDF técnico privado asociado; la v2 no tiene PDF. No se generaron contratos ficticios en Canva.
+Los documentos se copian desde la fila exacta a almacenamiento privado, nunca a GitHub Pages. Importación solo administrativa, PDF hasta 10 MB, sin enlaces Drive públicos ni regeneración Canva. Otro PDF para el mismo tipo/versión se rechaza antes de subirlo. La pestaña FE_Contratos existe actualmente (metadatos de Sheets consultados el 5 de noviembre); esto por sí solo no verifica sus filas, PDF ni la importación contractual. La copia ficticia v1 de efectivo ya tiene un PDF técnico privado asociado; la v2 no tiene PDF. No se generaron contratos ficticios en Canva.
 
 ## Evidencia anterior y regresiones
 
@@ -95,3 +95,13 @@ La pestaña técnica tiene cabeceras A:L equivalentes a FE_Cola, encabezado cong
 4. Investigar si se repite el SOURCE_NOT_VERIFIED observado en una lectura paralela; la posterior lectura secuencial y el resto de operaciones fueron correctos. No se confirma todavía la causa de aquella respuesta.
 
 Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo service_role usa la cuota. El aviso existente de contraseñas filtradas deshabilitadas sigue pendiente de decisión de Auth. Se eliminaron índices duplicados y se indexó recorded_by, conservando restricciones únicas. Las migraciones anteriores y la nueva protección contractual siguen aplicadas. No se han leído ni incluido secretos en código o mensajes.
+
+## Visibilidad contractual por estado · 5 noviembre 2026
+
+- Nueva prueba reproducible `supabase/tests/contract-visibility-rollback.sql`, ejecutada satisfactoriamente sobre la base real con identidades y roles SQL simulados.
+- Cliente propietario: contrato, metadatos PDF y fila Storage ocultos en draft/ready; visibles en sent/signed. Otro cliente: ocultos incluso en sent/signed. Comercial: lectura disponible, actualización de estado rechazada por RLS (cero filas). Cliente: no puede autocertificar la firma (cero filas).
+- Para evaluar la política de Storage sobre una fila existente, se reclasificaron temporalmente los metadatos del presupuesto de prueba como contrato dentro de la transacción. No se modificaron bytes PDF ni se creó un PDF contractual. La plantilla usada en esta fixture solo permite ejercitar permisos; no acredita correspondencia contractual con efectivo100.
+- Finalizó ROLLBACK. Consulta posterior: cero contratos, documento original quotation, evento sin cliente, cero usuarios de esta prueba y test_mode=true.
+- No equivale a sesiones Auth reales ni a descarga HTTP de contrato. El circuito HTTP ya comprobado corresponde al presupuesto. Sigue pendiente preparar/importar un PDF contractual ficticio de revisión exacta y probar su publicación/descarga con sesiones Auth; tampoco hay firma electrónica real verificada.
+- Limitación de esta sesión: entorno de ejecución y navegador remoto no disponibles. GitHub, Supabase y Drive continúan accesibles mediante conectores; no se han desplegado rutas privilegiadas para eludir este límite.
+
