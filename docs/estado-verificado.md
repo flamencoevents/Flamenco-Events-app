@@ -89,7 +89,7 @@ La pestaña técnica tiene cabeceras A:L equivalentes a FE_Cola, encabezado cong
 
 ## Pendientes reales y siguiente acción
 
-1. Circuito documental del presupuesto ficticio completado: origen firmado → importación administrativa → almacenamiento privado → descarga propia y denegación ajena. Sigue pendiente comprobar el recorrido contractual con un contrato ficticio de revisión exacta y su visibilidad según el estado; no se ha generado ni firmado un contrato real.
+1. Circuito documental del presupuesto ficticio completado: origen firmado → importación administrativa → almacenamiento privado → descarga propia y denegación ajena. El recorrido contractual con PDF técnico ficticio se completó después, según la evidencia al final. Siguen pendientes la generación desde plantillas aprobadas y la firma real.
 2. Nacho debe definir los requisitos de reserva formal, incluido el caso de reserva económica cero. La confirmación permanece bloqueada durante el modo prueba. Importar importes o aceptar comercialmente no confirma una reserva.
 3. Captación real requiere revisión de datos/contacto, información de privacidad y consentimientos del negocio. La implementación actual recoge exclusivamente consentimiento técnico ficticio. Faltan comprobaciones visuales con sesiones personales y móviles Safari/Android.
 4. Investigar si se repite el SOURCE_NOT_VERIFIED observado en una lectura paralela; la posterior lectura secuencial y el resto de operaciones fueron correctos. No se confirma todavía la causa de aquella respuesta.
@@ -103,5 +103,19 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - Para evaluar la política de Storage sobre una fila existente, se reclasificaron temporalmente los metadatos del presupuesto de prueba como contrato dentro de la transacción. No se modificaron bytes PDF ni se creó un PDF contractual. La plantilla usada en esta fixture solo permite ejercitar permisos; no acredita correspondencia contractual con efectivo100.
 - Finalizó ROLLBACK. Consulta posterior: cero contratos, documento original quotation, evento sin cliente, cero usuarios de esta prueba y test_mode=true.
 - No equivale a sesiones Auth reales ni a descarga HTTP de contrato. El circuito HTTP ya comprobado corresponde al presupuesto. Sigue pendiente preparar/importar un PDF contractual ficticio de revisión exacta y probar su publicación/descarga con sesiones Auth; tampoco hay firma electrónica real verificada.
-- Limitación de esta sesión: entorno de ejecución y navegador remoto no disponibles. GitHub, Supabase y Drive continúan accesibles mediante conectores; no se han desplegado rutas privilegiadas para eludir este límite.
+- Limitación histórica de esa comprobación SQL: el entorno de ejecución y navegador remoto no estaban disponibles. Quedó superada en el ensayo posterior documentado a continuación.
 
+
+## Contrato técnico: importación, publicación y descarga reales · 5 noviembre 2026
+
+- Acceso administrativo remoto comprobado mediante el perfil guardado de TinyFish. Importación y publicación realizadas desde el panel con sesión administrativa real; no se enviaron correos.
+- PDF técnico independiente, sin validez comercial ni contractual: 2206 bytes, SHA-256 `e304d882c72d10b1f324fc5420969f605de23e7adfe888de3777d215cf7ffc91`. No reproduce las plantillas Canva ni certifica su contenido.
+- Origen Drive privado `12q9JgnNti4OMWBhYceDAC3nHi10Be6ZI`, vinculado temporalmente en FE_Contratos!A4:I4 a X26-P900001-v1. Se verificó esa fila después de escribir. Tras importar se archivó como PRUEBA_TECNICA_ARCHIVADA, fuera de GENERADO, para excluir la fixture técnica del procesamiento habitual. No se tocaron las filas de contratos anteriores, fórmulas ni plantillas.
+- Documento privado `26033a63-7537-4f12-a45d-4dcbf79ab95d`, contract v1, evento `e4a35ff8-2fca-4e23-83ed-ffb4ab3c45de`. El panel devolvió “PDF privado incorporado. Publicación del contrato pendiente de revisión”.
+- Contrato de ensayo creado en draft con etiqueta técnica individual_reservation; esta etiqueta solo permite ejercitar permisos y **no acredita que esa plantilla sea adecuada para efectivo100**. La publicación desde el panel devolvió “Contrato publicado en el portal, sin envío automático de correo”, estado sent.
+- Dos sesiones Auth ficticias reales por contraseña, sin correo: en draft, ambos clientes obtuvieron cero metadatos y denegación de firma de URL y descarga autenticada. En sent, el propietario obtuvo metadatos, enlace firmado y descarga; los 2206 bytes y la huella coincidieron con el PDF original. El otro cliente continuó bloqueado en todas esas vías. La ruta pública anónima devolvió 400, sin PDF.
+- Asignación y creación del contrato de ensayo realizadas mediante rol administrativo simulado en SQL; importación/publicación mediante sesión administrativa de navegador; acceso de clientes mediante HTTP real. No equivale a prueba visual móvil ni a firma electrónica.
+- También pasó en ROLLBACK una comprobación SQL sobre el objeto contractual existente, con estados draft/ready/sent/signed. Las firmas solo fueron valores simulados dentro de la transacción revertida.
+- Limpieza confirmada: evento sin cliente, dos cuentas ficticias bloqueadas y sin contraseña utilizable, cero sesiones vigentes y cero refresh tokens utilizables. Credenciales locales retiradas. Se conserva el contrato técnico publicado, sin firma y sin destinatario activo, para revisión.
+- Estado final: test_mode=true, bucket privado, evento contract_pending, sin reserva confirmada. El bloqueo anterior del entorno y navegador quedó superado; la demora de red no impidió completar el ensayo.
+- Pendiente: circuito de generación contractual con plantillas aprobadas (incluida correspondencia de efectivo100), firma electrónica real y criterios definitivos de reserva. La prueba de privacidad del PDF contractual técnico ya está completada.
