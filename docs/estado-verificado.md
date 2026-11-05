@@ -206,3 +206,12 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - Localizados en la cuenta Flamenco Events el seguimiento económico anual y otra fuente de fechas cerradas. Inspeccionados metadatos, cabeceras y rangos acotados; no se modificó ningún libro.
 - Se identificó número de presupuesto en el seguimiento económico como posible enlace; no se ha validado su unicidad ni conciliado el histórico. Los balances no están integrados todavía.
 - Alcance, fases y criterios de aceptación en docs/web-gestion-empresa.md. Las cifras reales y referencias de los nuevos libros privados no se publican en el repositorio.
+
+## Preparación de entrada web de gestión · 5 noviembre 2026
+
+- Panel administrativo convertido en entrada de gestión con navegación a funciones existentes. La integración histórica/balances sigue pendiente y se indica expresamente.
+- La raíz HTTPS de gesion.flamencoevents.net queda preparada para abrir admin.html; entradas sales/client redirigen a su área tras comprobar perfil. El dominio actual GitHub y la web IONOS conservan su navegación.
+- 47 pruebas Node superadas con dobles. Nuevos casos: host exacto, roles, denegación de perfil desconocido, invalidación de respuesta tardía y enlaces existentes. No hay una nueva prueba Auth real de subdominio.
+- No se activó dominio personalizado, DNS ni callbacks Supabase. La configuración GitHub Pages es accesible por sesión existente, pero IONOS solicita autenticación; DNS y certificado no están comprobados. No se ha añadido CNAME al repositorio para no redirigir la URL activa antes de completar DNS.
+- Requisito añadido: enlace Espacio cliente en la web pública solo cuando esté verificado y se autorice uso real. No se editó IONOS ni se emitieron correos. Detalles en docs/dominio-gestion.md.
+- Se solicita despliegue de estos cambios en la URL GitHub actual; verificar ejecución antes de declararlo publicado. Modo prueba y permisos de servidor conservados.

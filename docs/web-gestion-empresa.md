@@ -69,3 +69,9 @@ El primer paso se ha iniciado con la localización y lectura acotada de fuentes.
 ## Condiciones conservadas
 
 Modo prueba hasta autorización expresa; sin clientes reales, correos comerciales, contratación de servicios o costes nuevos. Sincronización general desactivada hasta autorización. No se habilitan reservas ni firma por disponer de interfaz. Las decisiones de efectivo100, cancelación sin anticipo, reserva formal y proveedor de firma siguen pendientes.
+
+## Entrada de gestión y Espacio cliente
+
+Nacho solicita servir la gestión desde gesion.flamencoevents.net. Preparación, DNS y comprobaciones pendientes en [dominio-gestion.md](dominio-gestion.md). Se conserva el host literal solicitado.
+
+Cuando el espacio privado esté verificado y se autorice el uso real, se incorporará el enlace «Espacio cliente» al menú de www.flamencoevents.net. Llevará al área de eventos del cliente, separada de administración/comercial. No se ha añadido el enlace en la web IONOS ni activado clientes.
