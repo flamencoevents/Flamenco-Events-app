@@ -1,5 +1,7 @@
 # Estado verificado · 5 noviembre 2026
 
+> Estado vigente: portal publicado desde el commit 21d8889a721c95d25038fd01cdba44f27fdc55d5 (Pages 42111220294, build y deploy correctos); Apps Script versión 51 publicada. Las menciones anteriores a invalid_rapt, circuito PDF no completado o importación aún bloqueada son evidencias históricas, superadas por las secciones posteriores. Siguen pendientes la generación contractual completa desde plantillas aprobadas, la firma mediante proveedor y las decisiones de reserva formal.
+
 **MODO PRUEBA ACTIVO.** No se han contactado clientes, enviado presupuestos/contratos ni invitado clientes reales. La sincronización general continúa desactivada. Nacho conserva la única administración; Azahara conserva el único perfil sales tras retirar identidades técnicas.
 
 ## Documentos y contratos · avance del 4 noviembre 2026
@@ -173,3 +175,9 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - No se crearon usuarios, enviaron correos, activaron servicios de firma ni ejecutó TinyFish. Google v51 ya publicado; su bloqueo de autenticación anterior sigue resuelto.
 - Preparada comparativa de dos proveedores en docs/firma-opciones.md con fuentes oficiales consultadas el 5/11/2026. No se seleccionó, abrió ni contrató ninguna cuenta.
 - Pendientes: exportación Canva no disponible por conector; texto contractual efectivo100; proveedor de firma y acceso a sandbox; requisitos de reserva cero; revisión móvil autenticada y traducción integral del panel comercial/administrativo.
+
+### Evidencia de publicación del portal
+
+- Commit 21d8889a721c95d25038fd01cdba44f27fdc55d5 publicado por GitHub Pages: ejecución 42111220294, trabajos build y deploy completados con success.
+- Comprobación interactiva del portal público publicado: página de acceso carga sin error, aviso MODO PRUEBA · TEST MODE visible, cambio ES→EN actualiza cabecera, títulos, campo de correo y botón de acceso. No se solicitó ningún correo ni se abrió sesión.
+- Esta comprobación pública no acredita recorrido privado autenticado, firma, reserva formal ni funcionamiento en iPhone real.
