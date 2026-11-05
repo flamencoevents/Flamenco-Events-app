@@ -106,5 +106,9 @@ El subdominio gestion.flamencoevents.net se activará manualmente por Nacho al f
 
 - Apps Script **v54** publicado, commit 2d80f0b87349934cdc8b00843362ff703b3deff6, workflow 42129074849; logs confirman @54 y retirada de credenciales del ejecutor.
 - quote-bridge **v4 ACTIVE** en Supabase. Se conserva autenticación propia, permisos y CORS anteriores. El detalle se valida desde el módulo compartido existente source-catalog.ts; no se requiere otro endpoint privilegiado.
-- Interfaz guardada en commit e52350a0865b555fb0f94bfc6c152f0a388cff1a, publicación Pages pendiente de comprobar al cerrar.
+- Interfaz guardada en commit e52350a0865b555fb0f94bfc6c152f0a388cff1a, incluido en 0784fad1c363184e9431430e477117350e5b686a, publicado por Pages 42129340295 con build y deploy success.
 - Las operaciones create/update-ref de GitHub fallaron; se comprobó el estado antes de continuar y se guardaron los archivos existentes mediante Contents API. No se forzó ni sobrescribió trabajo ajeno. El documento del detalle queda aquí, sin depender de un archivo nuevo que no pudo crearse.
+
+### Límite vigente
+
+El detalle de origen está desplegado en modo prueba. Falta prueba HTTP/Auth real y revisión visual autenticada de la nueva consulta. Persistencia económica por evento, conciliación y balances siguen pendientes; no se han escrito movimientos reales ni activado sincronización general.
