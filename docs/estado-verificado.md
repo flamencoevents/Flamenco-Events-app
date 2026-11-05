@@ -223,3 +223,12 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - 52 pruebas Node de app y 23 del puente con dobles superadas; pasan también las cinco baterías Apps Script. Incluyen solo lectura sin escrituras, roles/anon, modos y referencias, respuesta HMAC alterada, paginación, campos limitados, escape y descarte por cambio de cuenta. No es una nueva demostración Auth/HTTP real.
 - Corrección de nombre previsto a gestion.flamencoevents.net. Activación manual exclusivamente por Nacho al finalizar la web. El acceso IONOS ya no es un bloqueo del desarrollo y no se vuelve a solicitar; no hay cambios DNS/CNAME/callbacks.
 - Código preparado y publicación en curso; registrar al final la versión Apps Script y estado de Edge/Pages. Se conservan modo prueba, sincronización general apagada y ausencia de nuevos clientes/envíos/costes contratados. El detalle económico completo y balances siguen pendientes.
+
+## Publicación verificada del inventario WhatsApp
+
+- Apps Script **v53** publicado (commit b597c314c2f60bf6d2c9042b5f0597cb51c0beae, workflow 42123431351). Subida y actualización de implementación comprobadas por logs @53; credenciales del ejecutor retiradas.
+- quote-bridge **v3 ACTIVE** en Supabase; se comprobó el bundle desplegado con catálogo y validación staff anteriores conservados.
+- Web publicada desde commit 7aa9e2853da2ca6087d79fbf997dd4acbda9a4ec, con funcionalidad incorporada en 60fa8a81fa899e29af3c0a503f89f032076b27f1. GitHub Pages 42123653296: build y deploy success. La bandeja está dentro de Presupuestos y eventos, tanto en administración como comercial.
+- 52 pruebas Node app y 23 puente con dobles; cinco baterías Apps Script y sintaxis correctas. No se ha realizado una nueva consulta del catálogo por HTTP con sesión Auth real ni revisión visual autenticada; el despliegue no sustituye esa prueba.
+- Drive conserva las carpetas y originales del circuito WhatsApp. La bandeja informa referencia PDF guardada, no disponibilidad comprobada. La revisión/importación privada existente comprueba el PDF exacto antes de incorporarlo; no se mueve ni regenera el original ni se expone su enlace.
+- Pendiente: integración estructurada completa de datos operativos/económicos, conciliación del histórico, balances, circuito contractual desde plantillas y firma. No se ha declarado terminada toda la integración. Modo prueba y sincronización general apagada; sin nuevos usuarios, correos, WhatsApp, documentos, cambios DNS o costes contratados.
