@@ -1,5 +1,7 @@
 # Estado verificado · 5 noviembre 2026
 
+> **PRIORIDAD VIGENTE · 5/11/2026:** web de gestión empresarial primero; adaptación a app después. Se amplía el alcance para enlazar presupuestos, contratos, seguimiento económico e histórico y balances. Ver [web-gestion-empresa.md](web-gestion-empresa.md). El progreso porcentual anterior no mide este nuevo alcance.
+
 > Estado vigente: portal publicado desde el commit 62749c92d71578686240b6125f8b9dcb7ebd8c9b (Pages 42112791130, build y deploy correctos); Apps Script versión 51 publicada. Las menciones anteriores a invalid_rapt, circuito PDF no completado o importación aún bloqueada son evidencias históricas, superadas por las secciones posteriores. Siguen pendientes la generación contractual completa desde plantillas aprobadas, la firma mediante proveedor y las decisiones de reserva formal.
 
 **MODO PRUEBA ACTIVO.** No se han contactado clientes, enviado presupuestos/contratos ni invitado clientes reales. La sincronización general continúa desactivada. Nacho conserva la única administración; Azahara conserva el único perfil sales tras retirar identidades técnicas.
@@ -197,3 +199,10 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - Empresa+efectivo100 ya no puede generar una cláusula bancaria incompatible. Particular efectivo100 sigue bloqueado. La propuesta privada de cláusula conserva base, IVA, IRPF, total, clave y revisión; no está conectada a generación. Proponer cobro al finalizar no equivale a aprobarlo.
 - Pasa la matriz de 15 combinaciones y las baterías existentes, con dobles; 20 tests del puente superados. Sin nuevo PDF, ensayo HTTP real ni firma. No se tocaron fórmulas ni plantillas originales.
 - Pendiente de Nacho: aprobar momento de cobro efectivo100, consecuencias de cancelación sin anticipo y requisitos de confirmación sin reserva económica. Continúa MODO PRUEBA, sin clientes ni envíos reales.
+
+## Cambio de prioridad: gestión empresarial web
+
+- Nacho prioriza la web de gestión completa y posterga la adaptación a app. Se conserva el trabajo y el modo prueba.
+- Localizados en la cuenta Flamenco Events el seguimiento económico anual y otra fuente de fechas cerradas. Inspeccionados metadatos, cabeceras y rangos acotados; no se modificó ningún libro.
+- Se identificó número de presupuesto en el seguimiento económico como posible enlace; no se ha validado su unicidad ni conciliado el histórico. Los balances no están integrados todavía.
+- Alcance, fases y criterios de aceptación en docs/web-gestion-empresa.md. Las cifras reales y referencias de los nuevos libros privados no se publican en el repositorio.

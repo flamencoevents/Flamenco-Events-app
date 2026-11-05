@@ -1,6 +1,8 @@
-# Flamenco Events App
+# Flamenco Events · Web de gestión empresarial
 
-App estática en GitHub Pages, con Supabase Auth, datos bajo RLS y documentos privados. **MODO PRUEBA**: sin clientes reales, envío automático ni reservas confirmadas.
+Prioridad vigente: completar primero la web de gestión de la empresa, enlazando presupuestos, contratos, eventos y seguimiento económico para balances. La adaptación a app se abordará después. [Alcance y criterios de aceptación](docs/web-gestion-empresa.md).
+
+La implementación actual usa GitHub Pages, Supabase Auth, datos bajo RLS y documentos privados. **MODO PRUEBA**: sin clientes reales, envío automático ni reservas confirmadas.
 
 - `index.html`: solicitud ficticia conectada al servidor, consentimiento, control de abuso e idempotencia; solo crea solicitud y avisos internos.
 - `portal.html`: acceso por correo para cuentas existentes, navegación por rol y documentos del evento propio.
