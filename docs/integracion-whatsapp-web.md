@@ -43,3 +43,12 @@ Se comprueba si una revisión ya está incorporada comparando número, revisión
 ## Dominio y acceso cliente
 
 El nombre vigente es gestion.flamencoevents.net. Nacho realizará manualmente su activación cuando la web esté terminada; no se solicita acceso IONOS ni se modifican DNS, CNAME, certificado o callbacks. Se desarrolla en la URL GitHub existente. El enlace Espacio cliente se publicará después, según la condición aprobada.
+
+## Publicación verificada del inventario WhatsApp
+
+- Apps Script **v53** publicado (commit b597c314c2f60bf6d2c9042b5f0597cb51c0beae, workflow 42123431351). Subida y actualización de implementación comprobadas por logs @53; credenciales del ejecutor retiradas.
+- quote-bridge **v3 ACTIVE** en Supabase; se comprobó el bundle desplegado con catálogo y validación staff anteriores conservados.
+- Web publicada desde commit 7aa9e2853da2ca6087d79fbf997dd4acbda9a4ec, con funcionalidad incorporada en 60fa8a81fa899e29af3c0a503f89f032076b27f1. GitHub Pages 42123653296: build y deploy success. La bandeja está dentro de Presupuestos y eventos, tanto en administración como comercial.
+- 52 pruebas Node app y 23 puente con dobles; cinco baterías Apps Script y sintaxis correctas. No se ha realizado una nueva consulta del catálogo por HTTP con sesión Auth real ni revisión visual autenticada; el despliegue no sustituye esa prueba.
+- Drive conserva las carpetas y originales del circuito WhatsApp. La bandeja informa referencia PDF guardada, no disponibilidad comprobada. La revisión/importación privada existente comprueba el PDF exacto antes de incorporarlo; no se mueve ni regenera el original ni se expone su enlace.
+- Pendiente: integración estructurada completa de datos operativos/económicos, conciliación del histórico, balances, circuito contractual desde plantillas y firma. No se ha declarado terminada toda la integración. Modo prueba y sincronización general apagada; sin nuevos usuarios, correos, WhatsApp, documentos, cambios DNS o costes contratados.
