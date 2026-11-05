@@ -140,3 +140,11 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 3. Definir confirmación formal cuando la reserva económica es cero, y los demás requisitos definitivos. Continúa bloqueada en prueba.
 4. Completar exportación de la copia de Canva y ensayo desde la cola sin envío; el conector disponible genera y lee diseños, pero no expone exportación PDF. No se han creado rutas privilegiadas de diagnóstico.
 5. Revisión visual en sesiones personales/móvil, traducción completa, privacidad/consentimientos reales y la incidencia histórica de lectura paralela SOURCE_NOT_VERIFIED.
+
+### Publicación y límites comprobados al cerrar esta continuación
+
+- App: commit edc8e28697f2da0f1dca8920123b119af8cc9958. GitHub Pages: ejecución 42081965306. Supabase import-event-document v5 ACTIVE, autenticación propia conservada. Las dos migraciones nuevas están aplicadas.
+- Apps Script: código guardado en commit 0ebba675b86f375c228cae1dea6f84fe9c8426d0. Workflow 42081970873 superó sintaxis y todas las pruebas, pero Google devolvió invalid_rapt antes de subir/publicar. Las nuevas protecciones de Contratos.js todavía NO están confirmadas en la implementación de WhatsApp. No se ha modificado esa implementación en este intento.
+- Para publicar ese código hace falta renovar la autorización Google usada por CLASPRC_JSON en GitHub; no se han solicitado ni mostrado secretos.
+- Verificación adicional en ROLLBACK: SHA-256 inválido y segundo contrato para el mismo evento rechazados.
+- Inspección del navegador disponible: la página administrativa abre en modo prueba y solicita acceso; este navegador no comparte la sesión TinyFish. No se ha solicitado otro correo de acceso. No se confirma aquí el renderizado autenticado o móvil de las nuevas pantallas.
