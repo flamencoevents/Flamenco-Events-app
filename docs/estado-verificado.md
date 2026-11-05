@@ -156,3 +156,11 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - Desplegados quote-bridge v2 e import-event-document v6 con autenticación y permisos anteriores conservados; solo cambia su lectura remota.
 - El último workflow exitoso de Apps Script corresponde a documentación sin publicación (42082230893). No resuelve el invalid_rapt del intento de publicación 42081970873. No se repitió una publicación sabiendo que falta autenticación personal.
 - Sin nuevas ejecuciones TinyFish, nuevos usuarios o envíos externos. Modo prueba y reservas bloqueadas.
+
+## Autorización Google renovada y publicación completada · 5 noviembre 2026
+
+- Nacho actualizó privadamente CLASPRC_JSON. Se repitió el intento fallido 42081970873 con las credenciales actuales.
+- Nuevo intento completado correctamente: sintaxis, todas las baterías de pruebas, acceso a Google, subida y publicación. Logs: 15 archivos subidos y despliegue existente actualizado a **versión 51**, commit 0ebba675b86f375c228cae1dea6f84fe9c8426d0.
+- Evidencia: https://github.com/flamencoevents/flamenco-events-appscript/actions/runs/42081970873 . El bloqueo invalid_rapt anterior queda resuelto para este intento. La autorización temporal del ejecutor se eliminó al terminar.
+- Las protecciones de generación contractual por modalidad y revisión de Contratos.js ya están publicadas. Esta publicación no es una nueva prueba real de generación Canva → PDF → app.
+- Modo prueba conservado; no se activaron sincronización general, clientes reales, firmas ni reservas. Sin nuevas ejecuciones TinyFish.
