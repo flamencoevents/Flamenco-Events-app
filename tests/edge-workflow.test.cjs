@@ -63,3 +63,12 @@ test('Technical document source cannot be used outside database test mode',async
  const e=env({actorRole:'admin',testMode:false,document:true});e.tables.accepted_quote_terms[0].external_reference='sheet:12djLXZ7he8Znhp8ngNn_VvBPiV9-gzWR1HGtGycV0RY:FE_App_Pruebas:9999926-v1';
  assert.equal((await e.request('import-event-document',{operation:'preview',event_id:e.eventId,kind:'quotation'})).status,409);assert.equal(e.network.length,0);
 });
+
+
+test('Read-only transport retries once; signed rejection and rate limits are never retried',async()=>{
+ for(const opt of [{transientFailure:true},{transientStatus:503}]){
+  const e=env(opt);const r=await e.request('quote-bridge',{operation:'preview',...choice(e)});assert.equal(r.status,200);assert.equal(e.network.length,2);assert.equal(e.inserts.length,0);assert.equal(e.writes.filter(x=>x.table==='quote_bridge_previews').length,1);
+ }
+ const outage=env({persistentFailure:true});assert.equal((await outage.request('quote-bridge',{operation:'preview',...choice(outage)})).status,502);assert.equal(outage.network.length,2);assert.equal(outage.writes.length,0);
+ for(const opt of [{sourceRejected:true},{tamperResponse:true},{transientStatus:429}]){const e=env(opt);assert.notEqual((await e.request('quote-bridge',{operation:'preview',...choice(e)})).status,200);assert.equal(e.network.length,1);assert.equal(e.writes.length,0);}
+});

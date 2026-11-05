@@ -148,3 +148,11 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - Para publicar ese código hace falta renovar la autorización Google usada por CLASPRC_JSON en GitHub; no se han solicitado ni mostrado secretos.
 - Verificación adicional en ROLLBACK: SHA-256 inválido y segundo contrato para el mismo evento rechazados.
 - Inspección del navegador disponible: la página administrativa abre en modo prueba y solicita acceso; este navegador no comparte la sesión TinyFish. No se ha solicitado otro correo de acceso. No se confirma aquí el renderizado autenticado o móvil de las nuevas pantallas.
+
+## Recuperación limitada de lecturas · 5 noviembre 2026
+
+- Un solo reintento total por lectura firmada ante fallo de transporte o HTTP 502/503/504. El presupuesto, documento y revisión se mantienen exactos. No se reintentan escrituras, límites 429, rechazos firmados, firmas inválidas ni respuestas de otra operación.
+- 32 pruebas Node superadas con dobles. La nueva prueba simula caída puntual y persistente, 503, 429, firma alterada y rechazo de origen: verifica número de peticiones y ausencia de escrituras en los errores. No es una reproducción real de la incidencia histórica SOURCE_NOT_VERIFIED, cuya causa permanece sin confirmar.
+- Desplegados quote-bridge v2 e import-event-document v6 con autenticación y permisos anteriores conservados; solo cambia su lectura remota.
+- El último workflow exitoso de Apps Script corresponde a documentación sin publicación (42082230893). No resuelve el invalid_rapt del intento de publicación 42081970873. No se repitió una publicación sabiendo que falta autenticación personal.
+- Sin nuevas ejecuciones TinyFish, nuevos usuarios o envíos externos. Modo prueba y reservas bloqueadas.

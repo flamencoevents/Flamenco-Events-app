@@ -36,9 +36,15 @@ export async function accepted(db:any,id:string,testMode:boolean){const x=await 
 const scriptUrl='https://script.google.com/macros/s/AKfycbwuqhtUABn3lExsnnmnkn5f9n80xLvsL02rkvL_b373uPGr0EEyuiCViqcza9Xx9MtKgg/exec?fe_app_bridge=1';
 export async function scriptRead(operation:string,choice:any){const {secret}=settings();const requestId=crypto.randomUUID(),timestamp=String(Math.floor(Date.now()/1000));
  const payload=JSON.stringify({operation,request_id:requestId,...choice});const envelope={kind:'fe_app_bridge',timestamp,payload,signature:await mac(secret,'request:'+timestamp+'.'+payload)};
- let target=scriptUrl,method='POST',data:BodyInit|undefined=JSON.stringify(envelope);let response:Response|undefined;
+ let target=scriptUrl,method='POST',data:BodyInit|undefined=JSON.stringify(envelope);let response:Response|undefined;let retryRemaining=1;
  for(let n=0;n<4;n++){
-  response=await fetch(target,{method,body:data,headers:method==='POST'?{'Content-Type':'application/json'}:{},redirect:'manual',signal:AbortSignal.timeout(25000)});
+  // This endpoint only reads. Never replay database writes or semantic failures.
+  for(;;){
+   try{response=await fetch(target,{method,body:data,headers:method==='POST'?{'Content-Type':'application/json'}:{},redirect:'manual',signal:AbortSignal.timeout(25000)});}
+   catch(e){if(retryRemaining-->0)continue;throw new Problem(502,'No se pudo leer Google tras el reintento limitado');}
+   if([502,503,504].includes(response.status)&&retryRemaining-->0){await response.body?.cancel();continue;}
+   break;
+  }
   if([301,302,303,307,308].includes(response.status)){
    const next=new URL(response.headers.get('location')||'',target);
    if(next.protocol!=='https:'||!['script.google.com','script.googleusercontent.com'].includes(next.hostname))throw new Problem(502,'Redirección de Google no autorizada');
@@ -67,3 +73,4 @@ export function quotation(p:any,choice?:any){if(!p||!uuid(p.enquiry_id)||typeof 
  if(choice&&(p.enquiry_id!==choice.enquiry_id||p.quote_number!==choice.quote_number||p.version!==choice.version||sheet!==choice.source_sheet||p.source_reference!==ref))throw new Problem(409,'La respuesta no coincide con la selección');
  return{enquiry_id:p.enquiry_id,quote_number:p.quote_number,version:p.version,total_payable_eur:p.total_payable_eur,deposit_payable_eur:p.deposit_payable_eur??null,billing_mode:p.billing_mode,is_test:p.is_test===true,source_sheet:sheet,...(p.source_reference?{source_reference:p.source_reference}:{}),...(fiscal?{tax_details:fiscal}:{})};
 }
+
