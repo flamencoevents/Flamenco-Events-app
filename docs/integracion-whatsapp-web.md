@@ -52,3 +52,59 @@ El nombre vigente es gestion.flamencoevents.net. Nacho realizará manualmente su
 - 52 pruebas Node app y 23 puente con dobles; cinco baterías Apps Script y sintaxis correctas. No se ha realizado una nueva consulta del catálogo por HTTP con sesión Auth real ni revisión visual autenticada; el despliegue no sustituye esa prueba.
 - Drive conserva las carpetas y originales del circuito WhatsApp. La bandeja informa referencia PDF guardada, no disponibilidad comprobada. La revisión/importación privada existente comprueba el PDF exacto antes de incorporarlo; no se mueve ni regenera el original ni se expone su enlace.
 - Pendiente: integración estructurada completa de datos operativos/económicos, conciliación del histórico, balances, circuito contractual desde plantillas y firma. No se ha declarado terminada toda la integración. Modo prueba y sincronización general apagada; sin nuevos usuarios, correos, WhatsApp, documentos, cambios DNS o costes contratados.
+
+## Detalle operativo y económico del origen WhatsApp
+
+Revisión: 6 noviembre 2026. MODO PRUEBA.
+
+### Entrega de esta continuación
+
+Consulta protegida source_detail de un presupuesto generado con número, clave, revisión y fuente exactos. Se abre desde Origen WhatsApp → Consultar detalle guardado en administración y comercial. Es una consulta del origen actual, no una incorporación contable ni una certificación de cobros/gastos reales.
+
+- Textos aprobados de servicios y descripciones, fecha, lugar y cliente ficticio en prueba.
+- Tipo de cliente y modalidad fiscal; total, reserva y saldo guardados al presupuestar.
+- Base, base facturada, IVA, retención IRPF y conciliación fiscal guardadas.
+- SHA-256 del JSON exacto de origen para identificar su contenido.
+- Para administración: líneas internas, costes previstos, asignaciones de venta/administración/anuales, logística prevista y parámetros congelados disponibles.
+- Los datos ausentes permanecen ausentes; se conservan cero y ajustes negativos. No se recalcula un presupuesto, suma de costes, margen o balance.
+- Se copian solo campos permitidos. No se transfieren el JSON completo, DNI/datos contractuales, tarifas completas, mensajes de WhatsApp, secretos, URLs Drive o PDFs.
+
+### Permisos y efectos
+
+La función Edge comprueba sesión y perfil en servidor. Cliente y público no acceden a source_detail. Comercial recibe servicios e importes fiscales; los costes internos se reservan a administración en la respuesta del servidor, aunque el navegador solicite include_costs=true. Apps Script recibe ese permiso dentro de la petición HMAC, nunca directamente de la entrada del navegador.
+
+Es solo lectura: no crea solicitudes, condiciones aceptadas, eventos, documentos, clientes, cobros ni gastos, ni cambia estados. La consulta previa a una aceptación no evita la llamada ni la revisión comercial exigidas para importar. No se activa sincronización general ni se altera la organización Drive.
+
+Los resultados tardíos se descartan tras cambiar de cuenta, invalidar el montaje o pasar a otra página del inventario. Se conserva la validación HMAC y el reintento de lectura limitado existente.
+
+### Significado de las cifras
+
+El campo histórico calculo.real se presenta como **Neto previsto según cálculo**, no como efectivo recibido o beneficio realizado. Los importes calculo.venta/admin/anuales se presentan como asignaciones previstas de línea, no como movimientos reales.
+
+Los subtotales de logística y sus componentes están en distintos niveles. No se suman entre sí para crear un gasto global nuevo. Los balances siguen pendientes de conciliación con los libros de cuentas, registro de cobros/pagos reales y definiciones del negocio.
+
+La huella identifica el origen consultado ahora. No acredita por sí sola que todo ese desglose se incorporó o aceptó con anterioridad. Falta persistir una versión estructurada aprobada por evento y comparar sus cambios en futuras revisiones; no se reconstruye retroactivamente una aceptación económica.
+
+### Validación
+
+56 tests Node de la web y 25 del puente Apps Script superados con dobles. Pasan también sintaxis y las baterías de solicitudes, historial, PDF, formulario y contratos.
+
+Nuevos casos: hash del JSON exacto, inmutabilidad, importe fiscal/retención/reserva, coste/logística guardados, cero y ausencia, descuento negativo, duplicados, revisión errónea, borrador, modo incorrecto, escalada de costes desde comercial, anonimato/cliente denegados, campos extra privados eliminados, escape de textos y respuesta tardía de otra página.
+
+No es una nueva prueba HTTP real con sesiones Auth ni una revisión visual autenticada. La publicación se registrará al verificar las versiones resultantes. No se generaron documentos ni se escribieron registros económicos reales.
+
+### Próximos pasos
+
+1. Incorporación persistente y versionada del detalle aprobado a la ficha económica del evento, con permisos y auditoría.
+2. Enlace conciliado con el histórico y distinción de movimientos previstos/realizados.
+3. Balances verificados contra las fuentes, sin contar dos veces reservas, saldos, subtotales o revisiones.
+4. Prueba Auth real y revisión de interfaz con los roles autorizados.
+
+El subdominio gestion.flamencoevents.net se activará manualmente por Nacho al finalizar la web. No se cambian DNS, CNAME, callbacks ni el sitio público de IONOS.
+
+### Publicación del detalle · 6 noviembre 2026
+
+- Apps Script **v54** publicado, commit 2d80f0b87349934cdc8b00843362ff703b3deff6, workflow 42129074849; logs confirman @54 y retirada de credenciales del ejecutor.
+- quote-bridge **v4 ACTIVE** en Supabase. Se conserva autenticación propia, permisos y CORS anteriores. El detalle se valida desde el módulo compartido existente source-catalog.ts; no se requiere otro endpoint privilegiado.
+- Interfaz guardada en commit e52350a0865b555fb0f94bfc6c152f0a388cff1a, publicación Pages pendiente de comprobar al cerrar.
+- Las operaciones create/update-ref de GitHub fallaron; se comprobó el estado antes de continuar y se guardaron los archivos existentes mediante Contents API. No se forzó ni sobrescribió trabajo ajeno. El documento del detalle queda aquí, sin depender de un archivo nuevo que no pudo crearse.
