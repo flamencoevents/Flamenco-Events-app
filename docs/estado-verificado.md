@@ -181,3 +181,11 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - Commit 21d8889a721c95d25038fd01cdba44f27fdc55d5 publicado por GitHub Pages: ejecución 42111220294, trabajos build y deploy completados con success.
 - Comprobación interactiva del portal público publicado: página de acceso carga sin error, aviso MODO PRUEBA · TEST MODE visible, cambio ES→EN actualiza cabecera, títulos, campo de correo y botón de acceso. No se solicitó ningún correo ni se abrió sesión.
 - Esta comprobación pública no acredita recorrido privado autenticado, firma, reserva formal ni funcionamiento en iPhone real.
+
+## Envíos concurrentes y descargas tras cambio de sesión · 5 noviembre 2026
+
+- Portal cliente: bloqueo local por cuenta, evento y tipo de envío mientras se guarda un mensaje o propuesta. Evita escrituras simultáneas por doble pulsación, incluso desde formularios reconstruidos. No es una garantía de idempotencia de servidor entre recargas.
+- Se deshabilitan botones y se marca aria-busy durante la operación; texto conservado ante rechazo o fallo de red, controles restaurados al terminar. Los fallos de resultado incierto no se reintentan automáticamente: se pide comprobar el estado antes de repetir.
+- Las respuestas de escritura de una cuenta anterior no limpian formularios, muestran avisos ni cargan conversaciones en la nueva sesión. Las respuestas de descarga privada tampoco abren documentos tras cambiar de cuenta o invalidar el refresco. Se conservan RLS, bucket privado y expiración de 60 segundos.
+- 39 pruebas Node superadas con dobles: concurrencia de mensajes/propuestas, rechazo y fallo de transporte, recuperación del bloqueo, cambios de cuenta durante escritura y descarga, descarga válida y traducciones existentes. Sin nuevas sesiones Auth ni prueba HTTP real de estos cambios; no se repitieron los ensayos históricos de importes y aislamiento real.
+- Código preparado para publicación por GitHub Pages en este commit; la ejecución resultante debe verificarse antes de declarar desplegado. Modo prueba activo, sin cambios económicos, plantillas, permisos, proveedores, sincronización general ni envíos reales. TinyFish no ejecutado.
