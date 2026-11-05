@@ -5,7 +5,7 @@
  const money=(v,lang='es')=>new Intl.NumberFormat(lang==='es'?'es-ES':'en-GB',{style:'currency',currency:'EUR',useGrouping:'always'}).format(v);
  const labels={no_vat_quote:'Presupuesto sin IVA · impuestos no incluidos',individual_reservation:'Particular · reserva y condiciones pactadas',individual_full_invoice:'Particular · factura completa · 100 % en efectivo',business_full_invoice:'Empresa · factura completa'};
  function quoteHtml(q,lang='es'){
-  const t=q.tax_details;return '<article class="panel card"><strong>'+escape(q.quote_number)+' · v'+escape(q.version)+'</strong><p>'+escape(window.FEState?window.FEState.label(q.billing_mode,lang):(labels[q.billing_mode]||q.billing_mode))+'</p><p>Total: <b>'+escape(money(q.total_payable_eur,lang))+'</b>'+(q.deposit_payable_eur==null?'':(lang==='es'?' · Reserva: ':' · Deposit: ')+escape(money(q.deposit_payable_eur,lang)))+'</p>'+(t?(lang==='es'?'<p>Base guardada: ':'<p>Stored base: ')+escape(money(t.base_eur,lang))+(lang==='es'?' · Base facturada: ':' · Invoiced base: ')+escape(money(t.invoiced_base_eur,lang))+' · IVA: '+escape(money(t.vat_eur,lang))+' · IRPF: '+escape(money(t.withholding_eur,lang))+(t.rounding_eur?' · Ajuste fiscal guardado: '+escape(money(t.rounding_eur,lang)):'')+'</p>':(lang==='es'?'<p>Sin desglose fiscal incorporado.</p>':'<p>No tax breakdown imported.</p>'))+'</article>';
+  const t=q.tax_details;return '<article class="panel card"><strong>'+escape(q.quote_number)+' · v'+escape(q.version)+'</strong><p>'+escape(window.FEState?window.FEState.label(q.billing_mode,lang):(labels[q.billing_mode]||q.billing_mode))+'</p><p>Total: <b>'+escape(money(q.total_payable_eur,lang))+'</b>'+(q.deposit_payable_eur==null?'':(lang==='es'?' · Reserva: ':' · Deposit: ')+escape(money(q.deposit_payable_eur,lang)))+'</p>'+(t?(lang==='es'?'<p>Base guardada: ':'<p>Stored base: ')+escape(money(t.base_eur,lang))+(lang==='es'?' · Base facturada: ':' · Invoiced base: ')+escape(money(t.invoiced_base_eur,lang))+(lang==='es'?' · IVA: ':' · VAT: ')+escape(money(t.vat_eur,lang))+(lang==='es'?' · IRPF: ':' · Withholding tax: ')+escape(money(t.withholding_eur,lang))+(t.rounding_eur?(lang==='es'?' · Ajuste fiscal guardado: ':' · Stored tax rounding: ')+escape(money(t.rounding_eur,lang)):'')+'</p>':(lang==='es'?'<p>Sin desglose fiscal incorporado.</p>':'<p>No tax breakdown imported.</p>'))+'</article>';
  }
  async function mount(db,role,id='commercial-workflow'){
   const host=document.getElementById(id);if(!host||!['admin','sales'].includes(role))return;
@@ -41,4 +41,5 @@
  }
  window.FEWorkflow={mount,quoteHtml,money};
 })();
+
 

@@ -164,3 +164,12 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - Evidencia: https://github.com/flamencoevents/flamenco-events-appscript/actions/runs/42081970873 . El bloqueo invalid_rapt anterior queda resuelto para este intento. La autorización temporal del ejecutor se eliminó al terminar.
 - Las protecciones de generación contractual por modalidad y revisión de Contratos.js ya están publicadas. Esta publicación no es una nueva prueba real de generación Canva → PDF → app.
 - Modo prueba conservado; no se activaron sincronización general, clientes reales, firmas ni reservas. Sin nuevas ejecuciones TinyFish.
+
+## Portal bilingüe y respuestas tardías · 5 noviembre 2026
+
+- Portal cliente: controles de avisos, presupuesto, pagos, tareas, documentos y propuestas usan el idioma seleccionado; cabecera y atributo lang se actualizan. Se traducen las etiquetas fiscales del presupuesto. Los textos introducidos por usuarios y los avisos guardados no se traducen automáticamente.
+- Respuestas de conversaciones ligadas a identidad y época de refresco: si cambia la cuenta o se invalida la sesión antes de terminar la consulta, su resultado no se dibuja.
+- 34 pruebas Node superadas. Las nuevas pruebas renderizan un evento ficticio en español/inglés, comprueban escape HTML y simulan respuestas tardías tras cambio de cuenta o refresco. Son pruebas de renderizado con dobles, no sesiones Auth reales ni Safari.
+- No se crearon usuarios, enviaron correos, activaron servicios de firma ni ejecutó TinyFish. Google v51 ya publicado; su bloqueo de autenticación anterior sigue resuelto.
+- Preparada comparativa de dos proveedores en docs/firma-opciones.md con fuentes oficiales consultadas el 5/11/2026. No se seleccionó, abrió ni contrató ninguna cuenta.
+- Pendientes: exportación Canva no disponible por conector; texto contractual efectivo100; proveedor de firma y acceso a sandbox; requisitos de reserva cero; revisión móvil autenticada y traducción integral del panel comercial/administrativo.
