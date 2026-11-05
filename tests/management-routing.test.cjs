@@ -1,8 +1,8 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 function routing(){const ctx=vm.createContext({window:{},URLSearchParams});vm.runInContext(fs.readFileSync('management-routing.js','utf8'),ctx);return ctx.window.FEManagement;}
 test('Management root targets admin only on exact HTTPS custom domain',()=>{
- const r=routing(),base={protocol:'https:',hostname:'gesion.flamencoevents.net',pathname:'/',search:''};assert.equal(r.homeTarget(base),'./admin.html');assert.equal(r.homeTarget({...base,pathname:'/index.html'}),'./admin.html');
- for(const patch of [{hostname:'flamencoevents.github.io'},{hostname:'www.flamencoevents.net'},{hostname:'gesion.flamencoevents.net.attacker.invalid'},{protocol:'http:'},{pathname:'/portal.html'},{search:'?view=public'}])assert.equal(r.homeTarget({...base,...patch}),null);
+ const r=routing(),base={protocol:'https:',hostname:'gestion.flamencoevents.net',pathname:'/',search:''};assert.equal(r.homeTarget(base),'./admin.html');assert.equal(r.homeTarget({...base,pathname:'/index.html'}),'./admin.html');
+ for(const patch of [{hostname:'flamencoevents.github.io'},{hostname:'www.flamencoevents.net'},{hostname:'gestion.flamencoevents.net.attacker.invalid'},{protocol:'http:'},{pathname:'/portal.html'},{search:'?view=public'}])assert.equal(r.homeTarget({...base,...patch}),null);
 });
 test('Management routes sales and clients without treating unknown roles as staff',()=>{
  const r=routing();assert.equal(r.roleTarget('sales'),'./staff.html');assert.equal(r.roleTarget('client'),'./portal.html');for(const role of ['admin',undefined,null,'owner','ADMIN'])assert.equal(r.roleTarget(role),null);

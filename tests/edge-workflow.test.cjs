@@ -72,3 +72,19 @@ test('Read-only transport retries once; signed rejection and rate limits are nev
  const outage=env({persistentFailure:true});assert.equal((await outage.request('quote-bridge',{operation:'preview',...choice(outage)})).status,502);assert.equal(outage.network.length,2);assert.equal(outage.writes.length,0);
  for(const opt of [{sourceRejected:true},{tamperResponse:true},{transientStatus:429}]){const e=env(opt);assert.notEqual((await e.request('quote-bridge',{operation:'preview',...choice(e)})).status,200);assert.equal(e.network.length,1);assert.equal(e.writes.length,0);}
 });
+function catalogPayload(){return {source_sheet:'FE_Cola',offset:0,next_offset:null,test_mode:true,items:[{source_sheet:'FE_Cola',source_key:'X26-P900003-v2',quote_number:'X26-P900003',version:2,is_test:true,client_label:'PRUEBA ficticia',event_date:'12/01/2027',venue:'Recinto ficticio',quote_state:'GENERADO',contract_state:'SIN_CONTRATO',total_payable_eur:605,quotation_pdf_ready:true,contract_pdf_ready:false}]};}
+test('Source catalog is staff-only and read-only even before commercial acceptance',async()=>{
+ for(const actorRole of ['admin','sales']){const e=env({actorRole,stage:'new',scriptPayload:catalogPayload()}),r=await e.request('quote-bridge',{operation:'source_catalog'});assert.equal(r.status,200);const p=await r.json();assert.equal(p.items[0].version,2);assert.equal(e.writes.length,0);assert.equal(e.calls.length,0);assert.equal(e.uploads.length,0);}
+ const client=env({actorRole:'client'});assert.equal((await client.request('quote-bridge',{operation:'source_catalog'})).status,403);assert.equal(client.network.length,0);
+ const anon=env();assert.equal((await anon.request('quote-bridge',{operation:'source_catalog'},{auth:false})).status,401);assert.equal(anon.network.length,0);
+});
+test('Catalog rejects wrong pages, source, duplicate keys, real test rows and unverified responses',async()=>{
+ const variants=[p=>p.offset=20,p=>p.next_offset=1,p=>p.source_sheet='OTHER',p=>p.items.push({...p.items[0]}),p=>p.items[0].is_test=false,p=>p.items[0].source_key='OTHER'];
+ for(const mutate of variants){const p=catalogPayload();mutate(p);const e=env({scriptPayload:p});assert.notEqual((await e.request('quote-bridge',{operation:'source_catalog'})).status,200);assert.equal(e.writes.length,0);}
+ const tamper=env({scriptPayload:catalogPayload(),tamperResponse:true});assert.equal((await tamper.request('quote-bridge',{operation:'source_catalog'})).status,502);
+ const e=env();for(const patch of [{offset:-1},{offset:1.5},{source_sheet:'OTHER'}])assert.equal((await e.request('quote-bridge',{operation:'source_catalog',...patch})).status,422);assert.equal(e.network.length,0);
+ const prod=env({testMode:false});assert.equal((await prod.request('quote-bridge',{operation:'source_catalog',source_sheet:'FE_App_Pruebas'})).status,409);assert.equal(prod.network.length,0);
+});
+test('Catalog strips source extras instead of forwarding arbitrary raw data',async()=>{
+ const p=catalogPayload();p.items[0].pdf_base64='PRIVATE';p.items[0].document_url='https://example.invalid/private';const e=env({scriptPayload:p}),r=await e.request('quote-bridge',{operation:'source_catalog'});assert.equal(r.status,200);const text=await r.text();assert.ok(!text.includes('PRIVATE'));assert.ok(!text.includes('document_url'));assert.equal(e.writes.length,0);
+});

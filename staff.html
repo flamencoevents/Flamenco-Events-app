@@ -28,7 +28,7 @@ $('login').classList.add('hidden');$('workspace').classList.remove('hidden');$('
 $('identity').textContent=user.email+' · '+role;
 [leads,events,messages,tasks,notifications,requests,documents]=await Promise.all([read('enquiries'),read('events'),read('event_messages'),read('event_tasks'),read('notifications'),read('event_change_requests'),read('event_documents')]);
 if(epoch!==refreshEpoch)return;render();
-await window.FEWorkflow.mount(db,role);
+await window.FEWorkflow.mount(db,role,'commercial-workflow',lang);
 }catch(e){$('workspace').classList.add('hidden');$('content').innerHTML='';$('commercial-workflow').innerHTML='';notice(e.message||'Error al cargar datos',true)}}
 function render(){if(!user)return;
 $('heading').textContent=i18n[lang].heading;

@@ -1,6 +1,6 @@
 (function(root){
  'use strict';
- const hostname='gesion.flamencoevents.net';
+ const hostname='gestion.flamencoevents.net';
  function homeTarget(location){
   if(location.protocol!=='https:'||location.hostname!==hostname||!['/','/index.html'].includes(location.pathname))return null;
   if(new URLSearchParams(location.search||'').get('view')==='public')return null;

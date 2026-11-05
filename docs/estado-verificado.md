@@ -215,3 +215,11 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - No se activó dominio personalizado, DNS ni callbacks Supabase. La configuración GitHub Pages es accesible por sesión existente, pero IONOS solicita autenticación; DNS y certificado no están comprobados. No se ha añadido CNAME al repositorio para no redirigir la URL activa antes de completar DNS.
 - Requisito añadido: enlace Espacio cliente en la web pública solo cuando esté verificado y se autorice uso real. No se editó IONOS ni se emitieron correos. Detalles en docs/dominio-gestion.md.
 - Publicado commit 6f711de977cd01ddedcc89f2c4def971c594b425 mediante Pages 42120655796: build y deploy correctos. Verificación interactiva del admin publicado: título Gestión de empresa, aviso MODO PRUEBA y acceso privado sin datos. No se abrió sesión ni emitió correo. Modo prueba y permisos de servidor conservados.
+
+## Bandeja de origen WhatsApp · 5 noviembre 2026
+
+- Preparada bandeja interna de presupuestos/revisiones y estado contractual exacto, consulta paginada a petición y selección de referencia sin aceptación/importación automática. Encaja en el circuito de importación existente tras llamada, autorización, envío y aceptación. Mapa de destinos y pendientes en docs/integracion-whatsapp-web.md.
+- Filtro ficticio en modo prueba y doble validación en Apps Script/Edge. Sin transferir raw snapshots, identidades contractuales, PDF, secretos ni URLs Drive. Contratos múltiples requieren revisión; no se elige la última versión.
+- 52 pruebas Node de app y 23 del puente con dobles superadas; pasan también las cinco baterías Apps Script. Incluyen solo lectura sin escrituras, roles/anon, modos y referencias, respuesta HMAC alterada, paginación, campos limitados, escape y descarte por cambio de cuenta. No es una nueva demostración Auth/HTTP real.
+- Corrección de nombre previsto a gestion.flamencoevents.net. Activación manual exclusivamente por Nacho al finalizar la web. El acceso IONOS ya no es un bloqueo del desarrollo y no se vuelve a solicitar; no hay cambios DNS/CNAME/callbacks.
+- Código preparado y publicación en curso; registrar al final la versión Apps Script y estado de Edge/Pages. Se conservan modo prueba, sincronización general apagada y ausencia de nuevos clientes/envíos/costes contratados. El detalle económico completo y balances siguen pendientes.

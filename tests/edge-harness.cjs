@@ -30,6 +30,7 @@ function env(options={}){
  }});
  const compile=file=>stripTypeScriptTypes(fs.readFileSync(file,'utf8').replace(/^import .*;\r?\n/gm,'').replace(/^export /gm,''));
  vm.runInContext(compile('supabase/functions/_shared/bridge.ts'),ctx);
+ vm.runInContext(compile('supabase/functions/_shared/source-catalog.ts'),ctx);
  for(const name of ['ingest-accepted-quote','quote-bridge','public-enquiry','import-event-document']){vm.runInContext(compile('supabase/functions/'+name+'/index.ts'),ctx);handlers[name]=handler;}
  const request=async(name,data,opts={})=>{
   const raw=JSON.stringify(data),headers={'Content-Type':'application/json',...(opts.auth===false?{}:{authorization:'Bearer mock-token'}),...opts.headers};

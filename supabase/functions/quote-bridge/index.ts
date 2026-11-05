@@ -1,6 +1,11 @@
 import {route,body,database,staff,runtime,selection,accepted,scriptRead,quotation,hash,settings,mac,Problem,uuid} from '../_shared/bridge.ts';
+import {catalogSelection,catalogPage} from '../_shared/source-catalog.ts';
 Deno.serve(route(async request=>{
  const db=database(),actor=await staff(request,db),b=await body(request),testMode=await runtime(db);
+ if(b.operation==='source_catalog'){
+  const choice=catalogSelection(b,testMode);
+  return catalogPage(await scriptRead('source_catalog',choice),choice);
+ }
  if(b.operation==='preview'){
   const choice=selection(b);await accepted(db,choice.enquiry_id,testMode);
   if(!testMode&&choice.source_sheet==='FE_App_Pruebas')throw new Problem(409,'Origen reservado a pruebas');
