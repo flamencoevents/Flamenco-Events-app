@@ -5,6 +5,10 @@
 
 # Prioridad vigente: web de gestión de Flamenco Events
 
+> Comprobación administrativa de enlace contractual y económico preparada:
+> [conciliación en servidor y límites](conciliacion-servidor-cuentas.md). Consulta
+> exclusivamente ficticia, sin escritor remoto ni integración contable activada.
+
 > Consulta de eventos del libro en ambos paneles y página de balances reservada
 > a administración: [avance y flujo confirmado](listado-eventos-cuentas.md).
 > La incorporación automática de documentos al libro sigue pendiente; la tabla

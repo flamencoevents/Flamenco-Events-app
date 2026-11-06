@@ -9,6 +9,11 @@
 > locales superadas. Preparado, sin despliegue ni conexión a Drive/servidor.
 > [Reproducción y límites](circuito-whatsapp-cuentas.md#ensayo-local-coordinado--6-noviembre-2026).
 
+> **Conciliación de servidor · 6 noviembre, continuación:** preparada consulta
+> administrativa de solo lectura para contrastar revisión, PDF privado y cifras
+> aceptadas con el origen firmado. 79 pruebas Node locales superadas; sin escritura
+> XLSX ni activación contable. [Alcance y evidencia](conciliacion-servidor-cuentas.md).
+
 # Estado verificado · 5 noviembre 2026
 
 > **Listado compartido y balances · 6/11/2026:** incorporada lectura interna de

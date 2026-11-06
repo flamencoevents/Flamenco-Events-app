@@ -1,8 +1,13 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');
 function api(extra={}){const c=vm.createContext({window:{},URL,Intl,...extra});vm.runInContext(fs.readFileSync('accounts-events.js','utf8'),c);return c.window.FEAccounts;}
 const row=()=>({source_row:10,event_date:'2027-03-12',schedule:'18:00',venue:'<script>unsafe</script>',client_label:'PRUEBA',quote_number:'00926',budget_eur:0,account_values:{PRESUPUESTO:'0','COBRADO RESERVA':'0'},quotation_url:'https://drive.google.com/file/d/test/view',contract_url:'https://www.canva.com/d/test',document_note:'<unsafe>'});
-test('Accounts table has exactly five columns and separate safe document links',()=>{
- const html=api().table([row()]);assert.equal((html.match(/<th scope/g)||[]).length,5);assert.equal((html.match(/<td(?: |>|\b)/g)||[]).length,5);assert.match(html,/>Presupuesto<\/a>/);assert.match(html,/>Contrato<\/a>/);assert.match(html,/Cuentas del evento/);assert.match(html,/0,00/);assert.match(html,/00926/);assert.ok(!html.includes('<script>'));assert.ok(!html.includes('<unsafe>'));assert.match(html,/noopener noreferrer/);
+test('Accounts cards retain four event fields, budget and separate safe document links',()=>{
+ const html=api().table([row()]);assert.equal((html.match(/role="listitem"/g)||[]).length,1);assert.equal((html.match(/class="fe-event-field"/g)||[]).length,4);assert.match(html,/>Abrir presupuesto<\/a>/);assert.match(html,/>Abrir contrato<\/a>/);assert.match(html,/Cuentas del evento/);assert.match(html,/0,00/);assert.match(html,/00926/);assert.ok(!html.includes('<script>'));assert.ok(!html.includes('<unsafe>'));assert.match(html,/noopener noreferrer/);
+});
+test('Quotation display restores four-digit leading zero without mutating source references',()=>{
+ const a=api();for(const [source,display] of [['1926','01926'],['00926','00926'],['12826','12826'],['X26-P900003','X26-P900003']]){
+  const r={...row(),quote_number:source},html=a.table([r]);assert.ok(html.includes('Ref. '+display));assert.equal(r.quote_number,source);
+ }
 });
 test('Document URLs cannot point to arbitrary sites or scripts',()=>{
  const a=api();for(const u of ['javascript:alert(1)','https://drive.google.com.attacker.invalid/file/d/x/view','https://www.canva.com@attacker.invalid/design/x/view','http://drive.google.com/file/d/x/view','https://attacker.invalid/','https://docs.google.com/other'])assert.equal(a.safeUrl(u),null);

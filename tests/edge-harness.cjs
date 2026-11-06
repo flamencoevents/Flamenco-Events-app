@@ -24,7 +24,7 @@ function env(options={}){
   if(options.evilRedirect)return new Response(null,{status:302,headers:{location:'https://evil.invalid/stolen'}});
   const wire=JSON.parse(init.body),request=JSON.parse(wire.payload);
   const expected=crypto.createHmac('sha256',secret).update('request:'+wire.timestamp+'.'+wire.payload).digest('hex');if(expected!==wire.signature)throw Error('Bad outbound signature');
-  const data=options.document?{source_reference:p.source_reference,pdf_base64:Buffer.from('%PDF-1.4\nTEST').toString('base64')}:p;
+  const data=options.scriptResponses?options.scriptResponses(request):options.document?{source_reference:p.source_reference,pdf_base64:Buffer.from('%PDF-1.4\nTEST').toString('base64')}:p;
   const text=JSON.stringify({request_id:options.wrongNonce?'wrong':request.request_id,ok:!options.sourceRejected,data});
   const stamp=String(Math.floor(Date.now()/1000));return new Response(JSON.stringify({timestamp:stamp,payload:text,signature:options.tamperResponse?'0'.repeat(64):crypto.createHmac('sha256',secret).update('response:'+stamp+'.'+text).digest('hex')}));
  }});
