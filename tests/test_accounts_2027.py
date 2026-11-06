@@ -150,6 +150,22 @@ class ReaderTests(unittest.TestCase):
             self.assertEqual(summary['hyperlink_count'], 1)
             self.assertNotIn('PRIVATE', str(summary))
             self.assertEqual(path.read_bytes(), original)
+            with zipfile.ZipFile(path) as z:
+                entries = {name: z.read(name) for name in z.namelist()}
+            entries['xl/worksheets/sheet1.xml'] = entries['xl/worksheets/sheet1.xml'].replace(
+                b'</worksheet>', b'<drawing xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:id="drawing1"/></worksheet>')
+            entries['xl/worksheets/_rels/sheet1.xml.rels'] = b'<Relationships><Relationship Id="drawing1" Target="../drawings/drawing1.xml"/></Relationships>'
+            entries['xl/drawings/drawing1.xml'] = b'<wsDr xmlns="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing"/>'
+            with zipfile.ZipFile(path, 'w') as z:
+                for name, content in entries.items():
+                    z.writestr(name, content)
+            self.assertFalse(mod.read_book(path)['objects'])
+            entries['xl/drawings/drawing1.xml'] = b'<wsDr><twoCellAnchor/></wsDr>'
+            with zipfile.ZipFile(path, 'w') as z:
+                for name, content in entries.items():
+                    z.writestr(name, content)
+            self.assertTrue(mod.read_book(path)['objects'])
+            original = path.read_bytes()
             cli = subprocess.run([sys.executable, str(SOURCE), str(path)], capture_output=True, text=True)
             self.assertEqual(cli.returncode, 0)
             self.assertNotIn('PRIVATE', cli.stdout + cli.stderr)
