@@ -114,3 +114,35 @@ small,.muted,header small,.accounts-links .muted{color:#333}
 .history-table td small,.history-table td a{display:block;margin-top:8px}
 .history-table code,.accounts-details code{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.8rem}
 .history-table summary,.accounts-details summary{cursor:pointer;padding:8px 0;font-size:.85rem}
+
+/* 2026-11-06: Gestión de eventos — tabla y documentos sin solapamientos. */
+#accounts-events{min-width:0;overflow:hidden}
+#accounts-events .accounts-scroll{min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}
+#accounts-events .accounts-table{width:100%;min-width:860px;table-layout:fixed}
+#accounts-events .accounts-table th,#accounts-events .accounts-table td{box-sizing:border-box;min-width:0}
+#accounts-events .accounts-table th:nth-child(1){width:110px}
+#accounts-events .accounts-table th:nth-child(2){width:95px}
+#accounts-events .accounts-table th:nth-child(3){width:19%}
+#accounts-events .accounts-table th:nth-child(4){width:21%}
+#accounts-events .accounts-table th:nth-child(5){width:auto;text-align:left}
+#accounts-events .accounts-money{text-align:left;white-space:normal;overflow-wrap:anywhere}
+#accounts-events .accounts-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;min-width:0;width:100%}
+#accounts-events .accounts-links>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
+#accounts-events .accounts-links a,#accounts-events .accounts-links span{font-size:.85rem}
+#accounts-events .accounts-links button{grid-column:1/-1;min-width:0}
+@media(max-width:760px){
+ #accounts-events{overflow:visible}
+ #accounts-events .accounts-scroll{overflow:visible}
+ #accounts-events .accounts-table{display:block;min-width:0;width:100%}
+ #accounts-events .accounts-table tbody{display:grid;min-width:0}
+ #accounts-events .accounts-table tbody tr{min-width:0;overflow:hidden}
+ #accounts-events .accounts-table td,#accounts-events .accounts-table td:nth-child(1),#accounts-events .accounts-table td:nth-child(2){min-width:0;grid-template-columns:minmax(80px,100px) minmax(0,1fr);white-space:normal;overflow-wrap:anywhere}
+ #accounts-events .accounts-table td.accounts-money{grid-template-columns:minmax(80px,100px) minmax(0,1fr)}
+ #accounts-events .accounts-links{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+ #accounts-events .accounts-links a{display:flex;align-items:center;justify-content:center;text-align:center;padding:9px 6px;min-height:44px}
+ #accounts-events .accounts-links span{padding:10px 4px;overflow-wrap:anywhere}
+}
+@media(max-width:420px){
+ #accounts-events .accounts-links{grid-template-columns:minmax(0,1fr)}
+ #accounts-events .accounts-links>*{grid-column:1/-1}
+}
