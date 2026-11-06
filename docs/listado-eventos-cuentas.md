@@ -105,3 +105,13 @@ inventadas. La configuración de nuevos ejercicios y fórmulas queda pendiente.
 salida contiene datos privados y nunca se guarda en el repositorio público.
 Reconoce encabezados repetidos, fechas Excel y referencias numéricas sin añadir
 «.0»; conserva referencias textuales, incluidas las que tengan ceros iniciales.
+
+## Publicación comprobada
+
+Commit `1243c4ca6c39ead09e151b8e57597a28bf59d3a0` guardado en main.
+Pruebas web, 66 casos: https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42218224772 (success).
+Pruebas Python de cuentas: https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42218224712 (success).
+GitHub Pages: https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42218223433 (success).
+Consulta REST real sin sesión del catálogo: HTTP 401 / 42501, sin registros.
+Estado final consultado: test_mode=true, ocho filas en catálogo y cero eventos confirmados.
+No se crearon identidades de prueba ni se modificó el libro original.
