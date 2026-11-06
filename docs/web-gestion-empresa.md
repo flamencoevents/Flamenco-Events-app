@@ -1,5 +1,10 @@
 # Prioridad vigente: web de gestión de Flamenco Events
 
+> Consulta de eventos del libro en ambos paneles y página de balances reservada
+> a administración: [avance y flujo confirmado](listado-eventos-cuentas.md).
+> La incorporación automática de documentos al libro sigue pendiente; la tabla
+> publicada es una lectura incorporada del origen, no sincronización en vivo.
+
 > Última continuación del circuito WhatsApp → contrato → cuentas:
 > [ensayo integrado y evidencia actual](circuito-whatsapp-cuentas.md).
 > 40 pruebas sintéticas locales; empaquetado conservador y auditoría de copia

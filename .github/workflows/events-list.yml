@@ -1,0 +1,30 @@
+name: Staff accounts catalog checks
+on:
+  push:
+    paths:
+      - 'accounts-events.*'
+      - 'balances.*'
+      - 'admin.html'
+      - 'staff.html'
+      - 'tests/*.test.cjs'
+      - '.github/workflows/events-list.yml'
+  pull_request:
+    paths:
+      - 'accounts-events.*'
+      - 'balances.*'
+      - 'admin.html'
+      - 'staff.html'
+      - 'tests/*.test.cjs'
+      - '.github/workflows/events-list.yml'
+permissions:
+  contents: read
+jobs:
+  mocked-web-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test tests/*.test.cjs

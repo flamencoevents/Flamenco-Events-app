@@ -1,5 +1,11 @@
 # Estado verificado · 5 noviembre 2026
 
+> **Listado compartido y balances · 6/11/2026:** incorporada lectura interna de
+> ocho eventos del libro 2027 al principio de administración/comercial, con cinco
+> columnas y enlaces separados. Balances económicos queda preparado solo para
+> administración, por ejercicios y sin cálculos. 66 pruebas web locales;
+> comprobación RLS en ROLLBACK. [Estado y límites](listado-eventos-cuentas.md).
+
 > **Actualización 6/11/2026 · circuito de cuentas:** preparado adaptador local
 > de las filas FE3/FE_Contratos a propuesta mensual. 40 pruebas sintéticas
 > locales superadas. El empaquetado conservador resuelve el rechazo anterior:
