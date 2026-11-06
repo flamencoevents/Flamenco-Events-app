@@ -211,3 +211,62 @@ job synthetic-tests success; logs confirman 52 tests, OK, y sintaxis MJS correct
 No se repitieron ensayos Auth/HTTP ni se desplegó un escritor remoto. El siguiente
 paso técnico es integrar este protocolo con lectura autenticada y versión remota;
 no reutilizar el diario local como prueba de autorización o escritura en Drive.
+
+## Ensayo local coordinado · 6 noviembre 2026
+
+`tools/accounts_2027_trial.py` conecta el escritor MJS existente al diario local.
+Antes de ejecutarlo reserva la propuesta ficticia y mantiene un bloqueo de
+proceso Linux sobre la base privada. Esto impide que dos reintentos idénticos
+del mismo propietario lancen dos escritores. El bloqueo coordina solo las
+invocaciones de esta herramienta que comparten base y sistema de archivos.
+No sustituye permisos, control de versión remoto ni exclusión entre servidores.
+
+Después de terminar el proceso Node, el diario vuelve a verificar los archivos
+de origen y resultado. Ni salida cero del escritor ni audit.json favorable
+bastan para marcar copy_verified. Un reintento ya verificado relee y audita la
+copia, sin lanzar el escritor. Una copia ausente o alterada bloquea ese reintento;
+no borra la evidencia previa de verificación del diario.
+
+Un fallo ordinario o timeout deja estado failed y libera la reserva local;
+conserva diagnósticos privados. Una interrupción brusca conserva reserved, sin
+caducidad automática. Tras un reinicio, el mismo propietario y solicitud exacta
+pueden repetir el ensayo en un directorio nuevo. Otro propietario queda bloqueado.
+Una operación failed sigue siendo terminal y requiere conciliación, no se reactiva.
+Las claves opacas no son identidades autenticadas. La herramienta nunca sube,
+reemplaza ni declara escrito un archivo remoto.
+
+Reproducción de las pruebas nuevas, sin runtime Artifact, cuentas ni servicios:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_accounts_2027_trial.py' -v
+```
+
+Ocho pruebas nuevas locales superadas: proceso hijo y CLI reales con escritor
+sintético, repetición sin nueva escritura, concurrencia idéntica, auditoría
+falsificada rechazada, fallo y timeout, recuperación tras interrupción,
+propietario incorrecto, copia alterada, modo real rechazado y colisión del diario
+con la entrada. Las fixtures y bases se eliminan con TemporaryDirectory incluso
+ante fallos. No se crearon identidades, asignaciones ni sesiones externas.
+
+Para el ensayo manual con Artifact se conserva el montaje temporal del runtime
+documentado anteriormente. Ejemplo de argumentos (rutas y claves ficticias):
+
+```sh
+python3 tools/accounts_2027_trial.py /privado/origen.xlsx /privado/solicitud.json \
+  /privado/NUEVO_ENSAYO /privado/diario.sqlite CLAVE_LIBRO_SHA256 CLAVE_PROPIETARIO_SHA256 \
+  --node "$CODEX_PRIMARY_RUNTIME_NODE" --writer /temporal/accounts_2027_roundtrip.mjs
+```
+
+Las claves deben tener 64 caracteres hexadecimales y permanecer estables entre
+reintentos. No son secretos ni concesiones de permiso. El límite del proceso
+hijo es 180 segundos. No se ha repetido el ensayo Artifact/recálculo/visual del
+libro privado: el escritor y sus celdas permanecen sin cambios, y estas pruebas
+verifican la coordinación nueva. La prueba de proceso hijo utiliza paquetes
+XLSX sintéticos y no acredita ejecución de Artifact ni lectura autenticada.
+
+**Preparado y probado localmente; no desplegado.** production_writable=false y
+remote_committed=false. Sigue pendiente integrar lectura autenticada y versión
+remota, además de los criterios comerciales y meses no resueltos. La
+sincronización general sigue apagada y CUENTAS 27 no se ha abierto ni modificado
+en esta continuación. El workflow existente incluye automáticamente los nuevos
+archivos por sus patrones de rutas.

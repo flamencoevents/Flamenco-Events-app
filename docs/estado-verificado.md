@@ -3,6 +3,12 @@
 > [evidencia vigente](circuito-whatsapp-cuentas.md). Registro local de operaciones
 > preparado con 12 pruebas nuevas; sin escritura remota ni integración desplegada.
 
+> **Ensayo local con diario · 6 noviembre, continuación:** `accounts_2027_trial.py`
+> conecta el escritor MJS existente al registro SQLite con exclusión de proceso,
+> recuperación y auditoría independiente. Ocho pruebas de integración sintéticas
+> locales superadas. Preparado, sin despliegue ni conexión a Drive/servidor.
+> [Reproducción y límites](circuito-whatsapp-cuentas.md#ensayo-local-coordinado--6-noviembre-2026).
+
 # Estado verificado · 5 noviembre 2026
 
 > **Listado compartido y balances · 6/11/2026:** incorporada lectura interna de
