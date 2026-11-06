@@ -9,7 +9,31 @@
   u.hostname==='drive.google.com'&&/^\/file\/d\/[\w-]+\//.test(u.pathname)||
   u.hostname==='www.canva.com'&&/^\/(design|d)\//.test(u.pathname)||u.hostname==='canva.link'&&/^\/[\w-]+$/.test(u.pathname))?u.href:null;}catch{return null;}}
  const link=(href,label)=>url(href)?'<a href="'+esc(url(href))+'" target="_blank" rel="noopener noreferrer">'+esc(label)+'</a>':'';
- function table(rows){return '<div class="accounts-scroll"><table class="accounts-table" role="table" aria-label="Eventos y documentos"><caption class="accounts-sr-only">Listado de eventos y acceso a sus documentos</caption><thead role="rowgroup"><tr role="row">'+['Fecha','Horario','Lugar','Wedding/Cliente','Presupuesto'].map(x=>'<th scope="col" role="columnheader">'+x+'</th>').join('')+'</tr></thead><tbody role="rowgroup">'+rows.map(r=>'<tr role="row"><td role="cell" data-label="Fecha">'+date(r.event_date)+'</td><td role="cell" data-label="Horario">'+esc(r.schedule||'—')+'</td><td role="cell" data-label="Lugar">'+esc(r.venue||'—')+'</td><td role="cell" data-label="Wedding/Cliente">'+esc(r.client_label||'—')+'</td><td role="cell" data-label="Presupuesto" class="accounts-money">'+esc(r.budget_eur===null? r.budget_text||'—':money(r.budget_eur))+'<small>Pres. '+esc(r.quote_number||'sin referencia')+'</small><div class="accounts-links">'+(link(r.quotation_url,'Presupuesto')||'<span class="muted">Presupuesto sin enlazar</span>')+(link(r.contract_url,'Contrato')||'<span class="muted">Contrato sin enlazar</span>')+'<button type="button" data-accounts-detail="'+esc(r.source_row)+'">Cuentas del evento</button>'+link(r.source_link,'Documento del libro')+(r.document_note?'<small>'+esc(r.document_note)+'</small>':'')+'</div></td></tr>').join('')+'</tbody></table></div>'+(rows.length?'':'<p>No hay eventos que coincidan.</p>');}
+ function table(rows){
+  const field=(label,value)=>'<div class="fe-event-field"><dt>'+esc(label)+'</dt><dd>'+esc(value===null||value===undefined||value===''?'—':value)+'</dd></div>';
+  return '<div class="fe-event-cards" role="list" aria-label="Eventos y documentos del libro">'+rows.map(r=>
+    '<article class="fe-event-entry" role="listitem">'+
+    '<div class="fe-event-data">'+
+      field('Fecha',date(r.event_date))+
+      field('Horario',r.schedule)+
+      field('Lugar',r.venue)+
+      field('Wedding / cliente',r.client_label)+
+    '</div>'+
+    '<div class="fe-event-docs">'+
+      '<div class="fe-event-label">Presupuesto del libro</div>'+
+      '<strong>'+esc(r.budget_eur===null?r.budget_text||'—':money(r.budget_eur))+'</strong>'+
+      '<small>Ref. '+esc(r.quote_number||'sin referencia')+'</small>'+
+      '<div class="fe-event-actions">'+
+       (link(r.quotation_url,'Abrir presupuesto')||'<span class="fe-event-pending">Presupuesto sin enlazar</span>')+
+       (link(r.contract_url,'Abrir contrato')||'<span class="fe-event-pending">Contrato sin enlazar</span>')+
+       '<button type="button" data-accounts-detail="'+esc(r.source_row)+'">Cuentas del evento</button>'+
+       link(r.source_link,'Documento del libro')+
+       (r.document_note?'<small class="fe-event-note">'+esc(r.document_note)+'</small>':'')+
+      '</div>'+
+    '</div>'+
+    '</article>').join('')+'</div>'+(rows.length?'':'<p>No hay eventos que coincidan.</p>');
+ }
+
  function detail(r,year){
   if(Array.isArray(r.account_values?.__source_fields)){return '<h3>Ficha del libro · '+esc(r.client_label||r.venue||'Evento')+'</h3><p>'+date(r.event_date)+' · Fila '+esc(r.source_row)+' · '+esc(r.account_values.__source_sheet)+'</p><p>Valores originales del histórico, sin recalcular ni cambiar su significado.</p><dl class="accounts-details">'+r.account_values.__source_fields.map(f=>'<div><dt>'+esc(f.column)+' · '+esc(f.label)+'</dt><dd>'+esc(f.value===''?'—':f.value)+(f.formula?'<details><summary>Fórmula original</summary><code>'+esc(f.formula)+'</code></details>':'')+(f.note?'<small>'+esc(f.note)+'</small>':'')+'</dd></div>').join('')+'</dl><p>'+link(year.source_url,'Abrir cuentas totales de '+year.year)+'</p><button type="button" data-accounts-close>Cerrar ficha</button>'; }
   const monetary=new Set(['PRESUPUESTO','COBRADO RESERVA','Cobro pendiente','GASTOS ARTISTAS y DESPLAZAMIENTO','GASTOS GRABACION DE VIDEO','COMISION WED.','COBRO TOTAL']);
