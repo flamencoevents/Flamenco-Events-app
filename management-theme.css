@@ -146,3 +146,25 @@ small,.muted,header small,.accounts-links .muted{color:#333}
  #accounts-events .accounts-links{grid-template-columns:minmax(0,1fr)}
  #accounts-events .accounts-links>*{grid-column:1/-1}
 }
+
+/* Corrección definitiva: horarios multilínea y columnas con contenido largo */
+#accounts-events .accounts-table{table-layout:fixed;border-collapse:collapse;min-width:1050px}
+#accounts-events .accounts-table th:nth-child(1){width:110px}
+#accounts-events .accounts-table th:nth-child(2){width:225px}
+#accounts-events .accounts-table th:nth-child(3){width:220px}
+#accounts-events .accounts-table th:nth-child(4){width:205px}
+#accounts-events .accounts-table th:nth-child(5){width:290px}
+#accounts-events .accounts-table th,#accounts-events .accounts-table td{padding:14px 12px;vertical-align:top}
+#accounts-events .accounts-table td:nth-child(2){white-space:pre-wrap!important;overflow-wrap:anywhere!important;word-break:normal!important;line-height:1.55}
+#accounts-events .accounts-table td:nth-child(3),#accounts-events .accounts-table td:nth-child(4){white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.55}
+#accounts-events .accounts-table td:nth-child(5){white-space:normal!important;overflow-wrap:anywhere}
+#accounts-events .accounts-money>small{display:block;margin-top:8px}
+#accounts-events .accounts-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#accounts-events .accounts-links a,#accounts-events .accounts-links span{min-width:0;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:760px){
+ #accounts-events .accounts-table{min-width:0}
+ #accounts-events .accounts-table td:nth-child(2){white-space:pre-wrap!important}
+ #accounts-events .accounts-table td:nth-child(3),#accounts-events .accounts-table td:nth-child(4){white-space:normal!important}
+ #accounts-events .accounts-table tbody tr{overflow:hidden}
+ #accounts-events .accounts-table td{padding:10px 0}
+}
