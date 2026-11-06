@@ -168,3 +168,21 @@ small,.muted,header small,.accounts-links .muted{color:#333}
  #accounts-events .accounts-table tbody tr{overflow:hidden}
  #accounts-events .accounts-table td{padding:10px 0}
 }
+
+/* Fichas independientes: sustituye la tabla anterior sin solapamientos. */
+#accounts-events .fe-event-cards{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:18px}
+#accounts-events .fe-event-entry{display:grid;grid-template-columns:minmax(0,1fr) minmax(225px,285px);gap:22px;align-items:start;border:1px solid #d7d7d7;background:#fff;border-radius:10px;padding:20px;min-width:0}
+#accounts-events .fe-event-data{display:grid;grid-template-columns:minmax(0,145px) minmax(0,1fr);column-gap:22px;row-gap:15px;min-width:0}
+#accounts-events .fe-event-field{display:block;min-width:0;overflow-wrap:anywhere}
+#accounts-events .fe-event-field dt,#accounts-events .fe-event-label{font-size:.78rem;font-weight:700;letter-spacing:.02em;color:#555;margin:0 0 5px}
+#accounts-events .fe-event-field dd{margin:0;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;line-height:1.55;color:#111}
+#accounts-events .fe-event-docs{min-width:0;border-left:1px solid #e2e2e2;padding-left:20px}
+#accounts-events .fe-event-docs strong{display:block;font-size:1.12rem;font-weight:700}
+#accounts-events .fe-event-docs>small{display:block;margin-top:6px;font-size:.83rem;color:#555}
+#accounts-events .fe-event-actions{display:grid;gap:9px;margin-top:15px;min-width:0}
+#accounts-events .fe-event-actions>a,#accounts-events .fe-event-actions>button{display:block;width:100%;min-width:0;text-align:center;padding:10px 12px;min-height:42px;border:1px solid #aaa;border-radius:6px;background:#fff;color:#111;text-decoration:none;font-size:.88rem;overflow-wrap:anywhere}
+#accounts-events .fe-event-actions>a:hover,#accounts-events .fe-event-actions>button:hover{background:#f5f5f5;border-color:#333}
+#accounts-events .fe-event-pending{color:#595959;font-size:.83rem;padding:7px 0}
+#accounts-events .fe-event-actions .fe-event-note{display:block;border-left:2px solid #999;padding:7px 9px;background:#fafafa;overflow-wrap:anywhere;font-size:.8rem;color:#444}
+@media(max-width:900px){#accounts-events .fe-event-entry{grid-template-columns:minmax(0,1fr)}#accounts-events .fe-event-docs{border-left:0;border-top:1px solid #e2e2e2;padding:15px 0 0}}
+@media(max-width:540px){#accounts-events .fe-event-entry{padding:15px;gap:14px}#accounts-events .fe-event-data{grid-template-columns:minmax(0,1fr);gap:12px}#accounts-events .fe-event-field{border-bottom:1px solid #eee;padding-bottom:10px}#accounts-events .fe-event-field:last-child{border-bottom:0}}
