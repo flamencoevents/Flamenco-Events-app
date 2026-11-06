@@ -72,6 +72,49 @@ Modo prueba hasta autorización expresa; sin clientes reales, correos comerciale
 
 ## Entrada de gestión y Espacio cliente
 
-Nacho solicita servir la gestión desde gesion.flamencoevents.net. Preparación, DNS y comprobaciones pendientes en [dominio-gestion.md](dominio-gestion.md). Se conserva el host literal solicitado.
+La gestión se prepara para gestion.flamencoevents.net. Nacho activará manualmente el subdominio cuando la web esté terminada. Referencia: [dominio-gestion.md](dominio-gestion.md). No se modifica DNS desde este desarrollo.
 
 Cuando el espacio privado esté verificado y se autorice el uso real, se incorporará el enlace «Espacio cliente» al menú de www.flamencoevents.net. Llevará al área de eventos del cliente, separada de administración/comercial. No se ha añadido el enlace en la web IONOS ni activado clientes.
+
+
+## Registro de contratos de WhatsApp en cuentas 2027 · 6 noviembre 2026
+
+Decisión vigente de Nacho: el destino operativo de los eventos de 2027 es «CUENTAS 27 FLAMENCO EVENTS», manteniendo la organización que utiliza actualmente. Los datos de contratos originados desde el grupo WhatsApp deben enlazarse con ese libro y con la ficha del mismo evento en la web. El libro 2025/2026 queda como histórico; no sustituye al destino indicado. Inicio previsto: enero de 2027, sin activación automática por fecha y siempre sujeto a autorización expresa de salida de MODO PRUEBA.
+
+### Estructura comprobada, sin escritura
+
+Se localizó el archivo original y se inspeccionó una copia descargada, sin modificar el origen. El archivo es XLSX, no Google Sheets nativo. Contiene cinco hojas. La hoja principal «Fechas cerradas 2027 por fecha » conserva un espacio final en su nombre; contiene diez fórmulas y cuatro hipervínculos. Las otras hojas incluyen seguimiento por cierre, IVA trimestral y gastos; su contenido no se replica por inferencia.
+
+| Columna | Campo existente | Regla de integración pendiente de implementar |
+| --- | --- | --- |
+| A | MES | Mantener bloques mensuales según fecha del evento. |
+| B | Nº | Conservar numeración existente; no asignar una nueva regla sin comprobarla. |
+| C | nº presup | Conservar referencia textual e hipervínculo privado existente; resolver número, clave y revisión exactos en la trazabilidad. |
+| D | FECHA | Fecha del evento; no deducir año del número del presupuesto. |
+| E | HORARIO | Horario de la versión contractual comprobada. |
+| F | LUGAR | Lugar de esa misma versión. |
+| G | WEDDING/CLIENTE | Correspondencia exacta de los datos; sin enlaces aproximados por nombre. |
+| H | PRESUPUESTO | Importe contractual conciliado, sin recalcular impuestos. |
+| I | COBRADO RESERVA | Solo cobro acreditado; nunca copiar aquí la reserva prevista por generar un contrato. |
+| J | IVA | Preservar valor y representación originales; una marca textual no prueba exención ni IVA cero. |
+| K | FECHA RESERVA | No inventar fecha a partir de la generación o publicación del PDF; significado a conciliar antes de escribir. |
+| L | Cobro pendiente | Respetar fórmulas y significado conciliado; no sumar como ingreso adicional. |
+| M | ARTISTAS | Datos de coordinación comprobados, sin inventar asignaciones. |
+| N | GASTOS ARTISTAS y DESPLAZAMIENTO | Separar previsión de gasto y movimiento real antes de incorporar. |
+| O | GASTOS GRABACION DE VIDEO | Mismo control de previsión frente a gasto real. |
+| P | COMISION WED. | Conservar criterio aprobado; no inferir comisión. |
+| Q | COBRO TOTAL | Preservar fórmulas y cobros acreditados; no utilizar la columna R del libro histórico. |
+
+### Controles requeridos
+
+- Un PDF generado no acredita cierre comercial, firma, reserva o cobro. El alta en fechas cerradas exige las condiciones de cierre aprobadas y verificadas; mientras falten, se conserva como pendiente fuera del libro real.
+- Identidad estable: evento, número original, clave y revisión aceptada, versión contractual, referencia privada del PDF, huella y referencia de archivo/hoja/fila. El número por sí solo no identifica una revisión.
+- Conciliar primero las filas existentes; conservar referencias con ceros iniciales o sufijos. No normalizar números silenciosamente ni crear otra fila ante una coincidencia ambigua.
+- Resolver la fila libre del bloque mensual correcto sin sobrescribir fórmulas, separadores, hipervínculos ni registros. No usar appendRow al final ni ordenar toda la hoja.
+- Registrar operaciones repetibles con control de versión y conflictos. Un reintento no duplica filas ni cobros; un fallo no debe dejar escrituras parciales.
+- Las pruebas ficticias se realizan en copias aisladas. No se insertan datos de ensayo en este libro real ni en balances.
+- No convertir, sustituir ni cambiar permisos del XLSX original. Antes de escribir hay que implementar y verificar compatibilidad con ese formato o acordar una alternativa que conserve el registro existente.
+
+### Estado verificable
+
+Completado: localización y auditoría estructural de la fuente 2027; correspondencia de columnas documentada. Pendiente: conciliación semántica de fórmulas y registros, adaptador de escritura XLSX, pruebas en copia aislada y conexión de extremo a extremo WhatsApp → web → cuentas. No se ha implementado ni activado la escritura automática del libro. La sincronización general sigue apagada; esta actualización no despliega código funcional.
