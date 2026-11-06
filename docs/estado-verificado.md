@@ -252,3 +252,12 @@ Implementados tools/accounts_2027.py, trece pruebas sintéticas y workflow de co
 No contiene bloque ENERO; se rechazan meses ausentes y el último bloque sin límite auditado. Se comprobaron fórmulas fuera de A:Q y se protege toda la fila. No se cambia el libro para resolverlo. Las propuestas no acreditan cierre, firma o cobro; no rellenan IVA ni movimientos reales y permanecen pending_review/writable=false.
 
 Código guardado y probado; no hay nueva integración desplegada en Apps Script/Supabase ni cambio visual del panel. Falta escritor XLSX preservador, conciliación de fórmulas/estilos, ensayo de escritura en copia y conexión autenticada con el registro privado de operaciones. Detalles y ejecución: [web-gestion-empresa.md](web-gestion-empresa.md). MODO PRUEBA y sincronización general desactivada conservados; sin datos reales publicados ni comunicaciones.
+
+
+## Continuación encadenada: ensayo XLSX y conservación · 6 noviembre 2026
+
+Se encadenaron implementación, pruebas y guardado sin nueva confirmación rutinaria. Preparado ensayo de escritura exclusivamente en copia (tools/accounts_2027_roundtrip.mjs), pero el importador disponible falló al abrir el XLSX descargado: avisos de sheetId ausente y Sheet not found; causa interna no confirmada. No hay copia exportada válida, conservación tras escritura ni interfaz nueva verificada. El original mantiene la misma huella.
+
+Completado independientemente tools/accounts_2027_verify.py y ocho pruebas adicionales: rechaza cambios ajenos, pérdida de fórmulas, estilos/enlaces/estructura alterados y datos propuestos ausentes o incorrectos. Veintiuna pruebas locales totales y sintaxis MJS pasaron; workflow 42207740208 success. Una copia idéntica al origen fue correctamente rechazada por no contener el registro ficticio esperado. Son pruebas sintéticas y lectura local; no nuevas pruebas Auth/HTTP ni escritura Drive.
+
+Código guardado; ningún escritor desplegado, Apps Script/Supabase sin cambio funcional. Modo prueba y sincronización general apagada. Bloqueo concreto: importación conservadora del XLSX; continúan pendientes escritura y revisión visual en copia y enlace transaccional autenticado. Reproducción y límites en docs/web-gestion-empresa.md.
