@@ -91,3 +91,10 @@ Los bytes PDF y su huella se comprueban por integridad, no por validez jurídica
 
 No hay escritor contable desplegado, conexión automática al libro ni nueva
 función en el panel. El código nuevo es un componente local preparado y probado.
+
+## Comprobación en GitHub
+
+El commit `815e5704844de24e7613b0661b9598bbc5807d85` quedó guardado en main.
+El workflow de las pruebas sintéticas y sintaxis terminó con `success`:
+https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42215139509 .
+No implica despliegue de un escritor ni verificación del recorrido remoto.
