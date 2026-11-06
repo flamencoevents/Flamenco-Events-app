@@ -47,7 +47,9 @@ Deno.serve(route(async request=>{
   catch{throw new Problem(502,'No se pudo comprobar el PDF privado almacenado');}
   if(stored.error||!stored.data)throw new Problem(502,'No se pudo comprobar el PDF privado almacenado');
   if(stored.data.size!==bytes.length||stored.data.size>10485760)throw new Problem(409,'El PDF privado no conserva el tamaño del origen');
-  const storedBytes=new Uint8Array(await stored.data.arrayBuffer());
+  let storedBytes;
+  try{storedBytes=new Uint8Array(await stored.data.arrayBuffer());}
+  catch{throw new Problem(502,'No se pudo comprobar el PDF privado almacenado');}
   if(storedBytes.length!==bytes.length||new TextDecoder().decode(storedBytes.slice(0,5))!=='%PDF-')throw new Problem(409,'El objeto privado no coincide con el PDF de origen');
   const storedChecksum=[...new Uint8Array(await crypto.subtle.digest('SHA-256',storedBytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
   if(storedChecksum!==checksum)throw new Problem(409,'Los bytes privados han cambiado respecto al PDF de origen');
