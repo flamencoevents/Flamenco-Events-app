@@ -17,13 +17,14 @@ function feCiPlan_(d,url){
 }
 function feCiSheet_(book,name,headers){let s=book.getSheetByName(name);if(!s){s=book.insertSheet(name);s.getRange(1,1,1,headers.length).setValues([headers]);s.setFrozenRows(1);}if(JSON.stringify(s.getRange(1,1,1,headers.length).getValues()[0])!==JSON.stringify(headers))throw Error('Cabeceras de integración inesperadas');return s;}
 function feCiCuentas_(p){
- const year=Number(p.event_date.slice(0,4)),book=SpreadsheetApp.openById(FE_CI_BOOK),sheet=feCiSheet_(book,'PRUEBA contratos '+year,FE_CI_HEADERS),rows=sheet.getDataRange().getValues();
+ const year=Number(p.event_date.slice(0,4));if(year!==2026)throw Error('Libro del año '+year+' pendiente de conectar; no se escribe en 2026');const book=SpreadsheetApp.openById(FE_CI_BOOK),sheet=feCiSheet_(book,'PRUEBA contratos '+year,FE_CI_HEADERS),rows=sheet.getDataRange().getValues();
  const matches=rows.map((r,i)=>({r,i})).filter(x=>x.i&&x.r[0]===p.source_key);if(matches.length>1)throw Error('Referencia duplicada en cuentas de prueba');
  const values=[p.source_key,p.quote_number,p.revision,p.event_date,p.client_label,p.venue,p.service,p.total_eur,p.deposit_eur,p.balance_eur,p.contract_url,p.pdf_sha256,'PRUEBA · PDF generado; pendiente revisión comercial'];
  const row=matches.length?matches[0].i+1:rows.length+1;
- if(matches.length&&JSON.stringify(matches[0].r.slice(0,13))!==JSON.stringify(values))throw Error('La previsión existente ha cambiado; requiere conciliación');
+ const normalized=values=>values.map((v,i)=>i===3&&v instanceof Date?Utilities.formatDate(v,book.getSpreadsheetTimeZone(),'yyyy-MM-dd'):v);
+ if(matches.length&&JSON.stringify(normalized(matches[0].r.slice(0,13)))!==JSON.stringify(values))throw Error('La previsión existente ha cambiado; requiere conciliación');
  if(!matches.length){sheet.getRange(row,1,1,14).setValues([[...values,new Date()]]);SpreadsheetApp.flush();}
- if(JSON.stringify(sheet.getRange(row,1,1,13).getValues()[0])!==JSON.stringify(values))throw Error('No se confirma la lectura de cuentas');
+ if(JSON.stringify(normalized(sheet.getRange(row,1,1,13).getValues()[0]))!==JSON.stringify(values))throw Error('No se confirma la lectura de cuentas');
  return 'https://docs.google.com/spreadsheets/d/'+FE_CI_BOOK+'/edit#gid='+sheet.getSheetId()+'&range=A'+row+':N'+row;
 }
 function feCiEnviar_(p){
