@@ -3,11 +3,15 @@ on:
   push:
     paths:
       - 'tools/accounts_2027*'
+      - 'tools/accounts_history.py'
+      - 'tests/test_accounts_history.py'
       - 'tests/test_accounts_2027*'
       - '.github/workflows/accounts-2027.yml'
   pull_request:
     paths:
       - 'tools/accounts_2027*'
+      - 'tools/accounts_history.py'
+      - 'tests/test_accounts_history.py'
       - 'tests/test_accounts_2027*'
       - '.github/workflows/accounts-2027.yml'
 permissions:
@@ -20,5 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Pruebas ficticias sin servicios ni credenciales
         run: python3 -m unittest discover -s tests -p 'test_accounts_2027*.py' -v
+      - name: Historical native source projection tests
+        run: python3 -m unittest discover -s tests -p 'test_accounts_history.py' -v
       - name: Sintaxis del ensayo local sin importar dependencias ni abrir archivos
         run: node --check tools/accounts_2027_roundtrip.mjs

@@ -99,3 +99,18 @@ small,.muted,header small,.accounts-links .muted{color:#333}
  .accounts-table tbody tr{padding:12px}
  .accounts-table td,.accounts-table td:nth-child(1),.accounts-table td:nth-child(2){grid-template-columns:90px minmax(0,1fr)}
 }
+
+/* Native sheet history stays a faithful, horizontally scrollable cell view. */
+#accounts-history:empty{display:none}
+#accounts-history{min-width:0;max-width:100%}
+#accounts-history select{width:100%;max-width:100%;font-size:16px;margin:8px 0}
+[data-history-source] small{display:block;margin-top:8px}
+.history-scroll{max-width:100%;overflow:auto;border:1px solid #ccc;border-radius:8px;margin-top:16px;max-height:650px}
+.history-table{border-collapse:collapse;font-size:.9rem;min-width:100%;text-align:left}
+.history-table caption{text-align:left;padding:12px}
+.history-table th{background:#f5f5f5}
+.history-table th,.history-table td{padding:12px;border:1px solid #ddd;vertical-align:top;white-space:pre-wrap;min-width:110px;max-width:280px;overflow-wrap:anywhere}
+.history-table th:first-child{min-width:60px}
+.history-table td small,.history-table td a{display:block;margin-top:8px}
+.history-table code,.accounts-details code{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.8rem}
+.history-table summary,.accounts-details summary{cursor:pointer;padding:8px 0;font-size:.85rem}

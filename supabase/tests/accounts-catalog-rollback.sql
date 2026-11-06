@@ -26,4 +26,25 @@ do $$ begin
  begin perform 1 from public.accounts_event_catalog;raise exception 'Anonymous access';
  exception when insufficient_privilege then null;end;
 end $$;
+set local role authenticated;
+select set_config('request.jwt.claim.sub',current_setting('fe.test_admin'),true);
+do $$ begin
+ if (select count(*) from public.accounts_source_sheet_catalog)<>10 then raise exception 'Admin history read failed';end if;
+end $$;
+select set_config('request.jwt.claim.sub',current_setting('fe.test_sales'),true);
+do $$ begin
+ if (select count(*) from public.accounts_source_sheet_catalog)<>10 then raise exception 'Sales history read failed';end if;
+ begin update public.accounts_source_sheet_catalog set sheet_title='SHOULD NEVER WRITE';
+ raise exception 'History browser write allowed';
+ exception when insufficient_privilege then null;end;
+end $$;
+select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000009999',true);
+do $$ begin
+ if exists(select 1 from public.accounts_source_sheet_catalog) then raise exception 'History nonstaff exposure';end if;
+end $$;
+set local role anon;
+do $$ begin
+ begin perform 1 from public.accounts_source_sheet_catalog;raise exception 'History anonymous exposure';
+ exception when insufficient_privilege then null;end;
+end $$;
 rollback;

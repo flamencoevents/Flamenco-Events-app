@@ -153,3 +153,54 @@ navegador con datos ficticios y apertura de ficha a 320 px comprobada; vista de
 768 px conserva tabla con desplazamiento horizontal. No se ha probado en un
 iPhone físico ni con una sesión real. No cambia permisos, libro, datos ni modo
 prueba. Balances continúa pendiente de configuración.
+
+
+## Histórico completo 2025/2026 · 6 noviembre 2026
+
+Petición explícita de Nacho: incorporar todos los datos de «Cuentas Flamenco
+Events 2025/26». Se leyó el documento nativo completo mediante CellData, con sus
+nombres y límites reales de hoja. El libro de origen no se editó. Su fecha de
+modificación permaneció idéntica durante la lectura y la incorporación.
+
+- Selector de años: 49 filas fechadas en 2025 y 51 en 2026, junto a las ocho de
+  2027 ya incorporadas. Son registros del histórico, no nuevas reservas.
+- Cada ejercicio respeta sus columnas: en 2025 referencia B, lugar E, wedding F
+  y cliente G; no existe horario. En 2026 referencia C, horario E, lugar F y
+  cliente G. Se conservan referencias vacías, repetidas, textuales y con ceros.
+- «Cuentas del evento» muestra todos los campos originales, con letra de columna,
+  encabezado, valor mostrado, nota y fórmula guardada cuando existen. TOTAL CASA
+  de 2025 no se transforma en COBRO TOTAL de 2026, que está en R.
+- Consulta del libro completo: diez hojas, 277 filas con contenido y 1.933 celdas
+  no vacías. Incluye fechas cerradas por cierre, IVA, gastos/ingresos y Hoja 11,
+  además de las dos hojas de eventos. Se mantienen direcciones y valores
+  tipados, texto mostrado, fórmulas, notas y metadatos de enlaces. No reproduce
+  el diseño de Google Sheets ni recalcula fórmulas.
+- Una fila de la hoja de 2025 está fechada en 2024. Se conserva en la consulta
+  completa, señalada en el aviso; no se cambia a 2025 ni se mezcla con ese año.
+- Los enlaces históricos sin clasificar quedan como «Documento del libro»;
+  no se inventan enlaces a presupuesto/contrato ni se acredita firma por ellos.
+
+`tools/accounts_history.py` prepara las proyecciones sin red ni escrituras.
+`supabase/accounts-history.sql` amplía el rango de ejercicios y añade la tabla
+privada de consulta completa. RLS y grants permiten solo lectura a admin/sales;
+no hay acceso anónimo o de clientes ni escritura desde el navegador. El import
+se ejecutó en una sola transacción, rechazando destinos históricos ya presentes.
+Los datos privados se guardan únicamente en la base, nunca en este repositorio.
+
+Verificaciones:
+
+- Comparación de todos los campos de los 100 registros y las diez instantáneas
+  de hoja contra la extracción: cero diferencias.
+- Pruebas SQL con roles simulados: admin/sales pueden leer; cliente/visitante
+  no pueden; escritura del navegador rechazada. ROLLBACK, sin crear usuarios.
+- 70 pruebas Node y 58 Python superadas. Las nuevas pruebas cubren columnas por
+  año, cero frente a ausente, referencias repetidas, texto sin importe, fórmulas,
+  notas, año discordante, escape HTML y respuesta tardía tras cambio de cuenta.
+- Navegador con datos ficticios: listado móvil a 390 px, apertura de ficha con
+  encabezados originales y cambio de hoja del histórico. No se ha validado una
+  sesión real ni un iPhone físico.
+- Asesores de seguridad sin avisos nuevos; se mantienen los anteriores.
+
+Esta es una incorporación puntual de consulta. No activa sincronización de Drive,
+clientes, firma, cobros, registro contable automático ni cálculos de balances.
+Balances económicos sigue pendiente de configuración por decisión del usuario.

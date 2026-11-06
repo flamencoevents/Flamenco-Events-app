@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'accounts-events.*'
+      - 'accounts-history.js'
       - 'management-theme.css'
       - 'assets/flamenco-events-logo.png'
       - 'balances.*'
@@ -13,6 +14,7 @@ on:
   pull_request:
     paths:
       - 'accounts-events.*'
+      - 'accounts-history.js'
       - 'management-theme.css'
       - 'assets/flamenco-events-logo.png'
       - 'balances.*'
