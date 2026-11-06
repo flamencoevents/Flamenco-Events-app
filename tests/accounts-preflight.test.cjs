@@ -99,3 +99,10 @@ test('Stored bytes must preserve length and PDF header, and oversized data is re
  const inconsistent=fixture({storageBlob:{size:pdf.length,arrayBuffer:async()=>new Uint8Array(2).buffer}});
  assert.equal((await ask(inconsistent)).status,409);unchanged(inconsistent);
 });
+
+test('Failure reading the private blob is sanitized and never returns accounting evidence',async()=>{
+ const e=fixture({storageBlob:{size:pdf.length,arrayBuffer:async()=>{throw Error('PRIVATE_STORAGE_ERROR secret path');}}});
+ const r=await ask(e),raw=await r.text();assert.equal(r.status,502);
+ assert.ok(!raw.includes('PRIVATE_STORAGE_ERROR'));assert.ok(!raw.includes('secret path'));
+ assert.ok(!raw.includes('accounts_source_checked'));unchanged(e);
+});
