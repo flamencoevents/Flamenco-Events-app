@@ -150,3 +150,11 @@ El commit `815e5704844de24e7613b0661b9598bbc5807d85` quedó guardado en main.
 El workflow de las pruebas sintéticas y sintaxis terminó con `success`:
 https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42215139509 .
 No implica despliegue de un escritor ni verificación del recorrido remoto.
+
+### Verificación de la corrección en GitHub
+
+Commit `d1dddf0224685c1fe001814ca349dac9f1d0052f` guardado en main.
+Las 40 pruebas y la comprobación de sintaxis finalizaron con `success`:
+https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42216066265 .
+La conservación se verificó localmente sobre una copia privada; CI usa solamente
+fixtures sintéticas, sin libro ni credenciales corporativas.
