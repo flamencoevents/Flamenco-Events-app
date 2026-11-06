@@ -8,6 +8,7 @@ import datetime as dt
 import hashlib
 import json
 from pathlib import Path
+import posixpath
 import re
 import zipfile
 import xml.etree.ElementTree as ET
@@ -65,7 +66,8 @@ def read_book(path):
         require(len(sheets) == 1, 'SHEET_MISSING_OR_AMBIGUOUS')
         target = rels[sheets[0].get(REL)]
         require('..' not in target and not target.startswith(('http:', 'https:')), 'INVALID_SHEET_PATH')
-        root = xml(target.lstrip('/') if target.startswith('/') else 'xl/' + target)
+        sheet_path = target.lstrip('/') if target.startswith('/') else 'xl/' + target
+        root = xml(sheet_path)
         strings = [''.join(x.itertext()) for x in xml('xl/sharedStrings.xml').findall('m:si', NS)] if 'xl/sharedStrings.xml' in names else []
         cells = {}
         for c in root.findall('m:sheetData/m:row/m:c', NS):
@@ -87,7 +89,20 @@ def read_book(path):
         hidden = [int(r.get('r')) for r in root.findall('m:sheetData/m:row', NS) if r.get('hidden') in ('1', 'true')]
         # Object/comment anchors need a dedicated audit before considering rows safe.
         objects = any('/comments' in n.lower() or '/threadedcomments/' in n.lower() for n in names) or any(
-            root.find('m:' + tag, NS) is not None for tag in ('drawing', 'legacyDrawing', 'tableParts'))
+            root.find('m:' + tag, NS) is not None for tag in ('legacyDrawing', 'tableParts'))
+        drawing = root.find('m:drawing', NS)
+        if drawing is not None:
+            rel_path = posixpath.dirname(sheet_path) + '/_rels/' + posixpath.basename(sheet_path) + '.rels'
+            drawing_rels = [r for r in xml(rel_path) if r.get('Id') == drawing.get(REL)] if rel_path in names else []
+            if len(drawing_rels) != 1 or drawing_rels[0].get('TargetMode') == 'External':
+                objects = True
+            else:
+                drawing_target = drawing_rels[0].get('Target', '')
+                drawing_path = posixpath.normpath(posixpath.join(posixpath.dirname(sheet_path), drawing_target))
+                require(drawing_path.startswith('xl/') and drawing_path in names, 'INVALID_DRAWING_PATH')
+                # Google Office exports may contain an empty drawing relationship.
+                # Nonempty drawings remain blocked until their anchors are audited.
+                objects = objects or len(xml(drawing_path)) > 0
     return {'sha256': hashlib.sha256(raw).hexdigest(), 'cells': cells,
             'markers': sorted(markers), 'links': links, 'merges': merges,
             'hidden': hidden, 'objects': objects}
