@@ -181,3 +181,37 @@ Pendientes actuales: probar con acceso administrativo ya autorizado el recorrido
 positivo de esta operación, conciliar fecha/horario y conectar el diario privado
 con versiones de una copia remota aislada. Ninguno de estos controles habilita
 firma, reserva, cierre o escritura en el libro real por sí solo.
+
+
+## Inventario remoto previo al ensayo positivo · 6 noviembre 2026
+
+Lecturas SQL reales, sin mutaciones, confirman test_mode=true, tres eventos
+ficticios, tres fichas aceptadas y un único documento contractual. Los otros
+dos eventos no tienen PDF contractual incorporado.
+
+El único contrato vinculado conserva un objeto en el bucket event-documents
+(2206 bytes según metadatos Storage), pero event_documents.sha256 y
+source_reference son NULL. Sus condiciones son individual_full_invoice y
+payment_method=efectivo100. Ambas modalidades siguen expresamente bloqueadas
+por accounts_preview. Que el contrato técnico histórico tenga state=sent no
+levanta esos bloqueos ni acredita aprobación comercial.
+
+Por tanto, no existe actualmente una fixture remota elegible para obtener
+accounts_source_checked: la modalidad se rechaza antes de comprobar los
+metadatos, y estos tampoco cumplen los requisitos. La mera disponibilidad de
+una sesión administrativa no resuelve este impedimento. La existencia y tamaño
+del objeto proceden de catálogo SQL; no acreditan descarga HTTP ni SHA-256 de
+sus bytes. No se ha ejecutado la operación con Auth real en esta continuación.
+
+Próximo ensayo positivo: preparar un presupuesto ficticio de modalidad ya
+admitida, con su secuencia comercial de prueba y origen verificable; importar
+su PDF contractual mediante el circuito existente para registrar huella y
+origen; vincular la misma revisión y ejecutar accounts_preview con sesión
+administrativa autorizada. Comprobar también denegación comercial/cliente.
+No rellenar huellas manualmente ni cambiar la modalidad de la fixture histórica
+para forzar un resultado positivo. No considerar esta lectura como prueba de
+firma, reserva, cierre contable o sincronización.
+
+No se cambiaron datos, objetos, permisos, usuarios, sesiones ni funciones.
+CUENTAS 27 no se abrió ni modificó. No se ejecutaron pruebas de código al no
+haber cambios de implementación.
