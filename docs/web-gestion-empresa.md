@@ -118,3 +118,32 @@ Se localizó el archivo original y se inspeccionó una copia descargada, sin mod
 ### Estado verificable
 
 Completado: localización y auditoría estructural de la fuente 2027; correspondencia de columnas documentada. Pendiente: conciliación semántica de fórmulas y registros, adaptador de escritura XLSX, pruebas en copia aislada y conexión de extremo a extremo WhatsApp → web → cuentas. No se ha implementado ni activado la escritura automática del libro. La sincronización general sigue apagada; esta actualización no despliega código funcional.
+
+
+## Preparador de conciliación implementado · 6 noviembre 2026
+
+Código: [tools/accounts_2027.py](../tools/accounts_2027.py). Pruebas: [tests/test_accounts_2027.py](../tests/test_accounts_2027.py). Es una herramienta local de solo lectura, sin red, credenciales, servicio HTTP ni operación de escritura. No está conectada todavía a la recepción WhatsApp o al panel.
+
+Permite inspeccionar la estructura del XLSX y preparar una propuesta ficticia para una fila candidata. Comprueba la huella del libro, cabeceras, mes del evento, número textual, clave, revisión, importe entero en céntimos y correspondencia del contrato con el presupuesto y evento exactos. Rechaza referencias existentes o posibles equivalencias por ceros iniciales, filas ocupadas en cualquier columna, fórmulas con resultado vacío, enlaces, combinaciones, filas ocultas y objetos cuyo alcance no está auditado. Una relación de dibujo vacía no cuenta como objeto con contenido.
+
+Solo propone C:H; no rellena cobros, IVA, fecha de reserva, gastos, comisiones o totales. Conserva importe en céntimos sin transformarlo en importe de celda Excel todavía. La propuesta incluye identidad y huellas, es determinista y siempre devuelve writable=false y pending_review. No es un recibo de escritura ni prueba de firma o cierre. Faltan el registro privado de operaciones, validación de servidor y escritura transaccional; un JSON aportado al comando no sustituye estas comprobaciones.
+
+### Ejecución reproducible
+
+Inspección estructural, sin mostrar filas privadas, importes, URLs ni fórmulas completas:
+
+```sh
+python3 tools/accounts_2027.py /ruta/privada/cuentas-2027.xlsx
+python3 -m unittest discover -s tests -p 'test_accounts_2027.py' -v
+```
+
+La opción --request /ruta/privada/solicitud-ficticia.json permite simular una propuesta. El JSON debe incluir test_mode=true, workbook_sha256, currency=EUR, candidate_row, event (is_test=true, id, date ISO, schedule, place, client), quotation (number y key textuales, revision entera positiva, sha256 y total_cents entero), contract (los mismos identificadores/importes; su propia sha256; quotation_sha256, event_id y event_date coincidentes). Las huellas son hexadecimales SHA-256. No guardar entradas ni salidas privadas en el repositorio público. No existe opción apply.
+
+### Evidencias y límites
+
+- Trece pruebas locales con fixtures sintéticas superadas: versiones, fuente/documento/evento, año, céntimos, ceros iniciales, conflictos, mes, filas protegidas y lectura sin modificación.
+- La misma batería pasó en GitHub Actions: https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42206658541 . Se repite cuando cambia la herramienta, su prueba o el workflow, sin usar cuentas de Google, Supabase o WhatsApp.
+- Lectura local del original descargado y propuesta ficticia sobre una fila candidata: pending_review, writable=false. Comparación SHA-256 antes/después idéntica. No se creó una fila en el libro.
+- La estructura actual no contiene marcador ENERO. El último bloque tampoco tiene un límite seguro inferible; se rechazan esos casos en lugar de añadir filas o afectar sumatorios.
+- Hay fórmulas fuera de A:Q, hasta V. El control de ocupación examina toda la fila; no presume que esas columnas están vacías.
+- Pendientes técnicos: conciliación de significados y fórmulas, revisión de estilos/separadores de cada fila, compatibilidad de escritura XLSX que conserve el archivo, ensayo de escritura en copia aislada, enlaces privados, registro de operaciones y conexión autenticada de extremo a extremo. No hay sincronización contable automática ni despliegue nuevo de Apps Script/Supabase en esta continuación.
