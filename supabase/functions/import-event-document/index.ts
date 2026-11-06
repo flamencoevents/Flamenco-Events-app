@@ -22,8 +22,10 @@ Deno.serve(route(async request=>{
   if(terms.data.billing_mode==='individual_full_invoice'||terms.data.tax_details?.payment_method==='efectivo100')throw new Problem(409,'Modalidad contractual pendiente de aprobación');
   const contract=await db.from('event_contracts').select('id,event_id,quotation_number,document_id,state').eq('event_id',ev.data.id).single();
   if(contract.error||!contract.data?.document_id||contract.data.quotation_number!==choice.quote_number)throw new Problem(409,'Falta el vínculo contractual exacto del evento');
-  const doc=await db.from('event_documents').select('id,event_id,kind,version,source_reference,sha256').eq('id',contract.data.document_id).single();
+  const doc=await db.from('event_documents').select('id,event_id,kind,version,source_reference,sha256,storage_path').eq('id',contract.data.document_id).single();
   if(doc.error||doc.data?.event_id!==ev.data.id||doc.data.kind!=='contract'||doc.data.version!==choice.version||doc.data.source_reference!==reference||!String(doc.data.sha256||'').match(/^[a-f0-9]{64}$/))throw new Problem(409,'El PDF privado no conserva versión, origen y huella comprobables');
+  const storagePrefix=ev.data.id+'/contract-v'+choice.version+'-';
+  if(typeof doc.data.storage_path!=='string'||!doc.data.storage_path.startsWith(storagePrefix)||!/^[a-f0-9]{64}\.pdf$/.test(doc.data.storage_path.slice(storagePrefix.length)))throw new Problem(409,'La ruta privada no corresponde al contrato y revisión del evento');
   accountsDocument=doc.data;accountsContract=contract.data;
  }
  const file=await scriptRead(b.kind==='quotation'?'quotation_document':'contract_document',choice);
@@ -38,11 +40,22 @@ Deno.serve(route(async request=>{
   for(const k of ['total_payable_eur','deposit_payable_eur','billing_mode'])if(current[k as keyof typeof current]!==terms.data[k])throw new Problem(409,'Las condiciones de origen han cambiado; requiere conciliación');
   const fiscalKeys=['base_eur','invoiced_base_eur','vat_eur','withholding_eur','rounding_eur','payment_method'];
   if(!current.tax_details||!terms.data.tax_details||fiscalKeys.some(k=>current.tax_details[k]!==terms.data.tax_details[k]))throw new Problem(409,'El detalle fiscal de origen no coincide con la versión aceptada');
+  // Download internally from the fixed private bucket. Never mint a URL or
+  // forward document bytes to the caller. Metadata alone is not byte evidence.
+  let stored;
+  try{stored=await db.storage.from('event-documents').download(accountsDocument.storage_path);}
+  catch{throw new Problem(502,'No se pudo comprobar el PDF privado almacenado');}
+  if(stored.error||!stored.data)throw new Problem(502,'No se pudo comprobar el PDF privado almacenado');
+  if(stored.data.size!==bytes.length||stored.data.size>10485760)throw new Problem(409,'El PDF privado no conserva el tamaño del origen');
+  const storedBytes=new Uint8Array(await stored.data.arrayBuffer());
+  if(storedBytes.length!==bytes.length||new TextDecoder().decode(storedBytes.slice(0,5))!=='%PDF-')throw new Problem(409,'El objeto privado no coincide con el PDF de origen');
+  const storedChecksum=[...new Uint8Array(await crypto.subtle.digest('SHA-256',storedBytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
+  if(storedChecksum!==checksum)throw new Problem(409,'Los bytes privados han cambiado respecto al PDF de origen');
   return{state:'accounts_source_checked',event_id:ev.data.id,terms_id:ev.data.quote_terms_id,contract_id:accountsContract.id,document_id:accountsDocument.id,
    quote_number:choice.quote_number,version:choice.version,pdf_sha256:checksum,size_bytes:bytes.length,
    is_forecast:true,stored:false,production_writable:false,remote_committed:false,
-   checks:{source_response_hmac:true,source_pdf_checksum:true,stored_document_metadata:true,accepted_financial_values:true,stored_pdf_bytes:false,event_schedule:false,workbook:false,signature:false,commercial_closure:false,payments:false},
-   pending:['stored_pdf_bytes','event_schedule','workbook_version_and_month','server_operation_journal','commercial_closure_rules']};
+   checks:{source_response_hmac:true,source_pdf_checksum:true,stored_document_metadata:true,accepted_financial_values:true,stored_pdf_bytes:true,event_schedule:false,workbook:false,signature:false,commercial_closure:false,payments:false},
+   pending:['event_schedule','workbook_version_and_month','server_operation_journal','commercial_closure_rules']};
  }
  if(preview)return{state:'verified',event_id:ev.data.id,kind:b.kind,version:choice.version,size_bytes:bytes.length,sha256:checksum,stored:false,requires_admin:true};
  const digest=await hash(file.pdf_base64),path=ev.data.id+'/'+b.kind+'-v'+choice.version+'-'+digest+'.pdf';

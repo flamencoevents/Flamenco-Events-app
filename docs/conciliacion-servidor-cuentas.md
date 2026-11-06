@@ -41,7 +41,7 @@ Drive/Storage, referencia privada completa, importes ni datos del cliente.
 `source_response_hmac` acredita la respuesta del puente, **no una firma del
 cliente**. La firma contractual permanece `false` en este informe.
 
-## Límites explícitos
+## Límites explícitos de v7 (histórico)
 
 La consulta no descarga los bytes almacenados en Storage: compara el PDF de
 origen con los metadatos de incorporación. `stored_pdf_bytes=false` lo expresa.
@@ -111,3 +111,46 @@ comprobación se documentan aparte tras obtener evidencia; no se deducen de CI.
 Siguiente paso: completar comprobación de bytes en Storage y fecha/horario,
 seguida de integración con el coordinador privado de operaciones y la versión
 remota de una copia aislada. Este preflight no autoriza ni ejecuta esa escritura.
+
+## Comprobación de bytes almacenados · continuación del 6 noviembre
+
+El código ampliado de `accounts_preview` ya descarga internamente el objeto
+exacto desde el bucket privado `event-documents`, después de superar las
+comprobaciones de identidad y cifras anteriores. Solo admite rutas con el UUID
+del evento, `contract-vREVISION-` y una huella hexadecimal de 64 caracteres más
+`.pdf`. Rechaza otro evento/revisión, presupuesto, URL, ruta vacía o traversal
+antes de leer Google o Storage. La ruta se toma de los metadatos de servidor;
+ningún campo de ruta del cuerpo autoriza seleccionar un objeto.
+
+Comprueba tamaño contra el PDF de origen y límite de 10 MB, cabecera PDF y SHA-256
+de los bytes descargados. La igualdad de tamaño y de metadatos no sustituye la
+comparación de contenido. Un objeto distinto con la misma longitud se rechaza.
+Los errores de Storage se convierten en error genérico 502, sin propagar rutas
+o mensajes internos. No se generan URLs firmadas ni se retornan bytes.
+
+En el código ampliado, un resultado correcto incluye `stored_pdf_bytes=true`
+y ya no enumera ese control como pendiente. Siguen pendientes fecha/horario,
+versión y mes del XLSX, diario remoto y reglas comerciales. Esto no es firma,
+cierre o movimiento económico. `production_writable=false`, `remote_committed=false`;
+sin escrituras, cambios de permisos, fórmulas, PDF o libro real.
+
+Prueba local afectada:
+
+```sh
+node --test tests/accounts-preflight.test.cjs tests/edge-workflow.test.cjs
+```
+
+**30 pruebas afectadas superadas**, 12 del preflight y 18 del flujo Edge. Cuatro
+casos nuevos cubren contenido alterado con idéntico tamaño, aislamiento de ruta,
+errores de servicio sin filtración y tamaño/cabecera inválidos. Los reintentos
+siguen leyendo sin crear escrituras ni promover estado contractual. Auth,
+Google y Storage son dobles; no se usaron cuentas/sesiones ni PDF reales.
+No se repitieron las pruebas Python/XLSX sin cambios.
+
+Referencia técnica verificada antes de implementar:
+https://supabase.com/docs/reference/javascript/storage-from-download . Se usa
+la llamada estable download(path), manteniendo el cliente y versión existentes.
+
+Estado en este punto: preparado y probado localmente. La publicación y prueba
+remota deben constar después; las pruebas sintéticas no acreditan descarga real
+de Storage con sesión administrativa.

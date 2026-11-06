@@ -4,11 +4,11 @@ const secret='test-only-secret-for-receiver-not-deployed';
 const userId='00000000-0000-4000-8000-000000000101',enquiryId='00000000-0000-4000-8000-000000000201',eventId='00000000-0000-4000-8000-000000000301';
 const payload=()=>({enquiry_id:enquiryId,quote_number:'9999926',version:1,total_payable_eur:100,deposit_payable_eur:30,billing_mode:'individual_reservation',is_test:true});
 function env(options={}){
- let handler,scriptAttempts=0;const handlers={},writes=[],network=[],uploads=[],calls=[];
+ let handler,scriptAttempts=0;const handlers={},writes=[],network=[],uploads=[],downloads=[],calls=[];
  const p=options.scriptPayload||{...payload(),source_sheet:'FE_Cola',source_reference:'sheet:12djLXZ7he8Znhp8ngNn_VvBPiV9-gzWR1HGtGycV0RY:FE_Cola:9999926-v1'};
  const tables={enquiries:[{id:enquiryId,source:options.sourceTag||'admin_test',is_test:!options.sourceTag||options.sourceTag==='admin_test',stage:options.stage||'accepted',call_completed_at:'test',approved_at:'test',quote_sent_at:'test'}],profiles:[{id:userId,role:options.actorRole||'sales'}],app_runtime:options.runtimeError?[]:[{singleton:true,test_mode:options.testMode??true}],accepted_quote_terms:options.existing?[{id:'terms-existing',quote_number:'9999926',version:1,...options.existing}]:[],quote_bridge_previews:options.previews||[],events:[{id:eventId,enquiry_id:enquiryId,quote_terms_id:'terms-document',is_test:true}],event_documents:[]};
  if(options.document)tables.accepted_quote_terms.push({id:'terms-document',quote_number:p.quote_number,version:p.version,external_reference:p.source_reference});
- const db={auth:{getUser:async()=>options.invalidToken?{error:{message:'invalid'}}:{data:{user:{id:userId,email:'test@example.invalid'}}}},storage:{from:()=>({upload:async(path,bytes)=>{uploads.push({path,bytes});return{error:null}}})},rpc:async(name,args)=>{calls.push({name,args});return options.rpcError?{error:options.rpcError}:{data:enquiryId};},from:table=>{
+ const db={auth:{getUser:async()=>options.invalidToken?{error:{message:'invalid'}}:{data:{user:{id:userId,email:'test@example.invalid'}}}},storage:{from:bucket=>({upload:async(path,bytes)=>{uploads.push({path,bytes});return{error:null}},download:async path=>{downloads.push({bucket,path});if(options.storageError)return{data:null,error:{message:'PRIVATE_STORAGE_ERROR'}};if(options.storageThrow)throw Error('PRIVATE_STORAGE_ERROR');return{data:options.storageBlob||new Blob([options.storagePdf??'%PDF-1.4\nTEST']),error:null};}})},rpc:async(name,args)=>{calls.push({name,args});return options.rpcError?{error:options.rpcError}:{data:enquiryId};},from:table=>{
   const predicates=[];let operation='select',value,done=null;
   const execute=()=>{if(done)return done;let rows=(tables[table]||[]).filter(r=>predicates.every(([k,v])=>r[k]===v));let error=null;
    if(table==='app_runtime'&&options.runtimeError)error=options.runtimeError;
@@ -37,7 +37,7 @@ function env(options={}){
   if(name==='ingest-accepted-quote'){const timestamp=String(opts.timestamp??Math.floor(Date.now()/1000));headers['x-fe-timestamp']=timestamp;headers['x-fe-signature']=opts.tamper?'0'.repeat(64):crypto.createHmac('sha256',secret).update(timestamp+'.'+raw).digest('hex');}
   return handlers[name](new Request('https://example.invalid/functions/v1/'+name,{method:'POST',headers,body:raw}));
  };
- return{ctx,tables,writes,network,uploads,calls,get inserts(){return writes.filter(w=>w.table==='accepted_quote_terms').map(w=>w.row);},run:(data,o)=>request('ingest-accepted-quote',data,o),request,payload:p,userId,eventId,enquiryId};
+ return{ctx,tables,writes,network,uploads,downloads,calls,get inserts(){return writes.filter(w=>w.table==='accepted_quote_terms').map(w=>w.row);},run:(data,o)=>request('ingest-accepted-quote',data,o),request,payload:p,userId,eventId,enquiryId};
 }
 module.exports={env,payload,secret};
 
