@@ -9,10 +9,11 @@
 > locales superadas. Preparado, sin despliegue ni conexión a Drive/servidor.
 > [Reproducción y límites](circuito-whatsapp-cuentas.md#ensayo-local-coordinado--6-noviembre-2026).
 
-> **Conciliación de servidor · 6 noviembre, continuación:** consulta administrativa
-> de solo lectura desplegada en import-event-document v7 ACTIVE. Bundle comprobado;
-> HTTP anónimo 401. 79 pruebas Node locales y en GitHub superadas. Correspondencia
-> documental/económica probada con dobles; falta ensayo Auth/Google real de esta
+> **Conciliación de servidor · 6 noviembre, continuación:** import-event-document
+> v8 ACTIVE añade comparación de bytes del PDF privado almacenado con el origen,
+> tras validar ruta, revisión y cifras aceptadas. Bundle comprobado, autenticación
+> conservada; 83 pruebas Node en GitHub superadas, 30 afectadas locales. Lectura
+> positiva probada con dobles; falta ensayo Auth/Google/Storage real de esta
 > operación. Sin escritura XLSX ni activación contable.
 > [Alcance y evidencia](conciliacion-servidor-cuentas.md).
 
