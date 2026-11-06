@@ -182,7 +182,7 @@ de revisión/importe/fila, exclusión entre conexiones concurrentes, propietario
 auditoría rechazada, copia preservada, liberación, rollback, datos no ficticios
 y modificación de solicitud. Las 40 pruebas anteriores también pasaron con la
 primera versión del nuevo módulo (49 en esa ejecución); se añadieron después
-tres casos más, y pasaron los 12 del módulo. CI ejecutará las 52 conjuntamente.
+tres casos más, y pasaron los 12 del módulo. Las 52 pruebas y la sintaxis MJS pasaron también conjuntamente en GitHub Actions.
 Las fixtures, bases y copias temporales se eliminan con TemporaryDirectory,
 incluso ante fallos. No se crearon usuarios, asignaciones ni sesiones externas.
 
@@ -202,3 +202,12 @@ incierta. La exclusión solo coordina llamadores que compartan la misma base y
 clave estable del libro. Liberar un ensayo no demuestra actualización del
 origen; el futuro servidor debe releer la versión y volver a conciliar antes de
 guardar. La sincronización general sigue apagada y CUENTAS 27 intacto.
+
+### Registro de operaciones: verificación en GitHub
+
+Código guardado en main: `c4997f90de167d4c4aff5e261d8a9d530f80583a`.
+Workflow https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42221012428 :
+job synthetic-tests success; logs confirman 52 tests, OK, y sintaxis MJS correcta.
+No se repitieron ensayos Auth/HTTP ni se desplegó un escritor remoto. El siguiente
+paso técnico es integrar este protocolo con lectura autenticada y versión remota;
+no reutilizar el diario local como prueba de autorización o escritura en Drive.
