@@ -2,7 +2,7 @@
 
 > **PRIORIDAD VIGENTE · 5/11/2026:** web de gestión empresarial primero; adaptación a app después. Se amplía el alcance para enlazar presupuestos, contratos, seguimiento económico e histórico y balances. Ver [web-gestion-empresa.md](web-gestion-empresa.md). El progreso porcentual anterior no mide este nuevo alcance.
 
-> Estado vigente: portal publicado desde el commit 62749c92d71578686240b6125f8b9dcb7ebd8c9b (Pages 42112791130, build y deploy correctos); Apps Script versión 51 publicada. Las menciones anteriores a invalid_rapt, circuito PDF no completado o importación aún bloqueada son evidencias históricas, superadas por las secciones posteriores. Siguen pendientes la generación contractual completa desde plantillas aprobadas, la firma mediante proveedor y las decisiones de reserva formal.
+> Estado vigente: consultar las últimas secciones fechadas de este documento. Apps Script v54 y quote-bridge v4 están verificados en la continuación del 6 de noviembre; las versiones y bloqueos anteriores se conservan como evidencia histórica. Siguen pendientes la generación contractual completa desde plantillas aprobadas, la firma mediante proveedor y las decisiones de reserva formal.
 
 **MODO PRUEBA ACTIVO.** No se han contactado clientes, enviado presupuestos/contratos ni invitado clientes reales. La sincronización general continúa desactivada. Nacho conserva la única administración; Azahara conserva el único perfil sales tras retirar identidades técnicas.
 
@@ -243,3 +243,12 @@ Seguridad: tabla privada intake_limits cerrada deliberadamente a usuarios; solo 
 - Las fallas de las operaciones GitHub de referencia/creación se resolvieron guardando archivos existentes por Contents API tras verificar el estado. Código y pruebas están en main; especificación en docs/integracion-whatsapp-web.md. Ningún cambio perdido ni fuerza sobre trabajo ajeno.
 - Sin escrituras contables, nuevos accesos, emails/WhatsApp, PDFs nuevos o cambios de plantillas/fórmulas. Drive y modo prueba conservados, sincronización general apagada. Activación de gestion.flamencoevents.net manual por Nacho al finalizar.
 - Pendientes: persistir por evento el desglose aprobado con versión/auditoría, conciliar histórico y movimientos reales, y comprobar balances. La consulta desplegada no equivale a completar esas tareas.
+
+
+## Cuentas 2027: conciliación sin escrituras · 6 noviembre 2026
+
+Implementados tools/accounts_2027.py, trece pruebas sintéticas y workflow de comprobación automática. Permiten leer el XLSX y preparar propuestas exclusivamente ficticias, ligadas a evento/presupuesto/contrato exactos; no modifican libros ni ejecutan servicios. GitHub Actions 42206658541: success. La lectura de la copia descargada y una propuesta ficticia conservaron su SHA-256 antes/después.
+
+No contiene bloque ENERO; se rechazan meses ausentes y el último bloque sin límite auditado. Se comprobaron fórmulas fuera de A:Q y se protege toda la fila. No se cambia el libro para resolverlo. Las propuestas no acreditan cierre, firma o cobro; no rellenan IVA ni movimientos reales y permanecen pending_review/writable=false.
+
+Código guardado y probado; no hay nueva integración desplegada en Apps Script/Supabase ni cambio visual del panel. Falta escritor XLSX preservador, conciliación de fórmulas/estilos, ensayo de escritura en copia y conexión autenticada con el registro privado de operaciones. Detalles y ejecución: [web-gestion-empresa.md](web-gestion-empresa.md). MODO PRUEBA y sincronización general desactivada conservados; sin datos reales publicados ni comunicaciones.
