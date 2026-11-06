@@ -147,3 +147,36 @@ La opción --request /ruta/privada/solicitud-ficticia.json permite simular una p
 - La estructura actual no contiene marcador ENERO. El último bloque tampoco tiene un límite seguro inferible; se rechazan esos casos en lugar de añadir filas o afectar sumatorios.
 - Hay fórmulas fuera de A:Q, hasta V. El control de ocupación examina toda la fila; no presume que esas columnas están vacías.
 - Pendientes técnicos: conciliación de significados y fórmulas, revisión de estilos/separadores de cada fila, compatibilidad de escritura XLSX que conserve el archivo, ensayo de escritura en copia aislada, enlaces privados, registro de operaciones y conexión autenticada de extremo a extremo. No hay sincronización contable automática ni despliegue nuevo de Apps Script/Supabase en esta continuación.
+
+
+## Ensayo de escritura y verificación independiente · 6 noviembre 2026
+
+Nacho solicita encadenar tareas sin esperar confirmaciones rutinarias. Se continúa dentro del alcance autorizado: lecturas, código reversible, pruebas aisladas y documentación, conservando los bloqueos comerciales y de acceso personal imprescindibles. Esta indicación no activa sincronización general, uso real ni trabajos programados nuevos.
+
+### Resultado del ensayo XLSX
+
+Preparado [tools/accounts_2027_roundtrip.mjs](../tools/accounts_2027_roundtrip.mjs). Revalida la solicitud ficticia mediante el preparador Python, relee los bytes y su huella, exige un directorio nuevo y solo intenta escribir una copia local con C:H. No tiene red, credenciales ni operación para reemplazar el original. Una exportación, si se consigue, queda marcada como candidata no verificada.
+
+El importador de hojas disponible no pudo completar la apertura del XLSX original descargado. Emitió avisos de sheetId ausente y terminó con «Sheet ... not found». No se confirma la causa interna; no se han cambiado los nombres originales para sortearlo. No se produjo una copia exportada válida, ni renderizado comprobable ni prueba de conservación tras escritura. El SHA-256 del original descargado se mantuvo idéntico.
+
+La escritura sigue bloqueada por compatibilidad del importador; no por falta de autorización de Nacho. Se conserva el ensayo reproducible para poder verificar una solución sin convertir ni alterar el libro real.
+
+### Verificador preparado sin depender del importador
+
+[tools/accounts_2027_verify.py](../tools/accounts_2027_verify.py) inspecciona el contenido de una copia XLSX independientemente del escritor. Comprueba las seis celdas esperadas con fecha e importe tipados y referencia textual, y rechaza cambios en otros datos/fórmulas, estructura de hojas, estilos o partes protegidas del archivo. Conserva los valores privados fuera del informe. Es deliberadamente estricto: una reserialización no explicada puede bloquear una copia aunque parezca visualmente equivalente.
+
+El verificador no acepta fórmulas sustituidas por valores ni céntimos o fechas distintos. Incluso si pasan sus comprobaciones, production_writable permanece false: siguen pendientes revisión visual, cálculo en Excel, autorización en servidor y registro atómico de operaciones. No comprueba por sí mismo firma, cierre comercial, cobro o permisos de usuario.
+
+```sh
+python3 -m unittest discover -s tests -p 'test_accounts_2027*.py' -v
+python3 tools/accounts_2027_verify.py /ruta/privada/original.xlsx /ruta/privada/candidata.xlsx /ruta/privada/solicitud-ficticia.json
+```
+
+Para reproducir el ensayo MJS se requiere el runtime con @oai/artifact-tool. Ejecutar una copia del MJS desde un directorio temporal con node_modules enlazado al runtime; FE_ACCOUNTS_PLANNER debe apuntar al preparador Python guardado y FE_ACCOUNTS_PYTHON permite seleccionar su intérprete. Argumentos: XLSX de entrada, JSON ficticio, directorio de salida nuevo. Los archivos privados de entrada, salida y renderizado no se suben al repositorio.
+
+### Evidencias nuevas y siguiente dependencia
+
+- Veintiuna pruebas sintéticas locales superadas: trece del preparador y ocho de conservación. La sintaxis MJS también pasó.
+- Automatización ampliada: https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42207740208 . Resultado success, sin dependencias de Google, Supabase, WhatsApp o datos privados.
+- Comprobación adicional sobre una copia local idéntica al origen: rechazo esperado por faltar los seis datos ficticios propuestos, sin cambios ajenos detectados. No se confunde ese rechazo esperado con escritura satisfactoria.
+- No se ha desplegado un escritor ni conectado cuentas a producción. Próxima dependencia técnica: resolver importación conservadora del XLSX y superar escritura, comparación y revisión visual en copia. La conexión de servidor y su registro de operaciones continúan pendientes. No se pide activar el libro real para superar la prueba.
