@@ -270,3 +270,12 @@ remota, además de los criterios comerciales y meses no resueltos. La
 sincronización general sigue apagada y CUENTAS 27 no se ha abierto ni modificado
 en esta continuación. El workflow existente incluye automáticamente los nuevos
 archivos por sus patrones de rutas.
+
+### Ensayo coordinado: verificación en GitHub
+
+Código guardado en main: `75eb0e161ad89e8fc3c9adadd72420b4a4a5b465`.
+Workflow https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42266102952
+completado con success. Logs del job synthetic-tests confirman 60 pruebas de
+cuentas, 6 de histórico y sintaxis MJS correctas. Incluye los ocho nuevos casos
+de coordinación y proceso hijo sintético. No constituye ejecución del runtime
+Artifact con el libro privado ni integración autenticada o escritura remota.
