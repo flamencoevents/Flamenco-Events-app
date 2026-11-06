@@ -1,5 +1,10 @@
 # Prioridad vigente: web de gestión de Flamenco Events
 
+> Última continuación del circuito WhatsApp → contrato → cuentas:
+> [ensayo integrado y evidencia actual](circuito-whatsapp-cuentas.md).
+> 32 pruebas sintéticas locales; exportación de copia conseguida, conservación
+> rechazada. No hay escritura contable automática ni cambio del original.
+
 Decisión de Nacho: 5 de noviembre de 2026. Sustituye la prioridad anterior de crear primero una app. MODO PRUEBA conservado.
 
 ## Resultado esperado

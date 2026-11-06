@@ -3,7 +3,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { SpreadsheetFile } from '@oai/artifact-tool';
 
 async function main() {
@@ -21,33 +21,52 @@ const sourceSha256 = crypto.createHash('sha256').update(raw).digest('hex');
 if (sourceSha256 !== proposal.workbook_sha256) throw new Error('WORKBOOK_CHANGED');
 // A new directory is mandatory; no overwrite, same-path save or symlink reuse.
 await fs.mkdir(outputDir);
-const workbook = await SpreadsheetFile.importXlsx(raw);
+// importXlsx accepts ArrayBuffer/FileBlob, not a Node Buffer view. Import
+// exactly the bytes whose digest was checked, without reopening the input.
+const workbook = await SpreadsheetFile.importXlsx(
+  raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength));
 const sheet = workbook.worksheets.getItemAt(0);
 if (sheet.name !== proposal.sheet) {
   throw new Error('IMPORT_SHEET_NAME_CHANGED');
 }
 const row = proposal.candidate_row;
 const saveRender = async (filename) => {
-  const image = await workbook.render({sheetName: proposal.sheet,
+  const image = await workbook.render({sheetIndex: 0,
     range: `A${row - 2}:Q${row + 2}`, scale: 1, format: 'png'});
   await fs.writeFile(path.join(outputDir, filename), new Uint8Array(await image.arrayBuffer()), {flag: 'wx'});
 };
 await saveRender('before.png');
 // Only proposal columns C:H. Existing destination formatting is retained.
 const cells = proposal.proposed_cells;
-sheet.getRange(`C${row}:H${row}`).values = [[cells.C, new Date(`${cells.D}T00:00:00Z`),
+// Keep the source's number format. Excel's 1900 date system is enforced by
+// the planner; export a date serial rather than changing the cell to t="d".
+const excelDate = (Date.parse(`${cells.D}T00:00:00Z`) - Date.UTC(1899, 11, 30)) / 86400000;
+sheet.getRange(`C${row}:H${row}`).values = [[cells.C, excelDate,
   cells.E, cells.F, cells.G, cells.H.amount_cents / 100]];
 workbook.recalculate();
 await saveRender('after.png');
 const copy = await SpreadsheetFile.exportXlsx(workbook);
 await copy.save(path.join(outputDir, 'unverified.candidate.xlsx'));
-// No assertion that export preserved features: independent XML audit is required.
+// Export is not success. Always run the independently implemented audit and
+// retain its result privately; a rejected copy exits nonzero and is never applied.
+const candidatePath = path.join(outputDir, 'unverified.candidate.xlsx');
+const auditProcess = spawnSync(process.env.FE_ACCOUNTS_PYTHON || 'python3',
+  [path.join(path.dirname(plannerPath), 'accounts_2027_verify.py'), inputPath, candidatePath, requestPath],
+  {encoding:'utf8',maxBuffer:100000});
+let audit;
+try { audit = JSON.parse(auditProcess.stdout); }
+catch { throw new Error('COPY_AUDIT_UNAVAILABLE'); }
+const verified = auditProcess.status === 0 && audit.status === 'copy_preservation_checks_passed'
+  && audit.production_writable === false && audit.source_sha256 === sourceSha256;
+await fs.writeFile(path.join(outputDir, 'audit.json'), JSON.stringify(audit, null, 2), {flag:'wx'});
 await fs.writeFile(path.join(outputDir, 'trial.json'), JSON.stringify({
-  mode: 'isolated_copy_trial', production_writable: false, preservation_verified: false,
+  mode: 'isolated_copy_trial', production_writable: false, preservation_verified: verified,
   source_sha256: sourceSha256, proposal_id: proposal.proposal_id,
   sheet: proposal.sheet, allowed_value_cells: ['C', 'D', 'E', 'F', 'G', 'H'].map(c => c + row)
 }, null, 2), {flag: 'wx'});
-console.log(JSON.stringify({status: 'candidate_exported_requires_audit', production_writable: false}));
+console.log(JSON.stringify({status: verified ? 'copy_audited_requires_review' : 'copy_rejected_by_audit',
+  production_writable: false, preservation_verified: verified}));
+if (!verified) process.exitCode = 2;
 }
 main().catch(error => {
   console.error(JSON.stringify({status: 'blocked', production_writable: false,

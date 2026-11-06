@@ -1,5 +1,11 @@
 # Estado verificado · 5 noviembre 2026
 
+> **Actualización 6/11/2026 · circuito de cuentas:** preparado adaptador local
+> de las filas FE3/FE_Contratos a propuesta mensual. 32 pruebas sintéticas
+> locales superadas. La copia XLSX ya se exporta, pero la auditoría independiente
+> rechaza cambios de estructura y partes protegidas. No hay escritor contable
+> desplegado ni balances modificados. [Evidencias y límites](circuito-whatsapp-cuentas.md).
+
 > **PRIORIDAD VIGENTE · 5/11/2026:** web de gestión empresarial primero; adaptación a app después. Se amplía el alcance para enlazar presupuestos, contratos, seguimiento económico e histórico y balances. Ver [web-gestion-empresa.md](web-gestion-empresa.md). El progreso porcentual anterior no mide este nuevo alcance.
 
 > Estado vigente: consultar las últimas secciones fechadas de este documento. Apps Script v54 y quote-bridge v4 están verificados en la continuación del 6 de noviembre; las versiones y bloqueos anteriores se conservan como evidencia histórica. Siguen pendientes la generación contractual completa desde plantillas aprobadas, la firma mediante proveedor y las decisiones de reserva formal.
