@@ -130,8 +130,8 @@ Los bytes PDF y su huella se comprueban por integridad, no por validez jurídica
 
 ## Pendientes para el circuito operativo
 
-1. Resolver conservación XLSX sin alterar nombres, formato, fórmulas ni enlaces;
-   no reducir controles para aprobar una reserialización no explicada.
+1. Conservación resuelta en copia local según la evidencia inicial de este documento;
+   sigue pendiente la comprobación en Microsoft Excel y la integración remota.
 2. Lectura autenticada de las colas y PDF exactos hacia el adaptador, con
    comprobación de permisos y secuencia comercial en servidor.
 3. Conciliar significado de IVA/fecha de reserva/gastos y condiciones de cierre;
@@ -158,3 +158,47 @@ Las 40 pruebas y la comprobación de sintaxis finalizaron con `success`:
 https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42216066265 .
 La conservación se verificó localmente sobre una copia privada; CI usa solamente
 fixtures sintéticas, sin libro ni credenciales corporativas.
+
+## Registro local de operaciones · 6 noviembre 2026
+
+Implementado `tools/accounts_2027_ledger.py`, ensayo local SQLite con datos
+ficticios. Recalcula la propuesta, conserva solo huellas y estados y utiliza
+transacciones `BEGIN IMMEDIATE` y restricciones únicas. Los reintentos exactos
+devuelven la misma operación; otra revisión, importe o fila del mismo evento
+requiere conciliación. Solo puede existir un ensayo reservado por libro lógico.
+Las claves de libro y propietario son identificadores opacos suministrados por
+el llamador: **no autentican ni autorizan usuarios**.
+
+Estados: `reserved`, `copy_verified`, `failed`. Una copia solo alcanza
+`copy_verified` ejecutando el verificador independiente sobre los archivos, no
+aportando un JSON de auditoría. Un fallo conserva la reserva; su propietario
+local puede marcarla fallida para liberar el libro. Un reinicio no vence ni
+roba reservas. El estado fallido no puede reactivarse automáticamente. Una
+operación verificada no puede marcarse fallida. No existe estado de escritura
+remota: `remote_committed=false` y `production_writable=false` siempre.
+
+Doce pruebas nuevas superadas localmente: persistencia, repetición, conflicto
+de revisión/importe/fila, exclusión entre conexiones concurrentes, propietario,
+auditoría rechazada, copia preservada, liberación, rollback, datos no ficticios
+y modificación de solicitud. Las 40 pruebas anteriores también pasaron con la
+primera versión del nuevo módulo (49 en esa ejecución); se añadieron después
+tres casos más, y pasaron los 12 del módulo. CI ejecutará las 52 conjuntamente.
+Las fixtures, bases y copias temporales se eliminan con TemporaryDirectory,
+incluso ante fallos. No se crearon usuarios, asignaciones ni sesiones externas.
+
+Reproducción sin dependencias nuevas ni servicios:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_accounts_2027_ledger.py' -v
+python3 -m unittest discover -s tests -p 'test_accounts_2027*.py' -v
+```
+
+Preparado y probado localmente; **no desplegado ni integrado** al MJS, al panel,
+a Supabase o a Drive. El diario debe almacenarse en una ubicación privada;
+no contiene clientes, horarios, importes, URLs ni PDF. No protege contra un
+usuario con acceso directo a esa base local. No prueba autenticación, lectura
+remota, reemplazo condicional Drive ni recuperación de una escritura remota
+incierta. La exclusión solo coordina llamadores que compartan la misma base y
+clave estable del libro. Liberar un ensayo no demuestra actualización del
+origen; el futuro servidor debe releer la versión y volver a conciliar antes de
+guardar. La sincronización general sigue apagada y CUENTAS 27 intacto.

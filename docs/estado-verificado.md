@@ -1,3 +1,8 @@
+> Actualización del 6 noviembre: el bloqueo XLSX descrito en el historial de este
+> documento se resolvió en copia aislada con empaquetado conservador; ver
+> [evidencia vigente](circuito-whatsapp-cuentas.md). Registro local de operaciones
+> preparado con 12 pruebas nuevas; sin escritura remota ni integración desplegada.
+
 # Estado verificado · 5 noviembre 2026
 
 > **Listado compartido y balances · 6/11/2026:** incorporada lectura interna de
@@ -274,3 +279,14 @@ Se encadenaron implementación, pruebas y guardado sin nueva confirmación rutin
 Completado independientemente tools/accounts_2027_verify.py y ocho pruebas adicionales: rechaza cambios ajenos, pérdida de fórmulas, estilos/enlaces/estructura alterados y datos propuestos ausentes o incorrectos. Veintiuna pruebas locales totales y sintaxis MJS pasaron; workflow 42207740208 success. Una copia idéntica al origen fue correctamente rechazada por no contener el registro ficticio esperado. Son pruebas sintéticas y lectura local; no nuevas pruebas Auth/HTTP ni escritura Drive.
 
 Código guardado; ningún escritor desplegado, Apps Script/Supabase sin cambio funcional. Modo prueba y sincronización general apagada. Bloqueo concreto: importación conservadora del XLSX; continúan pendientes escritura y revisión visual en copia y enlace transaccional autenticado. Reproducción y límites en docs/web-gestion-empresa.md.
+
+
+## Continuación: registro local de operaciones · 6 noviembre 2026
+
+Preparado `tools/accounts_2027_ledger.py` y 12 pruebas nuevas, todas superadas
+localmente. Evita duplicados y conflictos y serializa ensayos del mismo libro;
+completa una operación solo después de auditar la copia. No autentica usuarios,
+no escribe XLSX ni llama a servicios. No está conectado al circuito remoto.
+Evidencia, reproducción y límites: [circuito-whatsapp-cuentas.md](circuito-whatsapp-cuentas.md#registro-local-de-operaciones--6-noviembre-2026).
+Modo prueba, libro real intacto y sincronización general apagada. No hay nuevo
+despliegue Apps Script/Supabase ni cambio funcional en el panel.

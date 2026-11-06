@@ -1,3 +1,8 @@
+> Actualización del 6 noviembre: el bloqueo XLSX descrito en el historial de este
+> documento se resolvió en copia aislada con empaquetado conservador; ver
+> [evidencia vigente](circuito-whatsapp-cuentas.md). Registro local de operaciones
+> preparado con 12 pruebas nuevas; sin escritura remota ni integración desplegada.
+
 # Prioridad vigente: web de gestión de Flamenco Events
 
 > Consulta de eventos del libro en ambos paneles y página de balances reservada
@@ -190,3 +195,14 @@ Para reproducir el ensayo MJS se requiere el runtime con @oai/artifact-tool. Eje
 - Automatización ampliada: https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42207740208 . Resultado success, sin dependencias de Google, Supabase, WhatsApp o datos privados.
 - Comprobación adicional sobre una copia local idéntica al origen: rechazo esperado por faltar los seis datos ficticios propuestos, sin cambios ajenos detectados. No se confunde ese rechazo esperado con escritura satisfactoria.
 - No se ha desplegado un escritor ni conectado cuentas a producción. Próxima dependencia técnica: resolver importación conservadora del XLSX y superar escritura, comparación y revisión visual en copia. La conexión de servidor y su registro de operaciones continúan pendientes. No se pide activar el libro real para superar la prueba.
+
+
+## Continuación: registro local de operaciones · 6 noviembre 2026
+
+Preparado `tools/accounts_2027_ledger.py` y 12 pruebas nuevas, todas superadas
+localmente. Evita duplicados y conflictos y serializa ensayos del mismo libro;
+completa una operación solo después de auditar la copia. No autentica usuarios,
+no escribe XLSX ni llama a servicios. No está conectado al circuito remoto.
+Evidencia, reproducción y límites: [circuito-whatsapp-cuentas.md](circuito-whatsapp-cuentas.md#registro-local-de-operaciones--6-noviembre-2026).
+Modo prueba, libro real intacto y sincronización general apagada. No hay nuevo
+despliegue Apps Script/Supabase ni cambio funcional en el panel.
