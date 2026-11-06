@@ -1,3 +1,8 @@
+> **Estado vigente:** comprobación de bytes privados incorporada en
+> import-event-document **v8 ACTIVE**. Código/bundle comparados y 83 pruebas
+> sintéticas en GitHub superadas. No hay todavía prueba Auth/Google/Storage
+> positiva real de esta operación ni escritura contable. Ver evidencia al final.
+
 # Comprobación previa contractual y económica · 6 noviembre 2026
 
 ## Alcance preparado
@@ -154,3 +159,25 @@ la llamada estable download(path), manteniendo el cliente y versión existentes.
 Estado en este punto: preparado y probado localmente. La publicación y prueba
 remota deben constar después; las pruebas sintéticas no acreditan descarga real
 de Storage con sesión administrativa.
+
+### Publicación de la comprobación de bytes
+
+- Código en main: `e1459b96619a54e4a3012c437dc29e420b9bdec7`.
+- Workflow https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42282609740 :
+  success. Logs confirman **83 tests, 83 pass, 0 fail**. Las 30 pruebas afectadas
+  también pasaron localmente. No se repitieron localmente las demás sin cambios.
+- Función existente actualizada a **v8 ACTIVE**. Se comprobó que v7 seguía intacta
+  antes de publicar. El bundle leído después coincide con index.ts guardado;
+  bridge.ts y autenticación propia se conservan, con verify_jwt=false anterior.
+- La comparación positiva de bytes y sus fallos están probados con dobles. No se
+  ha utilizado una sesión administrativa real ni se ha descargado en esta
+  continuación ningún PDF real de Drive o Storage. El rechazo anónimo 401 de v7
+  sigue como evidencia anterior; no se repitió al no cambiar la autenticación.
+- Sin operaciones SQL, usuarios, asignaciones o sesiones nuevas; no hay limpieza
+  remota pendiente. Ningún cambio de bucket, permisos, plantilla, fórmula, PDF,
+  cobro o libro XLSX. Modo prueba y sincronización apagada conservados.
+
+Pendientes actuales: probar con acceso administrativo ya autorizado el recorrido
+positivo de esta operación, conciliar fecha/horario y conectar el diario privado
+con versiones de una copia remota aislada. Ninguno de estos controles habilita
+firma, reserva, cierre o escritura en el libro real por sí solo.
