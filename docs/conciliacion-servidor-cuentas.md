@@ -215,3 +215,18 @@ firma, reserva, cierre contable o sincronización.
 No se cambiaron datos, objetos, permisos, usuarios, sesiones ni funciones.
 CUENTAS 27 no se abrió ni modificó. No se ejecutaron pruebas de código al no
 haber cambios de implementación.
+
+
+## Fallo de lectura del cuerpo privado · 6 noviembre 2026
+
+Protegida también la lectura arrayBuffer del Blob: si falla después de download,
+accounts_preview responde 502 genérico sin propagar mensajes internos ni emitir
+evidencia contable. Prueba sintética nueva con excepción que contiene una ruta
+secreta; comprueba ausencia de filtración, evidencia y escrituras.
+
+13 pruebas afectadas superadas localmente con node --test tests/accounts-preflight.test.cjs.
+Código y prueba guardados en GitHub. Preparado, NO desplegado: v8 continúa como
+última publicación documentada. No se repiten pruebas XLSX sin cambios.
+El ensayo positivo real sigue pendiente del nuevo presupuesto/contrato ficticio
+que Nacho indicó que prepararía; no se alteró la fixture histórica ni se crearon
+identidades. CUENTAS 27 intacto y sincronización apagada.
