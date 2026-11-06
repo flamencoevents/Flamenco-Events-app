@@ -49,10 +49,11 @@ function feContratosIntegrarPendientes(){
    try{
     const d=JSON.parse(rows[i][2]),p=feCiPlan_(d,String(rows[i][6]||''));key=p.source_key;
     const exact=feContratoPresupuesto_(p.quote_number,p.revision);if(JSON.stringify(exact)!==JSON.stringify(d.presupuesto))throw Error('La copia contractual no coincide con FE_Cola');
-    j=records.findIndex((r,index)=>index&&r[0]===key);if(j>=0&&records[j][1]==='INTEGRADO'){result.existentes++;continue;}
+    j=records.findIndex((r,index)=>index&&r[0]===key);
     const file=DriveApp.getFileById(p.contract_url.match(/\/d\/([\w-]+)/)[1]),blob=file.getBlob(),bytes=blob.getBytes();
     if(bytes.length>10485760||bytes.length<5||String.fromCharCode(...bytes.slice(0,5))!=='%PDF-')throw Error('Documento contractual no válido');
     p.pdf_sha256=feCiSha_(bytes);p.accounts_url=feCiCuentas_(p);
+    if(j>=0&&records[j][1]==='INTEGRADO'){if(records[j][2]!==p.pdf_sha256||records[j][3]!==p.accounts_url)throw Error('El documento integrado ha cambiado; requiere conciliación');result.existentes++;continue;}
     const answer=feCiEnviar_(p);const row=j>=0?j+1:journal.getLastRow()+1;
     journal.getRange(row,1,1,6).setValues([[key,'INTEGRADO',p.pdf_sha256,p.accounts_url,new Date(),answer.state]]);SpreadsheetApp.flush();result.integrados++;
    }catch(e){result.errores++;const row=j>=0?j+1:journal.getLastRow()+1;journal.getRange(row,1,1,6).setValues([[key,'PENDIENTE','','',new Date(),String(e.message).slice(0,180)]]);SpreadsheetApp.flush();}
