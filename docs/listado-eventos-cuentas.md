@@ -134,3 +134,22 @@ GitHub Pages: https://github.com/flamencoevents/Flamenco-Events-app/actions/runs
 Consulta REST real sin sesión del catálogo: HTTP 401 / 42501, sin registros.
 Estado final consultado: test_mode=true, ocho filas en catálogo y cero eventos confirmados.
 No se crearon identidades de prueba ni se modificó el libro original.
+
+
+## Adaptación móvil · 6 noviembre 2026
+
+A 760 px o menos, el listado de cinco columnas se presenta como tarjetas por
+evento: fecha, horario, lugar, cliente/wedding y presupuesto. Conserva el mismo
+DOM, origen, filtro y manejador de documentos/ficha; no duplica registros ni
+consultas. Encabezados y roles de tabla se conservan para accesibilidad.
+
+Los paneles de administración, comercial y balances comparten márgenes móviles,
+formularios de ancho completo, navegación en dos columnas, botones táctiles y
+fichas económicas en una columna. Las hojas de estilo y el módulo del listado
+llevan versión de recurso para actualizar la caché habitual.
+
+Verificación: 66 pruebas Node superadas. Vista de 320 y 390 px inspeccionada en
+navegador con datos ficticios y apertura de ficha a 320 px comprobada; vista de
+768 px conserva tabla con desplazamiento horizontal. No se ha probado en un
+iPhone físico ni con una sesión real. No cambia permisos, libro, datos ni modo
+prueba. Balances continúa pendiente de configuración.
