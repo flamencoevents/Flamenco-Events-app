@@ -89,3 +89,25 @@ coincide con el origen GitHub, antes de preparar una actualización.
 
 Estado en este punto: código preparado y probado localmente. El despliegue y su
 comprobación se documentan aparte tras obtener evidencia; no se deducen de CI.
+
+## Despliegue y evidencia confirmados
+
+- Código guardado en main: `444783b851a3e899e57c4e4bc2c5c195f3bbc0bd`.
+- GitHub Actions https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/42274256444 :
+  success; logs de mocked-web-tests confirman 79 pruebas, 79 superadas, cero fallos.
+- Actualización de la función existente `import-event-document`: **v7 ACTIVE**.
+  Antes de desplegar se volvió a comprobar que v6 no había cambiado. Lectura del
+  bundle v7 confirma index.ts idéntico al código guardado y bridge.ts conservado.
+  verify_jwt=false se mantiene porque el código conserva autenticación propia
+  mediante Auth.getUser y autorización de perfil, no acceso libre.
+- HTTP real sin credenciales, POST accounts_preview con UUID sintético:
+  **401, Acceso requerido**. No crea petición de correo ni sesión.
+- No se ha probado esta nueva operación con sesión Auth administrativa real y
+  fuentes Google reales. La correspondencia documental/económica se ha probado
+  con dobles; el despliegue y la denegación anónima sí tienen evidencia remota.
+- No se modificaron Apps Script, SQL/RLS, permisos, documentos ni libro XLSX.
+  No se activó la sincronización ni se crearon usuarios o asignaciones.
+
+Siguiente paso: completar comprobación de bytes en Storage y fecha/horario,
+seguida de integración con el coordinador privado de operaciones y la versión
+remota de una copia aislada. Este preflight no autoriza ni ejecuta esa escritura.
