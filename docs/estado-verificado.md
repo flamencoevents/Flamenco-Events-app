@@ -9,10 +9,12 @@
 > locales superadas. Preparado, sin despliegue ni conexión a Drive/servidor.
 > [Reproducción y límites](circuito-whatsapp-cuentas.md#ensayo-local-coordinado--6-noviembre-2026).
 
-> **Conciliación de servidor · 6 noviembre, continuación:** preparada consulta
-> administrativa de solo lectura para contrastar revisión, PDF privado y cifras
-> aceptadas con el origen firmado. 79 pruebas Node locales superadas; sin escritura
-> XLSX ni activación contable. [Alcance y evidencia](conciliacion-servidor-cuentas.md).
+> **Conciliación de servidor · 6 noviembre, continuación:** consulta administrativa
+> de solo lectura desplegada en import-event-document v7 ACTIVE. Bundle comprobado;
+> HTTP anónimo 401. 79 pruebas Node locales y en GitHub superadas. Correspondencia
+> documental/económica probada con dobles; falta ensayo Auth/Google real de esta
+> operación. Sin escritura XLSX ni activación contable.
+> [Alcance y evidencia](conciliacion-servidor-cuentas.md).
 
 # Estado verificado · 5 noviembre 2026
 
