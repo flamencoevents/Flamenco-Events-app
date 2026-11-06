@@ -1,5 +1,24 @@
 # Listado compartido de eventos desde Cuentas 2027
 
+## Presentación clara · 6 noviembre 2026
+
+Petición de Nacho: fondo blanco, letras negras, logo de la web pública y
+columnas bien espaciadas. Se aplica management-theme.css a administración,
+comercial y balances, conservando estructura, datos y permisos. El logo PNG se
+recuperó de la web oficial y se guarda sin modificar como recurso del proyecto;
+no depende del enlace temporal firmado de IONOS.
+
+La tabla tiene anchuras mínimas, encabezados y fechas sin cortes, celdas con
+espacio suficiente y enlaces agrupados en la columna Presupuesto. En pantallas
+estrechas se desplaza horizontalmente para conservar legibilidad. El panel usa
+el ancho disponible hasta 1440px. La fecha de lectura y la limitación de
+actualización de Drive quedan en líneas separadas.
+
+Verificación visual en navegador con datos ficticios: fondo blanco, logo,
+encabezados completos, fechas en una línea y documentos separados. Las 66
+pruebas web existentes pasan tras el cambio. No equivale a revisión con sesión
+real de ambos perfiles ni a prueba en iPhone real.
+
 Petición de Nacho del 6 noviembre 2026: listado al entrar en administración y
 comercial, con Fecha, Horario, Lugar, Wedding/Cliente y Presupuesto. Los enlaces
 a presupuesto, contrato y ficha económica se muestran dentro de Presupuesto;
