@@ -1,5 +1,57 @@
 # Circuito WhatsApp → contrato → cuentas · 6 noviembre 2026
 
+> **Bloqueo de conservación resuelto en copia aislada.** El empaquetado nuevo
+> conserva el origen y traslada solo las seis celdas creadas por Artifact Tool.
+> La misma auditoría independiente pasa sin diferencias no autorizadas.
+> 40 pruebas sintéticas locales superadas. El rechazo descrito más abajo es
+> evidencia del ensayo anterior, conservada como historial.
+
+## Solución de conservación · continuación del 6 noviembre
+
+`tools/accounts_2027_package.py` utiliza el exportado de Artifact Tool únicamente
+como fuente de los valores de C:H. No reconstruye fórmulas, estilos ni valores
+del resto del libro. Reutiliza todos los componentes del paquete original y sus
+metadatos ZIP; en la hoja de destino sustituye solamente los seis elementos de
+celda preexistentes, reteniendo sus estilos y atributos. El resto del XML se
+conserva byte por byte. No calcula valores por otra vía ni utiliza otra
+biblioteca de hojas de cálculo para generarlos.
+
+El empaquetado publica una copia local nueva solo si pasa el verificador
+independiente existente. Rechaza el archivo origen como destino, destinos ya
+existentes, celdas sin preformato, fórmulas aportadas en vez de valores, importes
+incorrectos y fuentes cambiadas. Un fallo borra el temporal y no publica copia.
+No se ha debilitado ni modificado `accounts_2027_verify.py`.
+
+`accounts_2027_roundtrip.mjs` encadena ahora exportación Artifact → empaquetado
+conservador → auditoría de `preserved.candidate.xlsx`. Mantiene el exportado
+completo como diagnóstico privado, sin usarlo para sustituir el libro. La salida
+del ensayo completo es `copy_audited_requires_review`, preservation_verified=true
+y production_writable=false.
+
+Comprobaciones nuevas:
+
+- 40 pruebas sintéticas: las 32 anteriores y ocho de conservación, conflictos,
+  XML, datos incorrectos, prefijos y atributos, caracteres Unicode y enlaces
+  locales que intentan sobrescribir el origen.
+- Ensayo completo con entrada contractual ficticia y copia local del libro:
+  las seis celdas coinciden; auditoría sin diferencias; huella del origen intacta.
+- Vista de A9:Q13 de la copia preservada comprobada: fecha, hora, lugar, cliente,
+  céntimos y formato de moneda legibles, sin modificar la fila existente.
+- Apertura y recálculo en LibreOffice de dos copias separadas (origen y resultado):
+  110 fórmulas en ambos, mismos textos y resultados almacenados. Cuatro errores
+  aparecen en las mismas celdas y con los mismos códigos en ambas copias; no se
+  introducen errores nuevos en esta comprobación. No se confirma si se deben al
+  libro original o a compatibilidad de LibreOffice. No se corrigen por inferencia.
+- El guardado de LibreOffice se usa solo para comprobar el recálculo, no como
+  copia final ni sustituto del paquete preservado. Microsoft Excel no se ha
+  probado. Los ficheros privados e imágenes no se publican.
+
+Resuelto: conservar la copia XLSX de este ensayo sin alterar estructura,
+fórmulas, enlaces, estilos ni componentes ajenos a C:H. Pendiente: conexión
+autenticada a servidor/Drive/WhatsApp, registro de operaciones y escritura
+remota con control de versión, reglas de cierre, enero y último bloque. No hay
+escritor contable desplegado ni alta automática de contratos en el libro real.
+
 MODO PRUEBA. Este avance prepara un ensayo local; no activa sincronización,
 firma, reservas, clientes ni escritura en CUENTAS 27.
 

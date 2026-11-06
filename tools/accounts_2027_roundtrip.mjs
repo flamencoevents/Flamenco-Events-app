@@ -50,8 +50,18 @@ await copy.save(path.join(outputDir, 'unverified.candidate.xlsx'));
 // Export is not success. Always run the independently implemented audit and
 // retain its result privately; a rejected copy exits nonzero and is never applied.
 const candidatePath = path.join(outputDir, 'unverified.candidate.xlsx');
+const preservedPath = path.join(outputDir, 'preserved.candidate.xlsx');
+const packaging = spawnSync(process.env.FE_ACCOUNTS_PYTHON || 'python3',
+  [path.join(path.dirname(plannerPath), 'accounts_2027_package.py'), inputPath, candidatePath, requestPath, preservedPath],
+  {encoding:'utf8',maxBuffer:100000});
+let packaged;
+try { packaged = JSON.parse(packaging.stdout); }
+catch { throw new Error('PACKAGE_PRESERVATION_UNAVAILABLE'); }
+if (packaging.status !== 0 || packaged.status !== 'isolated_copy_preserved' || packaged.production_writable !== false) {
+  throw new Error(packaged.reason || 'PACKAGE_PRESERVATION_REJECTED');
+}
 const auditProcess = spawnSync(process.env.FE_ACCOUNTS_PYTHON || 'python3',
-  [path.join(path.dirname(plannerPath), 'accounts_2027_verify.py'), inputPath, candidatePath, requestPath],
+  [path.join(path.dirname(plannerPath), 'accounts_2027_verify.py'), inputPath, preservedPath, requestPath],
   {encoding:'utf8',maxBuffer:100000});
 let audit;
 try { audit = JSON.parse(auditProcess.stdout); }
