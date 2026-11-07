@@ -431,3 +431,19 @@ Código y prueba guardados; NO desplegados. Sin red en ensayos, escrituras Drive
 conversión de libros, cambios de permisos, sesiones o comunicaciones. Las tareas
 remotas de copia nativa anunciadas en el chat no se certifican aquí por lectura
 de este código. Sincronización general apagada y original sin modificar.
+
+
+## Identidad PDF conservada durante reintentos · 7 noviembre 2026
+
+La huella guardada se contrasta ahora antes de feCiCuentas_ y feCiEnviar_,
+tanto para INTEGRADO como para PENDIENTE. Antes un fallo convertía la fila a
+PENDIENTE y el reintento podía omitir el control previo de identidad PDF.
+Un cambio de bytes exige conciliación y conserva huella/destino anteriores.
+
+Nueva prueba con dobles cubre ambos estados, rechazo antes de cuentas/envío,
+evidencia conservada y bloqueo liberado. Nueve pruebas afectadas superadas
+localmente con node --test tests/contract-integration-mode.test.cjs.
+Código actual releído y SHA contrastado antes de guardar; sin sobrescritura
+forzada. Preparado y probado localmente, NO desplegado. No se ejecutaron rutas
+Google/XLSX ni se crearon identidades, documentos, mensajes o movimientos reales.
+Libro original intacto; MODO PRUEBA y sincronización general apagada.
