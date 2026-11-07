@@ -108,3 +108,18 @@ test('Financial plan never rounds away fractions smaller than one cent',()=>{
  for(const value of [0.000001,1.000001,0.001,1.005,1230.000001])assert.throws(()=>plan(value),/Importes guardados no válidos/);
  for(const value of [0,0.01,0.29,1230.21])assert.equal(plan(value).total_eur,value);
 });
+
+test('Pending retry rejects a changed PDF before accounts and delivery while retaining evidence',()=>{
+ for(const state of ['PENDIENTE','INTEGRADO']){
+  let accounts=0,sends=0,released=0;const writes=[],records=[['Clave'],['same',state,'original-checksum','original-account']];
+  const journal={getDataRange:()=>({getValues:()=>records}),getLastRow:()=>2,getRange:()=>({setValues:v=>writes.push(v)})};
+  const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>({FE_APP_TEST_MODE:'true',FE_CONTRACT_INTEGRATION_ENABLED:'TEST_ONLY'})[k]}),
+   LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>released++})},
+   libro_:()=>({getSheetByName:()=>({getDataRange:()=>({getValues:()=>[['header'],['','GENERADO','{"presupuesto":{}}','','','','url']]})})}),
+   SpreadsheetApp:{flush:()=>{}},DriveApp:{getFileById:()=>({getBlob:()=>({getBytes:()=>[37,80,68,70,45]})})}});
+  vm.runInContext(code,ctx);Object.assign(ctx,{feCiSheet_:()=>journal,feCiPlan_:()=>({source_key:'same',quote_number:'test',revision:1,contract_url:'https://drive.google.com/file/d/synthetic/view'}),feContratoPresupuesto_:()=>({}),feCiSha_:()=> 'changed-checksum',feCiCuentas_:()=>{accounts++;return 'original-account';},feCiEnviar_:()=>{sends++;return {state:'recorded'};}});
+  assert.equal(vm.runInContext('feContratosIntegrarPendientes()',ctx).errores,1);
+  assert.equal(accounts,0);assert.equal(sends,0);assert.equal(released,1);
+  assert.equal(writes.length,1);assert.equal(writes[0][0][2],'original-checksum');assert.equal(writes[0][0][3],'original-account');
+ }
+});
