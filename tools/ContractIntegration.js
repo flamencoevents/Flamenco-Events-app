@@ -32,6 +32,7 @@ function feCiEnviar_(p){
  const raw=JSON.stringify(p),ts=String(Math.floor(Date.now()/1000)),signature=feAppMac_(ts+'.'+raw,secret);
  const response=UrlFetchApp.fetch('https://vulbpjayunvlpftgfzyf.supabase.co/functions/v1/ingest-generated-contract',{method:'post',contentType:'application/json',payload:raw,headers:{'x-fe-timestamp':ts,'x-fe-signature':signature},muteHttpExceptions:true,followRedirects:false,validateHttpsCertificates:true});
  let result;try{result=JSON.parse(response.getContentText());}catch(e){throw Error('Respuesta de integración no válida');}
+ if(!result||typeof result!=='object'||Array.isArray(result))throw Error('Respuesta de integración no válida');
  if(![200,201].includes(response.getResponseCode())||!['recorded','already_recorded'].includes(result.state))throw Error('Gestión pendiente: HTTP '+response.getResponseCode());return result;
 }
 function feContratosIntegrarPendientes(){
