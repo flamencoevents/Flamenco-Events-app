@@ -583,3 +583,30 @@ No se invocó el recuperador ni se enviaron mensajes para probarlo; no se
 crearon usuarios, sesiones ni asignaciones ficticias que limpiar. No se
 escribió CUENTAS 27, no se acredita firma/cierre/cobro y no se publicó un
 escritor XLSX. MODO PRUEBA conservado.
+
+
+## Ventana de pendientes corregida · 7 noviembre 2026
+
+Detectado y reproducido un desfase en AppWhatsAppSync.js: con última fila 102,
+la ventana de 100 filas terminaba en 101 y omitía la solicitud más reciente.
+Corregido únicamente el inicio de rango de lastRow-100 a lastRow-99; mantiene
+máximo 100 filas, orden descendente, cuatro entregas por ejecución e interruptor
+existente. No se activó sincronización.
+
+Dos pruebas nuevas locales superadas y sintaxis válida:
+node --test tests/whatsapp-sync-window.test.cjs
+node --check AppWhatsAppSync.js
+La regresión falló antes de la corrección (101 frente a 102); cubre límites
+2, 100, 101, 102 y 150, primera entrega más reciente, límite de cuatro y
+ausencia de lectura del libro con sincronización desactivada.
+Solo dobles ficticios, sin servicios externos ni sesiones/asignaciones que limpiar.
+
+Código 9f8ac397af0215bb82d4b1456029574d86f2d7b7; pruebas
+a1b574b9639e8ec8ec40f9ca7861292e8bc5ea00; workflow
+35c89ba46f66edb89060fa396b1d98d33b855616 (repositorio Apps Script).
+CI 42383852366 pendiente al registrar; no se atribuye aún éxito.
+Preparado y guardado en GitHub, NO desplegado: la última publicación comprobada
+continúa en v61. Próximo paso: contrastar nuevamente el archivo del editor antes
+de aplicar esta sustitución puntual; no hacer clasp push del proyecto completo.
+No hay prueba nueva de extremo a extremo ni escritura de CUENTAS 27.
+MODO PRUEBA, fórmulas, plantillas, permisos y sincronización general conservados.
