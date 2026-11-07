@@ -36,7 +36,7 @@ function feCiEnviar_(p){
 }
 function feContratosIntegrarPendientes(){
  const props=props_();if(props.getProperty('FE_CONTRACT_INTEGRATION_ENABLED')!=='TEST_ONLY')return {state:'disabled'};
- if(props.getProperty('FE_APP_TEST_MODE')==='false')throw Error('Integración de prueba bloqueada en modo real');
+ if(props.getProperty('FE_APP_TEST_MODE')!=='true')throw Error('Integración de prueba bloqueada en modo real');
  const lock=LockService.getScriptLock();if(!lock.tryLock(1000))return {state:'busy'};
  const result={integrados:0,existentes:0,errores:0};
  try{
@@ -62,7 +62,7 @@ function feContratosIntegrarPendientes(){
  console.log(JSON.stringify(result));return result;
 }
 function feContratosActivarIntegracionPrueba(){
- if(props_().getProperty('FE_APP_TEST_MODE')==='false')throw Error('Requiere modo prueba');
+ if(props_().getProperty('FE_APP_TEST_MODE')!=='true')throw Error('Requiere modo prueba');
  props_().setProperty('FE_CONTRACT_INTEGRATION_ENABLED','TEST_ONLY');
  if(!ScriptApp.getProjectTriggers().some(t=>t.getHandlerFunction()==='feContratosIntegrarPendientes'))ScriptApp.newTrigger('feContratosIntegrarPendientes').timeBased().everyMinutes(5).create();
  return feContratosIntegrarPendientes();
