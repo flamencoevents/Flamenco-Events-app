@@ -414,3 +414,20 @@ pruebas, accesos nuevos, comunicaciones o escrituras en libros. El código leíd
 incluye integración auxiliar 2027 y ensayo XLSX; no se ejecutaron esas rutas ni
 se modifica el original. La identificación del destino 2027 y acceso Google
 pendientes en el chat no se dan por resueltos. Sincronización general apagada.
+
+
+## Fracciones de céntimo rechazadas · 7 noviembre 2026
+
+La comparación anterior redondeaba ambos lados y admitía cantidades como
+0.000001 o 1230.000001. feCiPlan_ exige ahora igualdad numérica con su
+representación de dos decimales: valida sin modificar el importe. No cambia
+fórmulas fiscales ni redondea valores al importarlos.
+
+Regresión nueva: cinco cantidades subcéntimo rechazadas y cuatro importes
+exactos (incluido 0,29) conservados. Se comprobó que el test falla con la
+validación anterior (Missing expected exception). Ocho pruebas locales afectadas
+superadas con node --test tests/contract-integration-mode.test.cjs.
+Código y prueba guardados; NO desplegados. Sin red en ensayos, escrituras Drive,
+conversión de libros, cambios de permisos, sesiones o comunicaciones. Las tareas
+remotas de copia nativa anunciadas en el chat no se certifican aquí por lectura
+de este código. Sincronización general apagada y original sin modificar.
