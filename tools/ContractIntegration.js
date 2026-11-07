@@ -12,7 +12,7 @@ function feCiPlan_(d,url){
  const date=b.request.fecha;if(!/^\d{4}-\d\d-\d\d$/.test(date)||isNaN(new Date(date+'T12:00:00Z').getTime())||new Date(date+'T12:00:00Z').toISOString().slice(0,10)!==date)throw Error('Fecha de evento no válida');
  if(!/^https:\/\/drive\.google\.com\/file\/d\/[\w-]+\/view(?:\?[^#]*)?$/.test(url))throw Error('Falta PDF contractual privado de Drive');
  feContratoModalidad_(b);
- const c=b.calculo;for(const k of ['total','reserva','pendiente'])if(typeof c[k]!=='number'||!Number.isFinite(c[k])||!Number.isSafeInteger(Math.round(c[k]*100))||c[k]<0||Math.round(c[k]*100)!==Math.round(c[k]*100000)/1000)throw Error('Importes guardados no válidos');
+ const c=b.calculo;for(const k of ['total','reserva','pendiente'])if(typeof c[k]!=='number'||!Number.isFinite(c[k])||!Number.isSafeInteger(Math.round(c[k]*100))||c[k]<0||Number(c[k].toFixed(2))!==c[k])throw Error('Importes guardados no válidos');
  if(Math.round((c.reserva+c.pendiente)*100)!==Math.round(c.total*100))throw Error('Reserva y saldo no concilian');
  return {source_key:b.key,quote_number:b.id,revision:b.revision,is_test:true,event_date:date,client_label:feCiTexto_('PRUEBA · '+b.request.cliente,150),venue:feCiTexto_(b.request.lugar,180),service:feCiTexto_(b.request.servicios.map(x=>x.artistas+'; '+x.duracion).join(' / '),600),total_eur:c.total,deposit_eur:c.reserva,balance_eur:c.pendiente,contract_url:url};
 }
