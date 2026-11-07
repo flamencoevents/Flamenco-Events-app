@@ -1,3 +1,15 @@
+## Comprobación de archivo solicitado · 7 noviembre 2026
+
+Nacho indica que todos sus libros son documentos Google. Se vuelve a contrastar sin escrituras: la búsqueda exacta de archivos nativos cuyo nombre contiene CUENTAS/Cuentas en la cuenta Flamenco Events solo devuelve CUENTAS 25/26, ID 1dsgfqv6YG49-_QaAx-0dUyvLImBTdkkDEvgXBu1QZuY, application/vnd.google-apps.spreadsheet. Metadatos de sus pestañas no incluyen el libro real 2027 (solo el ensayo histórico PRUEBA contratos 2027).
+
+El archivo identificado hasta ahora como CUENTAS 27, ID 174JxA-f27Fl4PS5jHibG0R8q0RqOgKfG, conserva MIME Excel y get_spreadsheet_metadata responde explícitamente que es un archivo Office, no nativo. No hay conversión ni escritura en él. Falta identificar por enlace la versión nativa 2027 a la que se refiere el usuario. No publicar/activar el espejo XLSX preparado como sustitución de esa identificación; permanece inactivo. Si se confirma otro ID nativo, usar la integración de Sheets y retirar el camino innecesario antes de publicar.
+
+Preparación guardada en app 3178a25b6c8e481f58deb696bd8a4f9a4650d6f6 y módulo privado be2734625b04e000445db9a53f58796145d79041; NO guardada en editor remoto ni desplegada. La sesión remota está cerrada. La identificación segura enviada no completó el acceso; Google muestra «Se cambió tu contraseña hace 5 días». No repetir ni recoger contraseñas por chat.
+
+CI inicial reveló dos dobles de propiedades que activaban todas las claves por defecto. Corregidos sin debilitar aserciones en 0f10958cbbf0d9e29f7dfd9bbc93207efca9d4ce. Comprobación local desde la raíz correcta: 19 pruebas afectadas pasan. Workflow Staff accounts catalog checks 42356488744 y Pages 42356488310 success. Las pruebas nuevas son sintéticas; no hay evidencia remota de If-Match, espejo XLSX o escritura original.
+
+---
+
 ## Continuación: escritor auxiliar dentro del XLSX · 7 noviembre 2026
 
 PREPARADO Y PROBADO LOCALMENTE, NO DESPLEGADO. La conexión anterior sigue activa; CUENTAS 27 conserva su estado original. El navegador remoto muestra «Saliste de la cuenta» para Flamenco Events y solicita identificación; la sesión de la publicación v59 no está disponible en esta continuación. No se vuelve a lanzar clasp con invalid_rapt.
