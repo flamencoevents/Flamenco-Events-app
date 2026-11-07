@@ -530,3 +530,20 @@ La copia tools/ContractIntegration.js de este repositorio conserva el experiment
 NO usarla para reemplazar la fuente de publicación. Referencia durable actual:
 ContractIntegration.js en flamenco-events-appscript; límites en docs/integracion-app.md.
 Sin escrituras contables, cambios de permisos, envíos ni activación de sincronización.
+
+
+## Comparación remota de tres archivos adicionales · 7 noviembre 2026
+
+Solo lectura en el editor autenticado: AppWhatsAppSync y AppBridgeEndpoint
+coinciden exactamente con sus blobs actuales del repositorio. Contratos coincide
+en contenido y difiere únicamente en un salto de línea final (26580 frente a
+26581 caracteres); no se normalizó ni escribió para ocultar esa diferencia.
+Huella, blob y alcance registrados sin código privado en
+`docs/editor-reviewed-files-20261107.json` del repositorio Apps Script.
+
+Con ContractIntegration revisado anteriormente, son cuatro archivos examinados;
+NO es comparación completa del proyecto ni exportación del bundle desplegado.
+No se publica ni ejecuta el circuito y no se repiten pruebas de código sin cambios.
+Resto de archivos, HTML y manifiesto pendientes antes de cualquier reemplazo total.
+Sin modificaciones en Google, sesiones ficticias, permisos, libros, comunicaciones
+o sincronización general. Las lecturas no acreditan firma, cobro o cierre.
