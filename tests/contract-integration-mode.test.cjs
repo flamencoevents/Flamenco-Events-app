@@ -67,3 +67,20 @@ test('Partial delivery failure recovers one journal identity and subsequent retr
  assert.equal(vm.runInContext('feContratosIntegrarPendientes()',ctx).existentes,1);
  assert.equal(sends,2);assert.equal(accountKeys.size,1);assert.equal(records.length,2);assert.equal(releases,3);
 });
+
+test('Repeated source rows reuse the journal created earlier in the same batch',()=>{
+ const records=[['Clave']],accountKeys=new Set();let sends=0,releases=0;
+ const journal={getDataRange:()=>({getValues:()=>records.map(r=>r.slice())}),getLastRow:()=>records.length,
+ getRange:row=>({setValues:values=>{records[row-1]=Array.from(values[0]);}})};
+ const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':'TEST_ONLY'}),
+ LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>releases++})},
+ libro_:()=>({getSheetByName:()=>({getDataRange:()=>({getValues:()=>[['header'],['','GENERADO','{"presupuesto":{}}','','','','url'],['','GENERADO','{"presupuesto":{}}','','','','url']]})})}),
+ SpreadsheetApp:{flush:()=>{}},DriveApp:{getFileById:()=>({getBlob:()=>({getBytes:()=>[37,80,68,70,45]})})}});
+ vm.runInContext(code,ctx);Object.assign(ctx,{
+ feCiSheet_:()=>journal,feCiPlan_:()=>({source_key:'same',quote_number:'test',revision:1,contract_url:'https://drive.google.com/file/d/synthetic/view'}),
+ feContratoPresupuesto_:()=>({}),feCiSha_:()=> 'synthetic-checksum',
+ feCiCuentas_:p=>{accountKeys.add(p.source_key);return 'synthetic-account';},
+ feCiEnviar_:()=>{sends++;return {state:'recorded'};}});
+ const result=vm.runInContext('feContratosIntegrarPendientes()',ctx);
+ assert.equal(result.integrados,1);assert.equal(result.existentes,1);assert.equal(result.errores,0);assert.equal(records.length,2);assert.equal(sends,1);assert.equal(releases,1);
+});
