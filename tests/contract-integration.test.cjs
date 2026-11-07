@@ -18,7 +18,7 @@ test('same batch reuses a journal row created by an earlier occurrence',()=>{
  const c=context(),src=book(),f=fixture();
  const row=[f.presupuesto.id,'GENERADO',JSON.stringify(f),'','','',url];
  src.sheets.FE_Contratos=new Sheet([['header'],row.slice(),row.slice()]);
- c.libro_=()=>src;c.props_=()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':'TEST_ONLY'});
+ c.libro_=()=>src;c.props_=()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':k==='FE_CONTRACT_INTEGRATION_ENABLED'?'TEST_ONLY':null});
  c.SpreadsheetApp={flush(){}};let released=0,sends=0;
  c.LockService={getScriptLock:()=>({tryLock:()=>true,releaseLock(){released++;}})};
  c.feContratoPresupuesto_=()=>f.presupuesto;

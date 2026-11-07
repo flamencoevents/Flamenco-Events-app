@@ -1,3 +1,19 @@
+## Continuación: escritor auxiliar dentro del XLSX · 7 noviembre 2026
+
+PREPARADO Y PROBADO LOCALMENTE, NO DESPLEGADO. La conexión anterior sigue activa; CUENTAS 27 conserva su estado original. El navegador remoto muestra «Saliste de la cuenta» para Flamenco Events y solicita identificación; la sesión de la publicación v59 no está disponible en esta continuación. No se vuelve a lanzar clasp con invalid_rapt.
+
+Se amplía tools/ContractIntegration.js con un espejo de prueba dentro del XLSX original, conservando ID, MIME, hojas existentes, fórmulas, estilos, relaciones y datos. Solo incorpora una pestaña propia PRUEBA contratos 2027; no escribe en fechas cerradas ni en balances. Fuente: previsión nativa 2027 previamente conciliada, nuevamente contrastada con el contrato y el SHA-256 del PDF.
+
+El escritor conserva todos los componentes existentes salvo las tres inserciones de registro de la nueva pestaña (workbook, relaciones y tipos); en reintentos solo actualiza su XML. Auditoría de componentes antes y después de guardar. Copia de seguridad privada antes de modificar el original. Actualización Office con If-Match y ETag de Drive v2; conflicto de versión bloquea. El ensayo obligatorio en copia debe demostrar primero HTTP 412 con ETag falso, bytes sin cambios, alta correcta, reintento sin escritura y original intacto. Esta garantía condicional está aún pendiente de prueba remota, no se deduce de los dobles.
+
+La activación exige FE_APP_TEST_MODE=true, ensayo remoto registrado y FE_XLSX_PREVIEW_2027=TEST_ONLY. El temporizador existente solo invoca el espejo tras revalidar el lote sin errores, dentro del bloqueo. Sin activación la ampliación no toca el Excel. Funciones preparadas: feExcel2027ProbarCopia y feExcel2027ConectarPrueba. No ejecutar la segunda sin ensayo remoto positivo y revisión de la copia.
+
+Validación local: 18 pruebas Node superadas (11 existentes y 7 nuevas); conserva fórmulas, estilos y partes opacas, controla colisiones, fechas 1904, XML, números inválidos, escape de texto, reintentos y modo. La prueba existente de lote actualiza su doble de propiedades para devolver null ante claves desconocidas; no se cambia su aserción de unicidad. Sin contratos reales nuevos, usuarios, permisos ni movimientos económicos.
+
+Pendiente concreto: recuperar acceso al editor remoto, comparar módulo remoto con v59, guardar solo ContractIntegration.gs, ejecutar el ensayo en copia, verificar visualmente la pestaña, activar espejo y auditar el original. Publicar únicamente tras evidencia remota y documentar el resultado. No confundir esta nueva pestaña de pruebas con el escritor de fechas cerradas reales, que sigue sin un contrato elegible acreditado.
+
+---
+
 ## Estado vigente · 7 noviembre 2026, 08:45 Europe/Madrid
 
 Recorrido de prueba 2026/2027 conectado. El destino 2027 es un archivo nativo auxiliar independiente, «PRUEBA integración contratos 2027 · Flamenco Events», ID 1ZE66Ko8bnh3qp9Z2Mfp8VOG2pmH_a-EyUJZRvQVnHtE; pestaña PRUEBA contratos 2027, gid 752903556. Se copió únicamente la pestaña auxiliar del ensayo previo; el XLSX original de CUENTAS 27 no se convierte ni se escribe. El ensayo previo dentro del libro 2026 se conserva como histórico y ya no es destino. Esta conexión no equivale a contabilización real ni a vinculación comercial.
