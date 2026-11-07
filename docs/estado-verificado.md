@@ -399,3 +399,18 @@ No se modificó la implementación ni se repitieron baterías anteriores sin cam
 Prueba y evidencia guardadas. El código actual incluye destino auxiliar 2027;
 no equivale al XLSX original. Sin despliegue en esta continuación, cuentas reales
 intactas y sincronización general apagada.
+
+
+## Céntimos representables sin pérdida · 7 noviembre 2026
+
+feCiPlan_ rechaza total, reserva y saldo si sus céntimos exceden el rango entero
+seguro de JavaScript. Evita validar/importar cantidades que perderían precisión;
+no recalcula impuestos ni cambia los importes admitidos. Caso nuevo: 0,29 válido
+y cantidades inseguras rechazadas en los tres campos antes de efectos externos.
+Siete pruebas locales afectadas superadas con
+node --test tests/contract-integration-mode.test.cjs.
+Código y pruebas guardados; NO desplegados en esta continuación. Sin red en las
+pruebas, accesos nuevos, comunicaciones o escrituras en libros. El código leído
+incluye integración auxiliar 2027 y ensayo XLSX; no se ejecutaron esas rutas ni
+se modifica el original. La identificación del destino 2027 y acceso Google
+pendientes en el chat no se dan por resueltos. Sincronización general apagada.
