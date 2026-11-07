@@ -43,9 +43,11 @@ function feContratosIntegrarPendientes(){
  try{
   const book=libro_(),source=book.getSheetByName('FE_Contratos');if(!source)return result;
   const journal=feCiSheet_(book,'FE_Integracion_Contratos',['Clave','Estado','Huella PDF','Cuentas','Actualizado','Detalle']);
-  const rows=source.getDataRange().getValues(),records=journal.getDataRange().getValues();
+  const rows=source.getDataRange().getValues();
   for(let i=rows.length-1;i>=1&&result.integrados+result.errores<4;i--){
    if(rows[i][1]!=='GENERADO')continue;
+   // El lote puede haber creado o actualizado una entrada en la vuelta anterior.
+   const records=journal.getDataRange().getValues();
    let key='fila-'+(i+1),j=-1,journalConflict=false;
    try{
     const d=JSON.parse(rows[i][2]),p=feCiPlan_(d,String(rows[i][6]||''));key=p.source_key;
@@ -70,3 +72,4 @@ function feContratosActivarIntegracionPrueba(){
  if(!ScriptApp.getProjectTriggers().some(t=>t.getHandlerFunction()==='feContratosIntegrarPendientes'))ScriptApp.newTrigger('feContratosIntegrarPendientes').timeBased().everyMinutes(5).create();
  return feContratosIntegrarPendientes();
 }
+

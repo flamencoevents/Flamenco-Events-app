@@ -12,3 +12,19 @@ function endpoint(){let handler,rows=new Map();const db={from(name){if(name==='a
 function payload(){const c=context();return {...JSON.parse(JSON.stringify(c.feCiPlan_(fixture(),url))),pdf_sha256:'a'.repeat(64),accounts_url:'https://docs.google.com/spreadsheets/d/1dsgfqv6YG49-_QaAx-0dUyvLImBTdkkDEvgXBu1QZuY/edit#gid=77&range=A2:N2'};}
 function request(p,patch={}){const raw=JSON.stringify(p),ts=String(Math.floor(Date.now()/1000));return new Request('https://test.invalid',{method:'POST',body:raw,headers:{'x-fe-timestamp':ts,'x-fe-signature':crypto.createHmac('sha256','s'.repeat(40)).update(ts+'.'+raw).digest('hex'),...patch}});}
 test('signed request, duplicate race path, conflicts and no unsigned writes',async()=>{const e=endpoint(),p=payload();a.equal((await e.handler(request(p,{'x-fe-signature':'0'.repeat(64)}))).status,401);a.equal(e.rows.size,0);a.equal((await e.handler(request(p))).status,201);a.equal((await e.handler(request(p))).status,200);a.equal(e.rows.size,1);a.equal((await e.handler(request({...p,total_eur:1401,balance_eur:981}))).status,409);a.equal((await e.handler(request(p,{origin:'https://evil.invalid'}))).status,403);a.equal((await e.handler(request({...p,is_test:false}))).status,422);});
+
+
+test('same batch reuses a journal row created by an earlier occurrence',()=>{
+ const c=context(),src=book(),f=fixture();
+ const row=[f.presupuesto.id,'GENERADO',JSON.stringify(f),'','','',url];
+ src.sheets.FE_Contratos=new Sheet([['header'],row.slice(),row.slice()]);
+ c.libro_=()=>src;c.props_=()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':'TEST_ONLY'});
+ c.SpreadsheetApp={flush(){}};let released=0,sends=0;
+ c.LockService={getScriptLock:()=>({tryLock:()=>true,releaseLock(){released++;}})};
+ c.feContratoPresupuesto_=()=>f.presupuesto;
+ c.DriveApp={getFileById:()=>({getBlob:()=>({getBytes:()=>[...Buffer.from('%PDF-test')]})})};
+ c.feCiCuentas_=()=> 'https://test.invalid/accounts';c.feCiEnviar_=()=>{sends++;return {state:'recorded'};};
+ const result=c.feContratosIntegrarPendientes();
+ a.equal(result.integrados,1);a.equal(result.existentes,1);a.equal(sends,1);
+ a.equal(src.sheets.FE_Integracion_Contratos.rows.length,2);a.equal(released,1);
+});
