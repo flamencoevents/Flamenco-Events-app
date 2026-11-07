@@ -304,3 +304,23 @@ no escribe XLSX ni llama a servicios. No está conectado al circuito remoto.
 Evidencia, reproducción y límites: [circuito-whatsapp-cuentas.md](circuito-whatsapp-cuentas.md#registro-local-de-operaciones--6-noviembre-2026).
 Modo prueba, libro real intacto y sincronización general apagada. No hay nuevo
 despliegue Apps Script/Supabase ni cambio funcional en el panel.
+
+
+## Revisión de continuidad · 7 noviembre 2026
+
+El commit 95cf07646ae6a237b78e1658bf394ab80127e0a1 guarda en
+`tools/ContractIntegration.js` una revalidación de PDF y referencia de cuentas
+incluso para entradas INTEGRADO. Leído el diff: compara huella y destino antes
+de aceptar un reintento; el fallo queda PENDIENTE. Esta lectura no demuestra
+publicación en Apps Script ni ejecución con Drive real.
+
+La conexión bandeja contractual → seguimiento comercial anunciada en el chat no
+tiene todavía cierre verificable en estos documentos. No tratar el anuncio como
+implementación terminada ni la presencia de PDF como aceptación, firma o cobro.
+Próxima revisión: inspeccionar el generador, receptor y pruebas actuales de esa
+conexión, comprobar recuperación sin duplicados y registrar despliegue aparte.
+No repetir la supuesta actividad concurrente como bloqueo sin evidencia nueva.
+
+Esta continuación solo concilia documentación con el código guardado: sin pruebas
+repetidas, despliegues, sesiones, comunicaciones o escrituras en cuentas. MODO
+PRUEBA y sincronización general apagada siguen siendo condiciones obligatorias.
