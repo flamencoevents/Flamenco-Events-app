@@ -477,3 +477,19 @@ docs/integracion-app.md del repositorio Apps Script; commit funcional
 5190e00db32dd78785fa2cbeb2b76af5077efcbb, ejecución CI 42369723609 pendiente al
 registrar. Sin cambios de código de negocio ni despliegue Google. No se usaron
 sesiones, credenciales o libros; MODO PRUEBA y sincronización apagada conservados.
+
+
+## Revisión del editor antes de publicar · 7 noviembre 2026
+
+Preparada en Apps Script la utilidad tools/verify-script-snapshot.cjs y cuatro
+pruebas locales superadas. Contrasta inventario/tipos/código de snapshot privado
+con SHA-256 previamente revisado; detecta cambios y archivos añadidos/eliminados,
+rechaza duplicados y baseline ausente, sin imprimir código. Pruebas conectadas
+a CI en 3801cf1df44448d174cfb63838f094c8c1186b61; ejecución 42374173861 pendiente
+al guardar. Evidencia y límites en docs/integracion-app.md de ese repositorio.
+
+Solo preparado: no se ha leído aquí el código actual del editor Google ni se ha
+integrado el comparador como bloqueo efectivo de clasp push. No resuelve por sí
+solo cambios entre lectura y publicación. Sigue pendiente revisión real antes
+de publicar. Sin escritura remota, usuarios, sesiones, mensajes, cambios de
+libros o activación de sincronización; MODO PRUEBA conservado.
