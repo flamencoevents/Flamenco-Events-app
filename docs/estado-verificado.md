@@ -348,3 +348,15 @@ Dos pruebas locales superadas con node --test tests/contract-integration-mode.te
 incluido caso nuevo de diario ambiguo con cero efectos y limpieza del bloqueo.
 Preparado y guardado; NO desplegado ni probado con Google real. Sin escritura
 en CUENTAS 27, sesiones nuevas, comunicaciones ni activación de sincronización.
+
+
+## Respuesta del receptor contractual · 7 noviembre 2026
+
+feCiEnviar_ valida objeto JSON no nulo ni array antes de consultar state; una
+respuesta null ya no produce TypeError interno. Se conservan HTTP 200/201 y
+estados recorded/already_recorded como únicos resultados aceptados.
+Tres pruebas locales afectadas superadas (node --test tests/contract-integration-mode.test.cjs),
+incluida matriz nueva de nueve respuestas: JSON inválido, null, array, primitivo,
+estado ausente, redirección, HTTP 500 y dos éxitos sintéticos. Sin red ni secretos
+reales. Código y pruebas guardados, NO desplegados. No acredita el recorrido
+Google real ni modifica CUENTAS 27, permisos, sincronización o estados comerciales.
