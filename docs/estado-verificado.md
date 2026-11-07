@@ -516,3 +516,17 @@ se conservaron sus cambios; no afirmar igualdad de todo el proyecto con main.
 Antes de publicar por clasp, reconciliar esas diferencias, especialmente destinos
 y rutas XLSX, sin forzar sobrescritura. No se activó sincronización general ni
 se alteraron libros en esta continuación.
+
+
+## Fuente de publicación reconciliada con v60 · 7 noviembre 2026
+
+ContractIntegration.js del repositorio Apps Script igualado al texto observado y
+releído en el editor (8365 caracteres, blob 1791e459686b60fdbd239bc81166fac25deeb014).
+El repositorio conservaba una ruta experimental de escritura XLSX ausente del
+editor; archivada íntegra como .experimental.txt fuera de los tipos de clasp.
+Se evita reintroducir esa ruta accidentalmente. Nueve pruebas locales y sintaxis
+superadas. No es otra publicación ni una comprobación de todo el proyecto remoto.
+La copia tools/ContractIntegration.js de este repositorio conserva el experimento;
+NO usarla para reemplazar la fuente de publicación. Referencia durable actual:
+ContractIntegration.js en flamenco-events-appscript; límites en docs/integracion-app.md.
+Sin escrituras contables, cambios de permisos, envíos ni activación de sincronización.
