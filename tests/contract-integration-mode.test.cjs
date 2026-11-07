@@ -98,3 +98,13 @@ test('Financial plan rejects unsafe integer cents before any external effect',()
   assert.throws(()=>plan(amounts),/Importes guardados no válidos/);
  }
 });
+
+test('Financial plan never rounds away fractions smaller than one cent',()=>{
+ const ctx=vm.createContext({feContratoModalidad_:()=>{}});vm.runInContext(code,ctx);
+ const plan=value=>{
+  ctx.input={presupuesto:{modelo:'FE3',modoPrueba:true,id:'X26-P999999',key:'X26-P999999-v1',revision:1,request:{fecha:'2027-08-14',cliente:'Ficticio',lugar:'Prueba',servicios:[{artistas:'Prueba',duracion:'1 h'}]},calculo:{total:value,reserva:0,pendiente:value}}};
+  return vm.runInContext("feCiPlan_(input,'https://drive.google.com/file/d/synthetic/view')",ctx);
+ };
+ for(const value of [0.000001,1.000001,0.001,1.005,1230.000001])assert.throws(()=>plan(value),/Importes guardados no válidos/);
+ for(const value of [0,0.01,0.29,1230.21])assert.equal(plan(value).total_eur,value);
+});
