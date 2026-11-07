@@ -23,3 +23,12 @@ test('Duplicate journal identities block Drive, accounts and delivery and releas
  assert.equal(result.errores,1);assert.equal(reads,0);assert.equal(accounts,0);assert.equal(sends,0);assert.equal(released,1);
  assert.equal(writes.length,0);
 });
+
+test('Delivery only accepts explicit successful receiver states and sanitizes invalid JSON shapes',()=>{
+ for(const [raw,status,ok] of [['null',200,false],['[]',200,false],['"recorded"',200,false],['{',200,false],['{}',200,false],['{"state":"recorded"}',302,false],['{"state":"recorded"}',500,false],['{"state":"recorded"}',201,true],['{"state":"already_recorded"}',200,true]]){
+  const ctx=vm.createContext({props_:()=>({getProperty:()=> 'synthetic-only-secret-not-used-remotely'}),feAppMac_:()=> 'mock',UrlFetchApp:{fetch:()=>({getContentText:()=>raw,getResponseCode:()=>status})}});
+  vm.runInContext(code,ctx);
+  if(ok)assert.ok(vm.runInContext('feCiEnviar_({is_test:true})',ctx).state);
+  else assert.throws(()=>vm.runInContext('feCiEnviar_({is_test:true})',ctx),/Respuesta de integración no válida|Gestión pendiente: HTTP/);
+ }
+});
