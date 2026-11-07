@@ -84,3 +84,17 @@ test('Repeated source rows reuse the journal created earlier in the same batch',
  const result=vm.runInContext('feContratosIntegrarPendientes()',ctx);
  assert.equal(result.integrados,1);assert.equal(result.existentes,1);assert.equal(result.errores,0);assert.equal(records.length,2);assert.equal(sends,1);assert.equal(releases,1);
 });
+
+test('Financial plan rejects unsafe integer cents before any external effect',()=>{
+ const ctx=vm.createContext({feContratoModalidad_:()=>{}});
+ vm.runInContext(code,ctx);
+ const plan=amounts=>{
+  ctx.input={presupuesto:{modelo:'FE3',modoPrueba:true,id:'X26-P999999',key:'X26-P999999-v1',revision:1,request:{fecha:'2027-08-14',cliente:'Ficticio',lugar:'Prueba',servicios:[{artistas:'Prueba',duracion:'1 h'}]},calculo:amounts}};
+  return vm.runInContext("feCiPlan_(input,'https://drive.google.com/file/d/synthetic/view')",ctx);
+ };
+ assert.equal(plan({total:0.29,reserva:0,pendiente:0.29}).total_eur,0.29);
+ for(const field of ['total','reserva','pendiente']){
+  const amounts={total:100,reserva:30,pendiente:70};amounts[field]=Number.MAX_SAFE_INTEGER;
+  assert.throws(()=>plan(amounts),/Importes guardados no válidos/);
+ }
+});
