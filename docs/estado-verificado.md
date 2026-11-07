@@ -633,3 +633,28 @@ No usar despliegue completo forzado para evitar este contraste.
 
 No es ensayo HTTP/Google real. Sin envíos, usuarios, sesiones o asignaciones
 creados; sin escrituras de CUENTAS 27. MODO PRUEBA y sincronización apagada.
+
+
+## Límite único de lectura de cola · 7 noviembre 2026
+
+AppWhatsAppSync.js consulta ahora getLastRow una sola vez para calcular inicio y
+cantidad del rango. Antes realizaba tres consultas: un crecimiento intercalado
+podía combinar límites distintos. Regresión sintética nueva falló antes del
+cambio y pasó después; no implica bloqueo de ediciones ni snapshot transaccional
+del contenido de Sheets. Las filas añadidas después del límite quedan para otra
+ejecución. Se conserva la ventana máxima de 100 y cuatro entregas por pasada.
+
+Cuatro pruebas afectadas locales y sintaxis superadas tras cambiar implementación:
+node --test tests/whatsapp-sync-window.test.cjs
+node --check AppWhatsAppSync.js
+Código 80885ff5c0bc1331d80f6377a01df8ec281e15d4; prueba
+9ca131281c86d972153643b9dc5782e62c497636 (Apps Script).
+Además, CI anterior 42385940539 success confirma la prueba de reintentos guardada
+en e447f77d5aaddf5e86c3a14e99b9520e1837d67f; no es CI del cambio nuevo.
+
+Preparado y guardado, sin publicación Google. Última publicación comprobada v61.
+El bloqueo de acceso al editor documentado sigue sin resolución verificada;
+no se repitió navegación ni se usó push forzado. Pendiente contraste remoto antes
+de publicar los cambios de ventana/límite. Sin envío real, usuarios, sesiones o
+asignaciones creados, ni escritura en CUENTAS 27. MODO PRUEBA y sincronización
+general apagada. Pruebas con dobles, no ensayo de extremo a extremo.
