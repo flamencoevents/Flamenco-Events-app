@@ -465,3 +465,15 @@ evidencia y límites en docs/integracion-app.md de Apps Script.
 No se ha publicado en Google ni modificado la implementación del editor, que
 requiere contraste actual antes de sobrescribirla. Sin cambios en libros,
 clientes, envíos, permisos, fórmulas, plantillas o sincronización general.
+
+
+## Publicación: archivos exactos y contrato obligatorio · 7 noviembre 2026
+
+Apps Script workflow ahora exige ContractIntegration.js y compara nombres de
+archivos completos. Defecto reproducido: Formulario.html ausente podía pasar
+por coincidencia parcial con ContratoFormulario.html. Tres pruebas locales
+nuevas superadas; conectadas al workflow de publicación. Evidencia detallada en
+docs/integracion-app.md del repositorio Apps Script; commit funcional
+5190e00db32dd78785fa2cbeb2b76af5077efcbb, ejecución CI 42369723609 pendiente al
+registrar. Sin cambios de código de negocio ni despliegue Google. No se usaron
+sesiones, credenciales o libros; MODO PRUEBA y sincronización apagada conservados.
