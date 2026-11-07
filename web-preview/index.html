@@ -104,6 +104,14 @@
   function hide(){panel.hidden=true;opener.hidden=false;opener.focus();}
   close.addEventListener('click',hide);
   opener.addEventListener('click',show);
+  // En pantallas pequeñas, mantener visible el acceso sin tapar la web.
+  if(window.matchMedia('(max-width: 760px)').matches){
+    panel.hidden=true;
+    opener.hidden=false;
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && !panel.hidden)hide();
+  });
   document.querySelectorAll('a[href="#contacto"]').forEach(a=>a.addEventListener('click',function(e){e.preventDefault();show();}));
 })();
 </script></body></html>
