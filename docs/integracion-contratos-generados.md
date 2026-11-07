@@ -1,3 +1,17 @@
+## Estado vigente · 7 noviembre 2026, 08:45 Europe/Madrid
+
+Recorrido de prueba 2026/2027 conectado. El destino 2027 es un archivo nativo auxiliar independiente, «PRUEBA integración contratos 2027 · Flamenco Events», ID 1ZE66Ko8bnh3qp9Z2Mfp8VOG2pmH_a-EyUJZRvQVnHtE; pestaña PRUEBA contratos 2027, gid 752903556. Se copió únicamente la pestaña auxiliar del ensayo previo; el XLSX original de CUENTAS 27 no se convierte ni se escribe. El ensayo previo dentro del libro 2026 se conserva como histórico y ya no es destino. Esta conexión no equivale a contabilización real ni a vinculación comercial.
+
+El módulo elige el archivo por fecha del evento, y el receptor rechaza año desconocido, destino de otro año y el XLSX original. La interfaz admite el nuevo enlace. Commit app d7c48ac650d5aa0c0aa439744bce6483a44d4f48; módulo privado a77faf065003eedc944ce6f88595b51f8a3c1198. Once pruebas locales superadas; workflows de catálogo y Pages completados correctamente. Receptor ingest-generated-contract versión 2 activo, firma HMAC conservada.
+
+La copia nativa se creó con zona Etc/GMT y la primera relectura falló al normalizar fechas. Se fijó explícitamente Europe/Madrid en este archivo auxiliar; metadatos y fecha mostrada verificados. Ejecución remota 08:44:10–08:44:24: {integrados:1,existentes:3,errores:0}. Reejecución 08:44:53–08:45:09: {integrados:0,existentes:4,errores:0}. Un intento intermedio terminó sin resumen por la exclusión mutua; no se contabiliza como prueba de integración.
+
+X26-P000006-v1 consta una sola vez en A2:N2 y una sola vez en generated_contract_intake; evento 2027-08-14, total previsto 1230, reserva prevista 369, saldo previsto 861. Diario INTEGRADO con enlace al nuevo archivo. Huella PDF b17d53a13e2ae47979ad48c10198dbbb7914fc3ac177745824f5f54d661852d7. Los tres contratos de 2026 conservan sus referencias y destinos. Captura del archivo auxiliar y lectura API confirman el resultado.
+
+Solo ContractIntegration.gs fue editado, con readback exacto; otros módulos preservados. Publicación remota confirmada: «La implementación se ha actualizado correctamente», versión 59, 08:45, mismo ID AKfycbwuqhtUABn3lExsnnmnkn5f9n80xLvsL02rkvL_b373uPGr0EEyuiCViqcza9Xx9MtKgg y permisos. Se mantiene TEST_ONLY y FE_APP_TEST_MODE=true. No se crean eventos comerciales, aceptaciones, firmas ni cobros. La escritura automática en el libro XLSX real de 2027 sigue pendiente.
+
+Los apartados siguientes son el historial y sus limitaciones quedan sustituidas únicamente por las comprobaciones expresas anteriores.
+
 ## Integración de contratos generados · 6 noviembre 2026
 
 Se ha conectado el contrato generado a una previsión de prueba en el libro CUENTAS 25/26 y a la bandeja administrativa generated_contract_intake. El año procede de la fecha del evento, nunca del prefijo del número. X26-P000007-v1 consta con fecha 2026-11-30, total 1400, reserva prevista 420 y saldo previsto 980. Cuenta: pestaña PRUEBA contratos 2026, fila 2 (gid 1665368309). Confirmado por lectura del diario FE_Integracion_Contratos y SQL.
