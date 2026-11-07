@@ -58,7 +58,9 @@ function feContratosIntegrarPendientes(){
     j=matches.length?matches[0].index:-1;
     const file=DriveApp.getFileById(p.contract_url.match(/\/d\/([\w-]+)/)[1]),blob=file.getBlob(),bytes=blob.getBytes();
     if(bytes.length>10485760||bytes.length<5||String.fromCharCode(...bytes.slice(0,5))!=='%PDF-')throw Error('Documento contractual no válido');
-    p.pdf_sha256=feCiSha_(bytes);p.accounts_url=feCiCuentas_(p);
+    p.pdf_sha256=feCiSha_(bytes);
+    if(j>=0&&records[j][2]&&records[j][2]!==p.pdf_sha256)throw Error('El PDF previamente registrado ha cambiado; requiere conciliación');
+    p.accounts_url=feCiCuentas_(p);
     if(j>=0&&records[j][1]==='INTEGRADO'){if(records[j][2]!==p.pdf_sha256||records[j][3]!==p.accounts_url)throw Error('El documento integrado ha cambiado; requiere conciliación');result.existentes++;continue;}
     const answer=feCiEnviar_(p);const row=j>=0?j+1:journal.getLastRow()+1;
     journal.getRange(row,1,1,6).setValues([[key,'INTEGRADO',p.pdf_sha256,p.accounts_url,new Date(),answer.state]]);SpreadsheetApp.flush();result.integrados++;
