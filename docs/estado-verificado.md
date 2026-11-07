@@ -337,3 +337,14 @@ ambas entradas y cero efectos. Código y prueba preparados; NO desplegados.
 No se crearon triggers, sesiones, documentos ni comunicaciones. Sin escritura
 remota, CUENTAS 27 intacto y sincronización general apagada. La prueba usa dobles,
 no acredita Google ni integración de extremo a extremo.
+
+
+## Duplicados en diario contractual · 7 noviembre 2026
+
+ContractIntegration.js rechaza claves múltiples en el diario antes de leer Drive,
+escribir cuentas o enviar al receptor. Conserva las filas ambiguas sin añadir
+otra ni sobrescribir evidencia; contabiliza error y libera el bloqueo.
+Dos pruebas locales superadas con node --test tests/contract-integration-mode.test.cjs,
+incluido caso nuevo de diario ambiguo con cero efectos y limpieza del bloqueo.
+Preparado y guardado; NO desplegado ni probado con Google real. Sin escritura
+en CUENTAS 27, sesiones nuevas, comunicaciones ni activación de sincronización.
