@@ -360,3 +360,15 @@ incluida matriz nueva de nueve respuestas: JSON inválido, null, array, primitiv
 estado ausente, redirección, HTTP 500 y dos éxitos sintéticos. Sin red ni secretos
 reales. Código y pruebas guardados, NO desplegados. No acredita el recorrido
 Google real ni modifica CUENTAS 27, permisos, sincronización o estados comerciales.
+
+
+## Evidencia conservada ante fallo · 7 noviembre 2026
+
+El registro PENDIENTE conserva ahora huella y destino previamente registrados
+si una revalidación falla, en lugar de borrarlos. El detalle de error lleva prefijo
+Error: y elimina controles para almacenarse como texto, incluso si el mensaje
+empieza por =. Cuatro pruebas afectadas superadas localmente con
+node --test tests/contract-integration-mode.test.cjs; caso nuevo con fallo Drive
+simulado, evidencia conservada y bloqueo liberado. Preparado y guardado, NO
+desplegado. Sin acceso Drive real, escritura contable, sesiones, envíos o
+activación de sincronización. CUENTAS 27 permanece intacto.
