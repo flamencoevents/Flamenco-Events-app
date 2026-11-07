@@ -324,3 +324,16 @@ No repetir la supuesta actividad concurrente como bloqueo sin evidencia nueva.
 Esta continuación solo concilia documentación con el código guardado: sin pruebas
 repetidas, despliegues, sesiones, comunicaciones o escrituras en cuentas. MODO
 PRUEBA y sincronización general apagada siguen siendo condiciones obligatorias.
+
+
+## Modo de integración contractual explícito · 7 noviembre 2026
+
+ContractIntegration.js exige ahora FE_APP_TEST_MODE exactamente true (cadena)
+antes de activar propiedades/triggers o adquirir bloqueo para integrar. Ausencia,
+vacío, false y valores desconocidos se rechazan: antes solo false bloqueaba.
+Prueba nueva tests/contract-integration-mode.test.cjs superada localmente con
+node --test tests/contract-integration-mode.test.cjs: seis modos inválidos,
+ambas entradas y cero efectos. Código y prueba preparados; NO desplegados.
+No se crearon triggers, sesiones, documentos ni comunicaciones. Sin escritura
+remota, CUENTAS 27 intacto y sincronización general apagada. La prueba usa dobles,
+no acredita Google ni integración de extremo a extremo.
