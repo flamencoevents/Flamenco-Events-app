@@ -46,3 +46,24 @@ test('A failed recheck retains prior checksum and account reference and stores e
  assert.equal(writes[0][0][2],'old-checksum');assert.equal(writes[0][0][3],'old-account');
  assert.equal(writes[0][0][5],'Error: =FAKE_FORMULA');assert.equal(released,1);
 });
+
+test('Partial delivery failure recovers one journal identity and subsequent retry does not redeliver',()=>{
+ const records=[['Clave']],accountKeys=new Set();let sends=0,releases=0;
+ const journal={getDataRange:()=>({getValues:()=>records.map(r=>r.slice())}),getLastRow:()=>records.length,
+ getRange:row=>({setValues:values=>{records[row-1]=Array.from(values[0]);}})};
+ const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':'TEST_ONLY'}),
+ LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>releases++})},
+ libro_:()=>({getSheetByName:()=>({getDataRange:()=>({getValues:()=>[['header'],['','GENERADO','{"presupuesto":{}}','','','','url']]})})}),
+ SpreadsheetApp:{flush:()=>{}},DriveApp:{getFileById:()=>({getBlob:()=>({getBytes:()=>[37,80,68,70,45]})})}});
+ vm.runInContext(code,ctx);Object.assign(ctx,{
+ feCiSheet_:()=>journal,feCiPlan_:()=>({source_key:'same',quote_number:'test',revision:1,contract_url:'https://drive.google.com/file/d/synthetic/view'}),
+ feContratoPresupuesto_:()=>({}),feCiSha_:()=> 'synthetic-checksum',
+ feCiCuentas_:p=>{accountKeys.add(p.source_key);return 'synthetic-account';},
+ feCiEnviar_:()=>{if(++sends===1)throw Error('temporary delivery failure');return {state:'already_recorded'};}});
+ assert.equal(vm.runInContext('feContratosIntegrarPendientes()',ctx).errores,1);
+ assert.equal(records.length,2);assert.equal(records[1][1],'PENDIENTE');
+ assert.equal(vm.runInContext('feContratosIntegrarPendientes()',ctx).integrados,1);
+ assert.equal(records.length,2);assert.equal(records[1][1],'INTEGRADO');assert.equal(records[1][2],'synthetic-checksum');
+ assert.equal(vm.runInContext('feContratosIntegrarPendientes()',ctx).existentes,1);
+ assert.equal(sends,2);assert.equal(accountKeys.size,1);assert.equal(records.length,2);assert.equal(releases,3);
+});
