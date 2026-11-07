@@ -384,3 +384,18 @@ No se repitieron casos anteriores sin cambios. Drive, cuentas y receptor son
 dobles: el Set de claves no demuestra idempotencia del escritor real ni entrega
 remota. Implementación sin cambios; prueba y evidencia guardadas. Sin despliegue,
 mutaciones remotas o comunicaciones. CUENTAS 27 intacto; sincronización apagada.
+
+
+## Diario actualizado dentro del lote · 7 noviembre 2026
+
+La lectura actual de tools/ContractIntegration.js confirma que records se relee
+por fila, dentro del bucle; el posible defecto de snapshot inicial ya está
+corregido en el código actual. Se añade regresión que procesa dos filas de origen
+con la misma clave: una integración, un reconocimiento existente, una sola fila
+de diario, un envío y bloqueo liberado. Prueba nueva local superada:
+node --test --test-name-pattern="Repeated source" tests/contract-integration-mode.test.cjs.
+Drive/cuentas/receptor son dobles; no acredita publicación o escritura real.
+No se modificó la implementación ni se repitieron baterías anteriores sin cambios.
+Prueba y evidencia guardadas. El código actual incluye destino auxiliar 2027;
+no equivale al XLSX original. Sin despliegue en esta continuación, cuentas reales
+intactas y sincronización general apagada.
