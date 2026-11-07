@@ -2,6 +2,7 @@
  * No registra llamadas, aceptación comercial, firma, reservas ni cobros.
  */
 const FE_CI_BOOK='1dsgfqv6YG49-_QaAx-0dUyvLImBTdkkDEvgXBu1QZuY';
+const FE_CI_BOOKS={2026:FE_CI_BOOK,2027:'1ZE66Ko8bnh3qp9Z2Mfp8VOG2pmH_a-EyUJZRvQVnHtE'};
 const FE_CI_HEADERS=['Clave','Presupuesto','Revisión','Fecha evento','Cliente de prueba','Lugar','Servicio','Total previsto','Reserva prevista','Saldo previsto','Contrato PDF','Huella PDF SHA256','Estado','Actualizado'];
 function feCiSha_(value){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,value).map(b=>('0'+((b+256)%256).toString(16)).slice(-2)).join('');}
 function feCiTexto_(value,max){const s=String(value||'').trim();if(!s||s.length>max||/[\x00-\x1f]/.test(s))throw Error('Dato de integración no válido');return /^[=+@-]/.test(s)?"'"+s:s;}
@@ -17,7 +18,7 @@ function feCiPlan_(d,url){
 }
 function feCiSheet_(book,name,headers){let s=book.getSheetByName(name);if(!s){s=book.insertSheet(name);s.getRange(1,1,1,headers.length).setValues([headers]);s.setFrozenRows(1);}if(JSON.stringify(s.getRange(1,1,1,headers.length).getValues()[0])!==JSON.stringify(headers))throw Error('Cabeceras de integración inesperadas');return s;}
 function feCiCuentas_(p){
- const year=Number(p.event_date.slice(0,4));if(year!==2026)throw Error('Libro del año '+year+' pendiente de conectar; no se escribe en 2026');const book=SpreadsheetApp.openById(FE_CI_BOOK),sheet=feCiSheet_(book,'PRUEBA contratos '+year,FE_CI_HEADERS),rows=sheet.getDataRange().getValues();
+ const year=Number(p.event_date.slice(0,4));const bookId=FE_CI_BOOKS[year];if(!bookId)throw Error('Libro del año '+year+' pendiente de conectar');const book=SpreadsheetApp.openById(bookId),sheet=feCiSheet_(book,'PRUEBA contratos '+year,FE_CI_HEADERS),rows=sheet.getDataRange().getValues();
  const matches=rows.map((r,i)=>({r,i})).filter(x=>x.i&&x.r[0]===p.source_key);if(matches.length>1)throw Error('Referencia duplicada en cuentas de prueba');
  const values=[p.source_key,p.quote_number,p.revision,p.event_date,p.client_label,p.venue,p.service,p.total_eur,p.deposit_eur,p.balance_eur,p.contract_url,p.pdf_sha256,'PRUEBA · PDF generado; pendiente revisión comercial'];
  const row=matches.length?matches[0].i+1:rows.length+1;
@@ -25,7 +26,7 @@ function feCiCuentas_(p){
  if(matches.length&&JSON.stringify(normalized(matches[0].r.slice(0,13)))!==JSON.stringify(values))throw Error('La previsión existente ha cambiado; requiere conciliación');
  if(!matches.length){sheet.getRange(row,1,1,14).setValues([[...values,new Date()]]);SpreadsheetApp.flush();}
  if(JSON.stringify(normalized(sheet.getRange(row,1,1,13).getValues()[0]))!==JSON.stringify(values))throw Error('No se confirma la lectura de cuentas');
- return 'https://docs.google.com/spreadsheets/d/'+FE_CI_BOOK+'/edit#gid='+sheet.getSheetId()+'&range=A'+row+':N'+row;
+ return 'https://docs.google.com/spreadsheets/d/'+bookId+'/edit#gid='+sheet.getSheetId()+'&range=A'+row+':N'+row;
 }
 function feCiEnviar_(p){
  const secret=props_().getProperty('FE_APP_BRIDGE_SECRET');if(!secret||secret.length<32)throw Error('Falta el secreto de integración');
@@ -72,4 +73,5 @@ function feContratosActivarIntegracionPrueba(){
  if(!ScriptApp.getProjectTriggers().some(t=>t.getHandlerFunction()==='feContratosIntegrarPendientes'))ScriptApp.newTrigger('feContratosIntegrarPendientes').timeBased().everyMinutes(5).create();
  return feContratosIntegrarPendientes();
 }
+
 

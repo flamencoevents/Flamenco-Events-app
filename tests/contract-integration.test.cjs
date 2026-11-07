@@ -28,3 +28,18 @@ test('same batch reuses a journal row created by an earlier occurrence',()=>{
  a.equal(result.integrados,1);a.equal(result.existentes,1);a.equal(sends,1);
  a.equal(src.sheets.FE_Integracion_Contratos.rows.length,2);a.equal(released,1);
 });
+
+
+test('2027 routes by event date to isolated forecast workbook, never source XLSX or 2026',()=>{
+ const c=context(),dest=book(),opened=[];c.SpreadsheetApp={openById:id=>{opened.push(id);return dest;},flush(){}};
+ const d=fixture();d.presupuesto.request.fecha='2027-08-14';const p=JSON.parse(JSON.stringify(c.feCiPlan_(d,url)));p.pdf_sha256='a'.repeat(64);
+ const link=c.feCiCuentas_(p);a.equal(opened[0],'1ZE66Ko8bnh3qp9Z2Mfp8VOG2pmH_a-EyUJZRvQVnHtE');a(link.includes(opened[0]));a.equal(dest.sheets['PRUEBA contratos 2027'].rows.length,2);
+ c.feCiCuentas_(p);a.equal(dest.sheets['PRUEBA contratos 2027'].rows.length,2);
+ p.event_date='2028-08-14';const before=opened.length;a.throws(()=>c.feCiCuentas_(p),/pendiente/);a.equal(opened.length,before);
+});
+test('receiver accepts 2027 forecast destination and rejects cross-year, unknown and real XLSX destinations',async()=>{
+ const e=endpoint(),p={...payload(),event_date:'2027-08-14',accounts_url:'https://docs.google.com/spreadsheets/d/1ZE66Ko8bnh3qp9Z2Mfp8VOG2pmH_a-EyUJZRvQVnHtE/edit#gid=77&range=A2:N2'};
+ a.equal((await e.handler(request(p))).status,201);a.equal((await e.handler(request(p))).status,200);
+ for(const patch of [{event_date:'2026-08-14'},{accounts_url:payload().accounts_url},{event_date:'2028-08-14'},{accounts_url:p.accounts_url.replace('1ZE66Ko8bnh3qp9Z2Mfp8VOG2pmH_a-EyUJZRvQVnHtE','174JxA-f27Fl4PS5jHibG0R8q0RqOgKfG')}])a.equal((await e.handler(request({...p,...patch}))).status,422);
+ a.equal(e.rows.size,1);
+});
