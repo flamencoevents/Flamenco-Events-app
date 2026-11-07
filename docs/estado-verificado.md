@@ -447,3 +447,21 @@ Código actual releído y SHA contrastado antes de guardar; sin sobrescritura
 forzada. Preparado y probado localmente, NO desplegado. No se ejecutaron rutas
 Google/XLSX ni se crearon identidades, documentos, mensajes o movimientos reales.
 Libro original intacto; MODO PRUEBA y sincronización general apagada.
+
+
+## Preparación de publicación en Apps Script · 7 noviembre 2026
+
+Detectada divergencia: las últimas correcciones de céntimos y reintento PDF
+estaban solo en el repositorio web. Tras contrastar ambos archivos, trasladadas
+al repositorio flamenco-events-appscript sin diferencias adicionales. Su
+ContractIntegration.js coincide ahora con tools/ContractIntegration.js, blob
+19b8dc7b879d630c701aeeb9df009c28e9e9332c.
+
+Nueve pruebas con dobles pasan localmente en la estructura del repositorio de
+publicación, y node --check pasa. Pruebas añadidas allí y conectadas al workflow
+antes de cualquier publicación. Commit CI fb9bf2b56ff75ec0d22acf7c5c15c8aaedeaf667;
+evidencia y límites en docs/integracion-app.md de Apps Script.
+
+No se ha publicado en Google ni modificado la implementación del editor, que
+requiere contraste actual antes de sobrescribirla. Sin cambios en libros,
+clientes, envíos, permisos, fórmulas, plantillas o sincronización general.
