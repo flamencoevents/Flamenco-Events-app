@@ -610,3 +610,26 @@ continúa en v61. Próximo paso: contrastar nuevamente el archivo del editor ant
 de aplicar esta sustitución puntual; no hacer clasp push del proyecto completo.
 No hay prueba nueva de extremo a extremo ni escritura de CUENTAS 27.
 MODO PRUEBA, fórmulas, plantillas, permisos y sincronización general conservados.
+
+
+## Reintentos de solicitudes validados · 7 noviembre 2026
+
+CI 42383852366 completado success para la corrección de ventana de pendientes.
+Nueva prueba con payload FE3 ficticio y huellas SHA-256 reales (transporte y
+Sheets simulados): error de entrega o requires_manual_review no guardan marca;
+el reintento already_recorded guarda una marca y la tercera pasada no reenvía.
+Reproducir solo el caso nuevo:
+node --test --test-name-pattern="Retry keeps" tests/whatsapp-sync-window.test.cjs
+Una prueba local superada; commit e447f77d5aaddf5e86c3a14e99b9520e1837d67f.
+El primer intento del fixture contó por error FE_APP_WA_SYNC_ENABLED como marca;
+se corrigió el filtro de la prueba y pasó. No se cambió la implementación.
+
+Acceso remoto comprobado: abrir el proyecto y el enlace Panel de Apps Script
+redirige a developers.google.com/apps-script; no se obtuvo el editor ni una
+sesión autenticada verificable. Causa/caducidad no confirmadas. No se introdujeron
+credenciales ni se publicó la corrección. Última versión comprobada: v61;
+lastRow-99 sigue preparado en GitHub, pendiente de contraste remoto y publicación.
+No usar despliegue completo forzado para evitar este contraste.
+
+No es ensayo HTTP/Google real. Sin envíos, usuarios, sesiones o asignaciones
+creados; sin escrituras de CUENTAS 27. MODO PRUEBA y sincronización apagada.
