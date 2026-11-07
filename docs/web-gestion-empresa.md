@@ -212,3 +212,39 @@ no escribe XLSX ni llama a servicios. No está conectado al circuito remoto.
 Evidencia, reproducción y límites: [circuito-whatsapp-cuentas.md](circuito-whatsapp-cuentas.md#registro-local-de-operaciones--6-noviembre-2026).
 Modo prueba, libro real intacto y sincronización general apagada. No hay nuevo
 despliegue Apps Script/Supabase ni cambio funcional en el panel.
+
+
+## Recuperación WhatsApp y publicación v61 · 7 noviembre 2026
+
+Revisados secuencialmente los 19 archivos del editor autenticado frente al
+repositorio: completados los 15 restantes tras los cuatro ya documentados.
+Doce coincidían exactamente; appsscript.json difiere solo en salto final y
+FormularioServidor.js solo en comentario/salto final. En whatspp.gs faltaba
+la llamada de recuperación a feAppWhatsAppSyncPendientes_; no se reemplazó
+el proyecto completo ni se alteraron los demás archivos.
+
+Corregido waWebhookRecuperar conservando wa9Despachar_ y aislando errores de
+sincronización. La llamada nueva exige FE_APP_TEST_MODE exactamente 'true';
+el helper mantiene su interruptor FE_APP_WA_SYNC_ENABLED y filtros ficticios.
+No se cambiaron propiedades ni se activó sincronización general.
+Código: e85d9b9c6afb70b60fc6cf5112c51b61b9101880, repositorio Apps Script.
+Tres pruebas nuevas con dobles superadas: orden, ausencia/error del helper
+y modo ausente/falso/mal escrito. Reproducir:
+node --test tests/whatsapp-recovery-sync.test.cjs
+CI confirmado success:
+https://github.com/flamencoevents/flamenco-events-appscript/actions/runs/42383077395
+(commit 238ca688643307435ebef83865b62ab1a564637c).
+
+Aplicada solo la sustitución puntual en el editor, sobre una coincidencia
+exacta; relectura completa confirmó el texto guardado. Google confirmó
+«Se actualizó correctamente la implementación. Versión 61» el 7 noviembre,
+con el mismo ID/URL. El comentario explicativo del repositorio no se añadió
+al archivo remoto; comportamiento equivalente, sin afirmar igualdad byte a byte.
+La revisión secuencial del editor no es un snapshot atómico del bundle publicado.
+
+Verificado: pruebas con dobles, guardado y publicación. Pendiente: ensayo
+de extremo a extremo de una solicitud ficticia recuperada hasta la gestión.
+No se invocó el recuperador ni se enviaron mensajes para probarlo; no se
+crearon usuarios, sesiones ni asignaciones ficticias que limpiar. No se
+escribió CUENTAS 27, no se acredita firma/cierre/cobro y no se publicó un
+escritor XLSX. MODO PRUEBA conservado.
