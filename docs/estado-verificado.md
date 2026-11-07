@@ -493,3 +493,26 @@ integrado el comparador como bloqueo efectivo de clasp push. No resuelve por sí
 solo cambios entre lectura y publicación. Sigue pendiente revisión real antes
 de publicar. Sin escritura remota, usuarios, sesiones, mensajes, cambios de
 libros o activación de sincronización; MODO PRUEBA conservado.
+
+
+## Publicación remota confirmada · 7 noviembre 2026
+
+Nacho completó el acceso Google y autorizó explícitamente publicar manteniendo
+MODO PRUEBA. Editor del proyecto vigente: leído ContractIntegration.gs actual
+(8198 caracteres antes del cambio), aplicado únicamente el control de céntimos
+seguros/exactos y de huella previa para reintentos PENDIENTE. Una coincidencia
+exacta por sustitución, sin reemplazo del proyecto completo. Relectura por
+portapapeles del editor confirmó igualdad exacta con el texto corregido y guardado.
+
+La implementación existente pasó de versión 59 a **versión 60**; la interfaz
+mostró «Se actualizó correctamente la implementación» y «Se implementó el proyecto
+correctamente». Mismo ID y URL de implementación; permisos de ejecución/acceso
+conservados. No se ejecutó sincronización, no se cambiaron propiedades ni se
+invocaron funciones de cuentas, clientes, envíos, firma o cobro.
+
+Esto verifica guardado y publicación por editor, no una nueva prueba real del
+recorrido contractual completo. El archivo remoto es distinto del repositorio:
+se conservaron sus cambios; no afirmar igualdad de todo el proyecto con main.
+Antes de publicar por clasp, reconciliar esas diferencias, especialmente destinos
+y rutas XLSX, sin forzar sobrescritura. No se activó sincronización general ni
+se alteraron libros en esta continuación.
