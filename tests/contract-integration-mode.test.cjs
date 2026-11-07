@@ -32,3 +32,17 @@ test('Delivery only accepts explicit successful receiver states and sanitizes in
   else assert.throws(()=>vm.runInContext('feCiEnviar_({is_test:true})',ctx),/Respuesta de integración no válida|Gestión pendiente: HTTP/);
  }
 });
+
+test('A failed recheck retains prior checksum and account reference and stores error as plain text',()=>{
+ let released=0;const writes=[],records=[['Clave'],['same','INTEGRADO','old-checksum','old-account']];
+ const journal={getDataRange:()=>({getValues:()=>records}),getLastRow:()=>2,getRange:()=>({setValues:v=>writes.push(v)})};
+ const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':'TEST_ONLY'}),
+ LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>released++})},
+ libro_:()=>({getSheetByName:()=>({getDataRange:()=>({getValues:()=>[['header'],['','GENERADO','{"presupuesto":{}}','','','','url']]})})}),
+ SpreadsheetApp:{flush:()=>{}},DriveApp:{getFileById:()=>{throw Error('=FAKE_FORMULA');}}});
+ vm.runInContext(code,ctx);Object.assign(ctx,{feCiSheet_:()=>journal,feCiPlan_:()=>({source_key:'same',quote_number:'test',revision:1,contract_url:'https://drive.google.com/file/d/synthetic/view'}),feContratoPresupuesto_:()=>({})});
+ assert.equal(vm.runInContext('feContratosIntegrarPendientes()',ctx).errores,1);
+ assert.equal(writes.length,1);assert.equal(writes[0][0][1],'PENDIENTE');
+ assert.equal(writes[0][0][2],'old-checksum');assert.equal(writes[0][0][3],'old-account');
+ assert.equal(writes[0][0][5],'Error: =FAKE_FORMULA');assert.equal(released,1);
+});
