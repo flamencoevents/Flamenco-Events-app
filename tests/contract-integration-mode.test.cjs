@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),vm=requir
 const code=fs.readFileSync('tools/ContractIntegration.js','utf8');
 test('Contract integration fails closed unless test mode is explicitly true',()=>{
  for(const mode of [null,undefined,'','false','TRUE','invalid']){
-  let effects=0;const ctx=vm.createContext({props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?mode:'TEST_ONLY',setProperty:()=>effects++}),LockService:{getScriptLock:()=>{effects++;throw Error('unexpected lock');}},ScriptApp:{getProjectTriggers:()=>{effects++;return [];}}});
+  let effects=0;const ctx=vm.createContext({props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?mode:k==='FE_CONTRACT_INTEGRATION_ENABLED'?'TEST_ONLY':null,setProperty:()=>effects++}),LockService:{getScriptLock:()=>{effects++;throw Error('unexpected lock');}},ScriptApp:{getProjectTriggers:()=>{effects++;return [];}}});
   vm.runInContext(code,ctx);
   assert.throws(()=>vm.runInContext('feContratosIntegrarPendientes()',ctx),/modo real/);
   assert.throws(()=>vm.runInContext('feContratosActivarIntegracionPrueba()',ctx),/modo prueba/);
@@ -13,7 +13,7 @@ test('Contract integration fails closed unless test mode is explicitly true',()=
 test('Duplicate journal identities block Drive, accounts and delivery and release the lock',()=>{
  let reads=0,sends=0,accounts=0,released=0;const writes=[];
  const journal={getDataRange:()=>({getValues:()=>[['Clave'],['same','INTEGRADO'],['same','PENDIENTE']]}),getLastRow:()=>3,getRange:()=>({setValues:v=>writes.push(v)})};
- const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':'TEST_ONLY'}),
+ const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':k==='FE_CONTRACT_INTEGRATION_ENABLED'?'TEST_ONLY':null}),
  LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>released++})},
  libro_:()=>({getSheetByName:()=>({getDataRange:()=>({getValues:()=>[['header'],['','GENERADO','{"presupuesto":{}}','','','','url']]})})}),
  SpreadsheetApp:{flush:()=>{}},DriveApp:{getFileById:()=>{reads++;throw Error('unexpected');}}});
@@ -36,7 +36,7 @@ test('Delivery only accepts explicit successful receiver states and sanitizes in
 test('A failed recheck retains prior checksum and account reference and stores error as plain text',()=>{
  let released=0;const writes=[],records=[['Clave'],['same','INTEGRADO','old-checksum','old-account']];
  const journal={getDataRange:()=>({getValues:()=>records}),getLastRow:()=>2,getRange:()=>({setValues:v=>writes.push(v)})};
- const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':'TEST_ONLY'}),
+ const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':k==='FE_CONTRACT_INTEGRATION_ENABLED'?'TEST_ONLY':null}),
  LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>released++})},
  libro_:()=>({getSheetByName:()=>({getDataRange:()=>({getValues:()=>[['header'],['','GENERADO','{"presupuesto":{}}','','','','url']]})})}),
  SpreadsheetApp:{flush:()=>{}},DriveApp:{getFileById:()=>{throw Error('=FAKE_FORMULA');}}});
@@ -51,7 +51,7 @@ test('Partial delivery failure recovers one journal identity and subsequent retr
  const records=[['Clave']],accountKeys=new Set();let sends=0,releases=0;
  const journal={getDataRange:()=>({getValues:()=>records.map(r=>r.slice())}),getLastRow:()=>records.length,
  getRange:row=>({setValues:values=>{records[row-1]=Array.from(values[0]);}})};
- const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':'TEST_ONLY'}),
+ const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':k==='FE_CONTRACT_INTEGRATION_ENABLED'?'TEST_ONLY':null}),
  LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>releases++})},
  libro_:()=>({getSheetByName:()=>({getDataRange:()=>({getValues:()=>[['header'],['','GENERADO','{"presupuesto":{}}','','','','url']]})})}),
  SpreadsheetApp:{flush:()=>{}},DriveApp:{getFileById:()=>({getBlob:()=>({getBytes:()=>[37,80,68,70,45]})})}});
@@ -72,7 +72,7 @@ test('Repeated source rows reuse the journal created earlier in the same batch',
  const records=[['Clave']],accountKeys=new Set();let sends=0,releases=0;
  const journal={getDataRange:()=>({getValues:()=>records.map(r=>r.slice())}),getLastRow:()=>records.length,
  getRange:row=>({setValues:values=>{records[row-1]=Array.from(values[0]);}})};
- const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':'TEST_ONLY'}),
+ const ctx=vm.createContext({console:{log:()=>{}},props_:()=>({getProperty:k=>k==='FE_APP_TEST_MODE'?'true':k==='FE_CONTRACT_INTEGRATION_ENABLED'?'TEST_ONLY':null}),
  LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock:()=>releases++})},
  libro_:()=>({getSheetByName:()=>({getDataRange:()=>({getValues:()=>[['header'],['','GENERADO','{"presupuesto":{}}','','','','url'],['','GENERADO','{"presupuesto":{}}','','','','url']]})})}),
  SpreadsheetApp:{flush:()=>{}},DriveApp:{getFileById:()=>({getBlob:()=>({getBytes:()=>[37,80,68,70,45]})})}});
