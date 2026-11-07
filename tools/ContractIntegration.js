@@ -59,7 +59,7 @@ function feContratosIntegrarPendientes(){
     if(j>=0&&records[j][1]==='INTEGRADO'){if(records[j][2]!==p.pdf_sha256||records[j][3]!==p.accounts_url)throw Error('El documento integrado ha cambiado; requiere conciliación');result.existentes++;continue;}
     const answer=feCiEnviar_(p);const row=j>=0?j+1:journal.getLastRow()+1;
     journal.getRange(row,1,1,6).setValues([[key,'INTEGRADO',p.pdf_sha256,p.accounts_url,new Date(),answer.state]]);SpreadsheetApp.flush();result.integrados++;
-   }catch(e){result.errores++;if(journalConflict)continue;const row=j>=0?j+1:journal.getLastRow()+1;journal.getRange(row,1,1,6).setValues([[key,'PENDIENTE','','',new Date(),String(e.message).slice(0,180)]]);SpreadsheetApp.flush();}
+   }catch(e){result.errores++;if(journalConflict)continue;const row=j>=0?j+1:journal.getLastRow()+1;journal.getRange(row,1,1,6).setValues([[key,'PENDIENTE',j>=0?records[j][2]||'':'',j>=0?records[j][3]||'':'',new Date(),'Error: '+String(e&&e.message||'Fallo de integración').replace(/[\x00-\x1f]/g,' ').slice(0,173)]]);SpreadsheetApp.flush();}
   }
  }finally{lock.releaseLock();}
  console.log(JSON.stringify(result));return result;
