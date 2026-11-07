@@ -372,3 +372,15 @@ node --test tests/contract-integration-mode.test.cjs; caso nuevo con fallo Drive
 simulado, evidencia conservada y bloqueo liberado. Preparado y guardado, NO
 desplegado. Sin acceso Drive real, escritura contable, sesiones, envíos o
 activación de sincronización. CUENTAS 27 permanece intacto.
+
+
+## Recuperación de entrega contractual · 7 noviembre 2026
+
+Añadida prueba reproducible del coordinador: primer envío falla, segundo devuelve
+already_recorded y tercero reconoce INTEGRADO sin reenviar. Una sola fila del
+diario, misma clave de cuentas y tres liberaciones de bloqueo. Prueba nueva local
+superada con node --test --test-name-pattern="Partial delivery" tests/contract-integration-mode.test.cjs.
+No se repitieron casos anteriores sin cambios. Drive, cuentas y receptor son
+dobles: el Set de claves no demuestra idempotencia del escritor real ni entrega
+remota. Implementación sin cambios; prueba y evidencia guardadas. Sin despliegue,
+mutaciones remotas o comunicaciones. CUENTAS 27 intacto; sincronización apagada.
