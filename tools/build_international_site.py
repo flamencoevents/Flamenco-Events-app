@@ -22,9 +22,9 @@ PAGE_NAMES = (
     "guitarrista-flamenco",
 )
 SPANISH_SITE = "https://www.flamencoevents.net/"
-PORTAL_LINK = re.compile(r'<a\\s+href="\\.\\./portal\\.html"[^>]*>Client area</a>', re.I)
-HREF_LANG_ES = re.compile(r'<link\\s+rel="alternate"\\s+hreflang="es"\\s+href="[^"]+"\\s*/?>', re.I)
-ES_SWITCH = re.compile(r'<a\\s+href="[^"]+"\\s+lang="es">ES</a>')
+PORTAL_LINK = re.compile(r'<a\s+href="\.\./portal\.html"[^>]*>Client area</a>', re.I)
+HREF_LANG_ES = re.compile(r'<link\s+rel="alternate"\s+hreflang="es"\s+href="[^"]+"\s*/?>', re.I)
+ES_SWITCH = re.compile(r'<a\s+href="[^"]+"\s+lang="es">ES</a>')
 
 class AssetReferences(HTMLParser):
     def __init__(self) -> None:
@@ -62,7 +62,7 @@ def build(destination: Path) -> None:
         # The released homepage must be index.html, not index-en.html.
         if "../portal.html" in html:
             raise ValueError(f"Unresolved private app link in {name}")
-        if re.search(r'href="[^"]+-en\\.html"', html):
+        if re.search(r'href="[^"]+-en\.html"', html):
             raise ValueError(f"Unresolved English preview link in {name}")
         if 'noindex,nofollow' not in html:
             raise ValueError(f"Page accidentally made indexable: {name}")
