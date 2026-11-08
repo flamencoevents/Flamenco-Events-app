@@ -1,0 +1,34 @@
+name: Validate international staging (not published)
+
+on:
+  push:
+    branches:
+      - international-staging
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate English files and safety requirements
+        run: python3 validate_international.py
+      - name: Check image file signatures
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for p in Path("assets").rglob("*"):
+              if not p.is_file():
+                  continue
+              data = p.read_bytes()
+              if p.suffix.lower() in (".jpg", ".jpeg"):
+                  assert data.startswith(b"\xff\xd8\xff"), f"Not JPEG: {p}"
+              elif p.suffix.lower() == ".png":
+                  assert data.startswith(b"\x89PNG\r\n\x1a\n"), f"Not PNG: {p}"
+              elif p.suffix.lower() == ".webp":
+                  assert data.startswith(b"RIFF") and data[8:12] == b"WEBP", f"Not WebP: {p}"
+              print("Checked", p, len(data), "bytes")
+          PY
