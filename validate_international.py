@@ -4,7 +4,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 import sys
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parent
 PAGES = ("index.html", "eventos-exclusivos.html", "suite-flamenca.html", "son-del-alma.html", "guitarrista-flamenco.html")
 
 class Page(HTMLParser):
