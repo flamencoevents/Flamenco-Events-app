@@ -1,30 +1,7 @@
-# Flamenco Events · Web de gestión empresarial
+# Flamenco Events Agency — web española
 
-Prioridad vigente: completar primero la web de gestión de la empresa, enlazando presupuestos, contratos, eventos y seguimiento económico para balances. La adaptación a app se abordará después. [Alcance y criterios de aceptación](docs/web-gestion-empresa.md).
+Preparación técnica separada para flamencoevents.net. NO PUBLICADA; dominio no asociado.
 
-La implementación actual usa GitHub Pages, Supabase Auth, datos bajo RLS y documentos privados. **MODO PRUEBA**: sin clientes reales, envío automático ni reservas confirmadas.
+NO cambiar los registros de correo Google Workspace en IONOS. Migración de las 59 URLs antiguas: solo siete rutas de legado disponen aquí de redirección HTML preliminar, NO son respuestas HTTP 301 ni sustituyen una migración SEO planificada.
 
-- `index.html`: solicitud ficticia conectada al servidor, consentimiento, control de abuso e idempotencia; solo crea solicitud y avisos internos.
-- `portal.html`: acceso por correo para cuentas existentes, navegación por rol y documentos del evento propio.
-- `staff.html`: solicitudes, llamada, validación/autorización, registro de envío y aceptación, coordinación, tareas y avisos.
-- `admin.html`: gestión independiente de eventos propios; prepara evento desde una versión aceptada y controla acceso/documentos. Invitaciones cliente y reserva formal bloqueadas en prueba.
-- `workflow.js`: selección exacta de presupuesto/revisión/clave, revisión de importes y autorización explícita. El puente Apps Script v44 está publicado y la transferencia ficticia de efectivo está verificada; ver evidencias y límites en [docs/estado-verificado.md](docs/estado-verificado.md).
-
-Importes e impuestos se conservan desde la copia aprobada. `individual_full_invoice` representa el particular efectivo100 con IVA guardado y reserva cero; no se equipara a empresa ni presupone exención.
-
-## Servidor
-
-`supabase/migrations/` es el historial aplicable. No ejecutar otra vez migraciones ya aplicadas. `supabase/schema.sql` y `supabase/legacy/` son referencias históricas. Las funciones privilegiadas validan JWT y rol en servidor; el receptor entre servicios valida HMAC. Las claves privadas solo existen en los servicios.
-
-La sincronización general sigue desactivada. GENERADO no equivale a aceptado, y aceptar no confirma reserva. El criterio comercial final de confirmación sigue pendiente.
-
-## Verificación
-
-```
-node --test tests/bridge-receiver.test.cjs tests/edge-workflow.test.cjs tests/portal.test.cjs tests/workflow-ui.test.cjs
-```
-
-28 pruebas locales con dobles para Edge/UI; `supabase/tests/continuation-rollback.sql` prueba permisos y secuencia en la base real mediante identidades ficticias y ROLLBACK. `supabase/tests/security-rollback.sql` conserva la batería anterior. Evidencias reales, límites y siguiente acción en [docs/estado-verificado.md](docs/estado-verificado.md).
-
-
-El equipo puede comprobar el PDF de origen sin recibir el archivo ni escribir datos. La incorporación al bucket privado exige la cuenta administrativa de Nacho. El PDF ficticio ya está preparado para X26-P900001-v1; siguiente paso y límites en docs/estado-verificado.md. Los contratos deben corresponder al número y revisión aceptados del evento; no se elige automáticamente la última revisión en WhatsApp.
+No se incluye el portal privado ni administración.
