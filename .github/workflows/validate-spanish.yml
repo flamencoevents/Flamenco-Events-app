@@ -1,0 +1,17 @@
+name: Validate Spanish Agency staging
+
+on:
+  push:
+    branches: [spanish-agency-staging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Spanish commercial pages and referenced media
+        run: python3 validate_spanish.py
