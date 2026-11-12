@@ -1,0 +1,31 @@
+{
+  "source": "public site",
+  "assets_downloaded_now": 57,
+  "unique_assets": 61,
+  "total_bytes": 4819918,
+  "per_page": {
+    "": 23,
+    "bienevenidos": 1,
+    "cursos": 9,
+    "cursosdesgranandolaguitarraflamenca": 5,
+    "didáctica-del-flamenco": 3,
+    "didáctica-del-flamencodc63ec1a": 1,
+    "métodos-de-guitarra-flamenca": 5,
+    "la-tirania-del-oido": 1,
+    "galeria": 16,
+    "contacto": 0,
+    "aviso-legal": 0
+  },
+  "failures": {
+    "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/logo+blog-2880w.png": "HTTP Error 403: Forbidden",
+    "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/IMG_20230707_212902-54df29e0-2880w.jpg": "HTTP Error 403: Forbidden",
+    "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/pizarra+flamenco-2880w.png": "HTTP Error 403: Forbidden",
+    "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/1-e3385456-2880w.png": "HTTP Error 403: Forbidden",
+    "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/5-c77e37a6-2880w.png": "HTTP Error 403: Forbidden",
+    "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/Flamen+cuentos+logo+3-2880w.jpg": "HTTP Error 403: Forbidden",
+    "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/3-f9e9252d-2880w.png": "HTTP Error 403: Forbidden",
+    "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/IMG_3146-2880w.jpg": "HTTP Error 403: Forbidden",
+    "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/descarga+%286%29-5acb39ba-2880w.png": "HTTP Error 403: Forbidden",
+    "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/portada+metodo-2880w.png": "HTTP Error 403: Forbidden"
+  }
+}
