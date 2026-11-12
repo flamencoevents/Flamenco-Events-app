@@ -129,6 +129,8 @@ class TrialTests(unittest.TestCase):
         with self.assertRaisesRegex(Blocked, 'FICTIONAL_ONLY'):
             self.run_trial()
         self.assertEqual(self.calls, 0)
+        self.assertFalse(self.database.exists())
+        self.assertFalse(Path(str(self.database) + '.trial.lock').exists())
 
     def test_cli_launches_child_process_and_rechecks_output_on_retry(self):
         repo = Path(__file__).resolve().parents[1]
