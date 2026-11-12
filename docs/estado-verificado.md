@@ -905,3 +905,18 @@ verifica el hipervínculo y el importe. Limpieza de temporales mediante
 TemporaryDirectory. Código 254b17137a26237d1e74fad8331f345762584c2a y prueba 8df109fd54b3146eeae1dd77dfeda517d434e8bc.
 Verificado localmente, sin despliegue. Sigue pendiente el control de
 versiones en Drive. No intervino el libro real.
+
+## Celdas con contenido ambiguo · 12 noviembre 2026
+
+El verificador de la copia XLSX rechaza celdas con valores, fórmulas o
+bloques de texto en línea repetidos, así como una combinación de valor
+y texto en línea. Antes la lectura podía quedarse con el primer
+elemento y omitir el resto. Se conserva la lectura de una fórmula con
+su valor de caché habitual.
+
+Los cuatro casos ficticios reprodujeron el fallo previo. Pasaron 13
+pruebas del verificador y 10 del empaquetador con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify test_accounts_2027_package`.
+Las pruebas eliminan sus temporales al terminar. Verificado localmente
+en modo prueba y sin despliegue. El libro original no intervino.
+Sigue pendiente la escritura remota con control de versión en Drive.

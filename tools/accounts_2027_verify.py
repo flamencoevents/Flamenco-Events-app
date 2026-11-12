@@ -27,8 +27,13 @@ def xml_signature(element):
 
 
 def cell_record(cell, strings):
-    value = cell.find('m:v', NS)
-    inline = cell.find('m:is', NS)
+    values = cell.findall('m:v', NS)
+    inline_values = cell.findall('m:is', NS)
+    formulas = cell.findall('m:f', NS)
+    require(len(values) + len(inline_values) <= 1 and len(formulas) <= 1,
+            'AMBIGUOUS_CELL_PAYLOAD')
+    value = values[0] if values else None
+    inline = inline_values[0] if inline_values else None
     text = value.text if value is not None else ''
     kind = cell.get('t', 'n')
     if kind == 's':
@@ -42,7 +47,7 @@ def cell_record(cell, strings):
         with localcontext() as context:
             context.prec = max(context.prec, len(number.as_tuple().digits))
             text = str(number.normalize())
-    formula = cell.find('m:f', NS)
+    formula = formulas[0] if formulas else None
     # Formula cache recalculation is not counted as changing the formula itself.
     if formula is not None:
         text, kind = None, 'formula'

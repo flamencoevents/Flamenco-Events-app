@@ -99,6 +99,24 @@ class PreservationTests(unittest.TestCase):
                     with self.assertRaisesRegex(audit.Blocked, reason):
                         audit.snapshot(path)
 
+    def test_snapshot_rejects_multiple_payloads_in_one_cell(self):
+        ns = audit.NS['m']
+        with TemporaryDirectory() as tmp, patch.object(audit, 'read_book'):
+            path = Path(tmp) / 'synthetic.xlsx'
+            for body in (
+                '<v>123</v><v>456</v>',
+                '<f>1+1</f><f>1+2</f><v>2</v>',
+                '<is><t>A</t></is><is><t>B</t></is>',
+                '<v>123</v><is><t>A</t></is>',
+            ):
+                with self.subTest(body=body):
+                    with audit.zipfile.ZipFile(path, 'w') as archive:
+                        archive.writestr('xl/workbook.xml', f'<workbook xmlns="{ns}"><sheets><sheet name="Other"/></sheets></workbook>')
+                        archive.writestr('xl/_rels/workbook.xml.rels', '<Relationships><Relationship Target="worksheets/sheet1.xml"/></Relationships>')
+                        archive.writestr('xl/worksheets/sheet1.xml', f'<worksheet xmlns="{ns}"><sheetData><row r="3"><c r="H3">{body}</c></row></sheetData></worksheet>')
+                    with self.assertRaisesRegex(audit.Blocked, 'AMBIGUOUS_CELL_PAYLOAD'):
+                        audit.snapshot(path)
+
     def test_rich_text_format_changes_are_detected(self):
         ns = audit.NS['m']
         for kind in ('s', 'inlineStr'):
