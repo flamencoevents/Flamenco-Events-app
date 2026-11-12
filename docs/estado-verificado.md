@@ -824,3 +824,21 @@ No conservar referencias temporales ni enlaces de descarga.
 Verificado el transporte de la copia ficticia. Pendiente comprobar la
 escritura condicionada a la versión remota y la integración autenticada.
 No se desplegó el circuito ni se abrió el libro original.
+
+## Huella ligada a los bytes auditados · 12 noviembre 2026
+
+El lector y el verificador analizan los mismos bytes con los que calculan
+la huella. Antes podían auditar una copia y devolver el SHA-256 de una
+lectura posterior distinta. La regresión reproduce el fallo con un XLSX
+ficticio y comprueba que el verificador lee el candidato una sola vez.
+
+34 pruebas afectadas superadas localmente con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_verify test_accounts_2027_package`.
+Código y regresión guardados en b2d272cc61e0adbdc3a3e5af93d480f557341f5f.
+Las pruebas usan temporales eliminados al finalizar.
+
+El conector Drive disponible permite reemplazar bytes por ID pero no
+expone una precondición de versión. Por tanto, sigue pendiente una
+escritura remota que compruebe la versión y escriba en una sola operación.
+El cambio local queda probado en modo prueba y sin despliegue.
+Sin operaciones sobre el libro real.
