@@ -31,8 +31,8 @@ def cell_record(cell, strings):
     text = value.text if value is not None else ''
     kind = cell.get('t', 'n')
     if kind == 's':
-        kind, text = 'text', strings[int(text)]
-    elif kind == 'inlineStr':
+        inline = strings[int(text)]
+    if kind in ('s', 'inlineStr'):
         kind, text = 'text', ''.join(inline.itertext()) if inline is not None else ''
     elif kind == 'str':
         kind = 'text'
@@ -45,9 +45,12 @@ def cell_record(cell, strings):
     # Formula cache recalculation is not counted as changing the formula itself.
     if formula is not None:
         text, kind = None, 'formula'
-    return {'kind': kind, 'value': text, 'style': cell.get('s', '0'),
+    record = {'kind': kind, 'value': text, 'style': cell.get('s', '0'),
             'formula': xml_signature(formula) if formula is not None else None,
             'attributes': {k: v for k, v in cell.attrib.items() if k not in ('r', 's', 't')}}
+    if inline is not None and (len(inline) != 1 or inline[0].tag != '{' + NS['m'] + '}t'):
+        record['rich_text'] = tuple(xml_signature(child) for child in inline)
+    return record
 
 
 def snapshot(path):
@@ -62,7 +65,7 @@ def snapshot(path):
         wb = xml(parts['xl/workbook.xml'])
         rels = {r.get('Id'): r.get('Target') for r in xml(parts['xl/_rels/workbook.xml.rels'])}
         ss = xml(parts['xl/sharedStrings.xml']) if 'xl/sharedStrings.xml' in parts else []
-        strings = [''.join(s.itertext()) for s in ss]
+        strings = list(ss)
         sheets = {}
         ignored = {'xl/sharedStrings.xml'}
         for sheet in wb.find('m:sheets', NS):
@@ -111,7 +114,7 @@ def compare(source, candidate, proposal):
             left, right = before['cells'].get(ref), after['cells'].get(ref)
             if name == SHEET and ref in expected:
                 wanted = expected[ref]
-                if right is None or any(right.get(k) != v for k, v in wanted.items()) or right.get('formula') is not None:
+                if right is None or any(right.get(k) != v for k, v in wanted.items()) or (right.get('formula') is not None or 'rich_text' in right):
                     changes.append({'reason': 'PROPOSED_VALUE_MISMATCH', 'cell': ref})
                 if right is not None and (right.get('style', '0') != (left or {}).get('style', '0') or
                                           right.get('attributes', {}) != (left or {}).get('attributes', {})):
