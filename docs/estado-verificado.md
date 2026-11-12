@@ -889,3 +889,19 @@ Código 0fac9f8db7da8d2133fee89e624dd25120b76366 y pruebas
 3f32c45e7431d8ae1d77a6bf32653d918db5e916.
 Preparado y verificado localmente. Pendiente control de versión remoto
 y despliegue. Sin acceso ni escritura al libro original.
+
+## Selección de la hoja de cuentas por nombre · 12 noviembre 2026
+
+El ensayo con el exportador real fallaba cuando la hoja de cuentas
+estaba en segunda posición. El escritor seleccionaba la primera.
+Ahora busca el nombre exacto validado y usa el índice de esa hoja para
+renderizar, porque el renderizado por nombre falló en la fixture con
+espacio final. No se modifica el nombre de ninguna hoja del libro.
+
+Pasó `python3 tests/run_accounts_2027_artifact_trial.py` con dos hojas
+ficticias, preservation_verified=true y cero diferencias de auditoría.
+La prueba compara byte a byte las partes ajenas a la hoja de destino y
+verifica el hipervínculo y el importe. Limpieza de temporales mediante
+TemporaryDirectory. Código 254b17137a26237d1e74fad8331f345762584c2a y prueba 8df109fd54b3146eeae1dd77dfeda517d434e8bc.
+Verificado localmente, sin despliegue. Sigue pendiente el control de
+versiones en Drive. No intervino el libro real.
