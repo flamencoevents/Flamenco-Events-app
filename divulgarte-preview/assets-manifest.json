@@ -1,0 +1,52 @@
+{
+  "imported_images": 8,
+  "total_bytes": 531834,
+  "pages": [
+    "aviso-legal.html",
+    "bienevenidos.html",
+    "contacto.html",
+    "cursos.html",
+    "cursosdesgranandolaguitarraflamenca.html",
+    "didáctica-del-flamenco.html",
+    "didáctica-del-flamencodc63ec1a.html",
+    "galeria.html",
+    "index.html",
+    "la-tirania-del-oido.html",
+    "métodos-de-guitarra-flamenca.html"
+  ],
+  "errors": [],
+  "assets": [
+    {
+      "origin_path": "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/IMG_20230707_212902-9bdbc7ca-1920w.jpg",
+      "local": "./assets/img-20230707-212902-9bdbc7ca-1920w-8816e69a350e.webp"
+    },
+    {
+      "origin_path": "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/20181116_112914-1920w.jpg",
+      "local": "./assets/20181116-112914-1920w-b8a856694646.webp"
+    },
+    {
+      "origin_path": "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/images+%286%29-5f65ecc3-1920w.jpg",
+      "local": "./assets/images-6--5f65ecc3-1920w-b6171c0ad660.webp"
+    },
+    {
+      "origin_path": "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/descarga+%286%29-5acb39ba-1920w.png",
+      "local": "./assets/descarga-6--5acb39ba-1920w-e58b7c10fe54.webp"
+    },
+    {
+      "origin_path": "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/descarga+%287%29-1920w.png",
+      "local": "./assets/descarga-7--1920w-f6a49afcbad6.webp"
+    },
+    {
+      "origin_path": "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/logo-desgranando-1920w.png",
+      "local": "./assets/logo-desgranando-1920w-eae0053eabba.webp"
+    },
+    {
+      "origin_path": "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/EEMM-267-1-1920w.jpg",
+      "local": "./assets/eemm-267-1-1920w-3489e05acfc9.webp"
+    },
+    {
+      "origin_path": "/s/bc682854daa440c9b94059482cdc976f/dms3rep/multi/opt/images+%288%29-1920w.jpg",
+      "local": "./assets/images-8--1920w-8881d111be2f.webp"
+    }
+  ]
+}
