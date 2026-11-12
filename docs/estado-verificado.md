@@ -722,3 +722,17 @@ Código 32133c2c2be38d4699ab9c4c5ec08b6f8f629493 y prueba
 46a53dfcc297fc9091299c46012307a9eba87537.
 Preparado y verificado localmente en modo prueba. Escritura remota y
 validación integral pendientes. El original permanece intacto.
+
+## Rechazo de ensayo antes de crear el diario · 12 noviembre 2026
+
+El coordinador valida el XLSX sintético y la propuesta antes de abrir el
+bloqueo y el diario SQLite. Una solicitud con test_mode=false ya se
+rechazaba, pero dejaba ambos archivos locales. La regresión comprueba que
+tampoco se crea ninguno ni se invoca el escritor.
+
+Ocho pruebas del coordinador superadas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_trial`.
+Código ad0edb558bdf73cc4570b0d9e1b6c601f35eddb7 y prueba
+d33afe25845e3aba17d24aab0854b596e27db2bb.
+Validación local con fixtures ficticias, sin despliegue. Pendiente ensayo
+remoto aislado. Sin acceso ni escritura al original.
