@@ -112,10 +112,11 @@ def package(source, artifact, request, output):
     proposal = propose(read_book(source), request)
     # Bound and validate both packages before parsing them; read once, then
     # compare source bytes to the exact proposal digest to prevent stale input.
-    read_book(artifact)
+    artifact_sha256 = read_book(artifact)['sha256']
     source_raw, artifact_raw = source.read_bytes(), artifact.read_bytes()
     require(hashlib.sha256(source_raw).hexdigest() == proposal['workbook_sha256'], 'WORKBOOK_CHANGED')
     require(len(artifact_raw) <= 20_000_000, 'WORKBOOK_TOO_LARGE')
+    require(hashlib.sha256(artifact_raw).hexdigest() == artifact_sha256, 'ARTIFACT_CHANGED')
     candidate = preserved_bytes(source_raw, artifact_raw, proposal)
     temporary = None
     try:
