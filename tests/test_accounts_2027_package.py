@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from xml.sax.saxutils import escape
 import zipfile
 
@@ -61,6 +62,19 @@ class PackagingTests(unittest.TestCase):
         self.proposal = propose(read_book(self.source), self.req)
         fixture(self.artifact, self.proposal)
         self.before = self.source.read_bytes()
+
+    def test_export_changed_after_validation_is_rejected(self):
+        def validate(path):
+            result = read_book(path)
+            if path == self.artifact:
+                fixture(path, self.proposal, prefix='m:')
+            return result
+
+        with patch.object(pack, 'read_book', side_effect=validate):
+            with self.assertRaisesRegex(Blocked, 'ARTIFACT_CHANGED'):
+                pack.package(self.source, self.artifact, self.req, self.output)
+        self.assertFalse(self.output.exists())
+        self.assertEqual(self.source.read_bytes(), self.before)
 
     def test_six_cells_pass_existing_independent_audit(self):
         out = pack.package(self.source, self.artifact, self.req, self.output)
