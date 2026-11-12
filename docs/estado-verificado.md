@@ -708,3 +708,17 @@ Código 85c5944cf93fb9746d4ac51cf55ca7a1f3ac4d21 y prueba
 Preparado y probado localmente, pendiente de integración remota.
 Los archivos temporales se limpiaron al finalizar la prueba.
 Sin operaciones sobre el libro real ni cambios en la sincronización.
+
+## Referencias de celdas inequívocas · 12 noviembre 2026
+
+El verificador rechaza referencias duplicadas o ausentes en cada hoja.
+El mapa de celdas podía ocultar duplicados en hojas secundarias. Una
+regresión con ZIP ficticio y lector preliminar simulado reproduce ambos
+casos y comprueba el rechazo. Once pruebas afectadas superadas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify`.
+El ZIP temporal se elimina al terminar.
+
+Código 32133c2c2be38d4699ab9c4c5ec08b6f8f629493 y prueba
+46a53dfcc297fc9091299c46012307a9eba87537.
+Preparado y verificado localmente en modo prueba. Escritura remota y
+validación integral pendientes. El original permanece intacto.
