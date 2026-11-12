@@ -920,3 +920,19 @@ pruebas del verificador y 10 del empaquetador con
 Las pruebas eliminan sus temporales al terminar. Verificado localmente
 en modo prueba y sin despliegue. El libro original no intervino.
 Sigue pendiente la escritura remota con control de versión en Drive.
+
+## Filas cubiertas por fórmulas de rango · 13 noviembre 2026
+
+El preparador de CUENTAS 27 bloquea una fila candidata cuando una
+fórmula declara un rango que la cubre, aunque la celda que contiene
+la fórmula esté en otra fila y fuera de A:Q. La comprobación usa
+el rango declarado en el XLSX y no recalcula el libro.
+
+Dos regresiones ficticias, con fórmula matricial y tabla de datos,
+reprodujeron la aceptación anterior. Tras el cambio ambas bloquearon
+el empaquetado, conservaron la fuente byte a byte y no dejaron copia
+ni archivo temporal de salida. Pasaron 24 pruebas mediante
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_package`.
+
+Verificado localmente en modo prueba. Sin despliegue ni acceso al libro
+original. Sigue pendiente la escritura remota con control de versión.

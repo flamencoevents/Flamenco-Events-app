@@ -71,6 +71,7 @@ def read_book(path):
         root = xml(sheet_path)
         strings = [''.join(x.itertext()) for x in xml('xl/sharedStrings.xml').findall('m:si', NS)] if 'xl/sharedStrings.xml' in names else []
         cells = {}
+        formula_ranges = []
         for c in root.findall('m:sheetData/m:row/m:c', NS):
             v, inline = c.find('m:v', NS), c.find('m:is', NS)
             value = v.text if v is not None else ''
@@ -78,8 +79,14 @@ def read_book(path):
                 value = strings[int(value)]
             elif inline is not None:
                 value = ''.join(inline.itertext())
+            formula = c.find('m:f', NS)
+            if formula is not None and formula.get('ref') is not None:
+                ref = formula.get('ref')
+                require(re.fullmatch(r'[A-Z]{1,3}[1-9][0-9]*(?::[A-Z]{1,3}[1-9][0-9]*)?', ref),
+                        'INVALID_FORMULA_RANGE')
+                formula_ranges.append(ref)
             require(c.get('r') not in cells, 'DUPLICATE_CELL')
-            cells[c.get('r')] = {'value': value, 'formula': c.find('m:f', NS) is not None}
+            cells[c.get('r')] = {'value': value, 'formula': formula is not None}
         for i, expected in enumerate(HEADERS):
             actual = cells.get(chr(65 + i) + '3', {}).get('value', '')
             require(' '.join(actual.split()) == expected, 'HEADER_CHANGED')
@@ -106,7 +113,7 @@ def read_book(path):
                 objects = objects or len(xml(drawing_path)) > 0
     return {'sha256': hashlib.sha256(raw).hexdigest(), 'cells': cells,
             'markers': sorted(markers), 'links': links, 'merges': merges,
-            'hidden': hidden, 'objects': objects}
+            'hidden': hidden, 'objects': objects, 'formula_ranges': formula_ranges}
 
 
 def inspect(book):
@@ -162,6 +169,9 @@ def propose(book, request):
     require(type(row) is int and start < row < min(following), 'ROW_OUTSIDE_MONTH')
     require(row not in book['hidden'], 'ROW_HIDDEN')
     require(not any(intersects_row(r, row) for r in book['merges'] + book['links']), 'ROW_HAS_LINK_OR_MERGE')
+    # A range formula may cover a blank row even when its anchor is elsewhere.
+    require(not any(intersects_row(ref, row) for ref in book.get('formula_ranges', ())),
+            'ROW_HAS_FORMULA_RANGE')
     # Check all columns, including formulas outside A:Q and cached-empty formulas.
     require(not any(int(re.search(r'\d+$', ref).group()) == row and
                     (c['formula'] or c['value'] not in ('', None))

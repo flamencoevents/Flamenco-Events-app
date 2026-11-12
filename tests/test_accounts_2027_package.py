@@ -129,6 +129,31 @@ class PackagingTests(unittest.TestCase):
         with self.assertRaisesRegex(Blocked, 'SAME_FILE_REJECTED'):
             pack.package(self.source, self.artifact, self.req, self.source)
 
+    def test_formula_range_blocks_blank_row_before_export(self):
+        with zipfile.ZipFile(self.source) as archive:
+            parts = {name: archive.read(name) for name in archive.namelist()}
+        sheet = 'xl/worksheets/sheet1.xml'
+        for kind, formula in (
+            ('array', '<f t="array" ref="V10:V12">ROW(V10:V12)</f>'),
+            ('dataTable', '<f t="dataTable" ref="V10:W12" dt2D="1" r1="V1" r2="W1"/>'),
+        ):
+            with self.subTest(kind=kind):
+                parts_with_formula = dict(parts)
+                parts_with_formula[sheet] = parts[sheet].replace(
+                    b'<row r="11">',
+                    f'<row r="10"><c r="V10">{formula}<v>1</v></c></row><row r="11">'.encode())
+                with zipfile.ZipFile(self.source, 'w') as archive:
+                    for name, data in parts_with_formula.items():
+                        archive.writestr(name, data)
+                original = self.source.read_bytes()
+                self.req['workbook_sha256'] = hashlib.sha256(original).hexdigest()
+                output = self.root / f'{kind}.xlsx'
+                with self.assertRaisesRegex(Blocked, 'ROW_HAS_FORMULA_RANGE'):
+                    pack.package(self.source, self.artifact, self.req, output)
+                self.assertFalse(output.exists())
+                self.assertFalse(list(self.root.glob('.fe-copy-*')))
+                self.assertEqual(self.source.read_bytes(), original)
+
     def test_stale_source_rejected(self):
         self.req['workbook_sha256'] = 'f' * 64
         with self.assertRaisesRegex(Blocked, 'WORKBOOK_CHANGED'):
