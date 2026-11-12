@@ -25,8 +25,6 @@ jobs:
           python-version: '3.12'
       - name: Guardar multimedia pública en el repositorio
         run: python scripts/divulgarte_collect_media.py
-      - name: Recuperar referencias visuales de la galería original
-        run: python scripts/divulgarte_import_images.py
       - name: Guardar imágenes y referencias
         run: |
           git config user.name "github-actions[bot]"
