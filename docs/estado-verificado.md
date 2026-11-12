@@ -804,3 +804,23 @@ La comprobación de Drive consistió en subir una salida ficticia auditada,
 leer metadatos, solicitar descarga y eliminar ese archivo temporal.
 No hubo despliegue ni escritura sobre el original. Pendientes la
 verificación de bytes descargados y el flujo remoto con control de versión.
+
+## Integridad de descarga XLSX desde Drive · 12 noviembre 2026
+
+Se reutilizó la copia ficticia auditada de 3872 bytes. Drive la registró
+como un archivo XLSX nuevo y no compartido. Se descargó el contenido
+mediante la referencia temporal del conector y se comparó en memoria
+con la salida local, byte a byte y por SHA-256. Ambos controles pasaron
+(huella c616665338fffe4c74c31a015882c83de2ccfd733837451b3d6d36879df72dd6).
+La eliminación de la única copia remota quedó confirmada con lectura 404.
+
+Reproducción: generar una salida ficticia con el recorrido de
+`tests/run_accounts_2027_artifact_trial.py`, subir solo la copia auditada
+como XLSX nuevo, comprobar shared=false y comparar el contenido descargado
+con la salida local mediante `cmp` y `sha256sum`. Eliminar únicamente
+el archivo temporal creado y comprobar que su lectura devuelve 404.
+No conservar referencias temporales ni enlaces de descarga.
+
+Verificado el transporte de la copia ficticia. Pendiente comprobar la
+escritura condicionada a la versión remota y la integración autenticada.
+No se desplegó el circuito ni se abrió el libro original.
