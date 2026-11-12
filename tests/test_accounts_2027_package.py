@@ -76,6 +76,24 @@ class PackagingTests(unittest.TestCase):
         self.assertFalse(self.output.exists())
         self.assertEqual(self.source.read_bytes(), self.before)
 
+    def test_audit_digest_identifies_the_single_candidate_read(self):
+        pack.package(self.source, self.artifact, self.req, self.output)
+        exact = self.output.read_bytes()
+        original_read = Path.read_bytes
+        reads = []
+
+        def read(path):
+            if path == self.output:
+                reads.append(path)
+                return exact if len(reads) == 1 else b'changed after inspection'
+            return original_read(path)
+
+        with patch.object(Path, 'read_bytes', read):
+            audit = verify(self.source, self.output, self.req)
+        self.assertEqual(audit['candidate_sha256'], hashlib.sha256(exact).hexdigest())
+        self.assertEqual(audit['status'], 'copy_preservation_checks_passed')
+        self.assertEqual(reads, [self.output])
+
     def test_six_cells_pass_existing_independent_audit(self):
         out = pack.package(self.source, self.artifact, self.req, self.output)
         self.assertEqual(out['status'], 'isolated_copy_preserved')
