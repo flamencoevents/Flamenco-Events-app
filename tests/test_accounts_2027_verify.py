@@ -81,6 +81,22 @@ class PreservationTests(unittest.TestCase):
             self.candidate = audit.snapshot(candidate)
             self.assertIn('SHEET_STRUCTURE_CHANGED', self.reasons())
 
+    def test_snapshot_rejects_ambiguous_cells_on_secondary_sheet(self):
+        ns = audit.NS['m']
+        with TemporaryDirectory() as tmp, patch.object(audit, 'read_book'):
+            path = Path(tmp) / 'synthetic.xlsx'
+            for cells, reason in (
+                ('<c r="H3"><v>123</v></c><c r="H3"><v>456</v></c>', 'DUPLICATE_CELL'),
+                ('<c><v>123</v></c>', 'MISSING_CELL_REFERENCE'),
+            ):
+                with self.subTest(reason=reason):
+                    with audit.zipfile.ZipFile(path, 'w') as z:
+                        z.writestr('xl/workbook.xml', f'<workbook xmlns="{ns}"><sheets><sheet name="Other"/></sheets></workbook>')
+                        z.writestr('xl/_rels/workbook.xml.rels', '<Relationships><Relationship Target="worksheets/sheet1.xml"/></Relationships>')
+                        z.writestr('xl/worksheets/sheet1.xml', f'<worksheet xmlns="{ns}"><sheetData><row r="3">{cells}</row></sheetData></worksheet>')
+                    with self.assertRaisesRegex(audit.Blocked, reason):
+                        audit.snapshot(path)
+
     def test_formula_change_fails(self):
         self.candidate['sheets'][audit.SHEET]['cells']['Q73']['formula'] = ('formula', 'CHANGED')
         self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
