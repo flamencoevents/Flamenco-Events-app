@@ -14,7 +14,7 @@
   const first=(new Date(Date.UTC(year,month,1)).getUTCDay()+6)%7;
   const last=new Date(Date.UTC(year,month+1,0)).getUTCDate();
   const byDay=new Map();
-  for(const r of rows){if(!r.event_date.startsWith(year+'-'+pad(month+1)+'-'))continue;const d=Number(r.event_date.slice(-2));if(!byDay.has(d))byDay.set(d,[]);byDay.get(d).push(r);}
+  for(const r of rows){const start=r.event_date,end=r.account_values?.calendar_end_date||start;for(let d=1;d<=last;d++){const day=year+'-'+pad(month+1)+'-'+pad(d);if(day<start||day>end)continue;if(!byDay.has(d))byDay.set(d,[]);byDay.get(d).push(r);}}
   let html='<div class="fe-cal-grid" role="grid" aria-label="Calendario de '+months[month]+' de '+year+'">'+
    days.map(x=>'<div class="fe-cal-weekday" role="columnheader">'+x+'</div>').join('');
   for(let i=0;i<first;i++)html+='<div class="fe-cal-empty" aria-hidden="true"></div>';
@@ -26,7 +26,7 @@
   return html+'</div>';
  }
  function renderDetails(rows,date){
-  const selected=rows.filter(x=>x.event_date===date);
+  const selected=rows.filter(x=>x.event_date<=date&&(x.account_values?.calendar_end_date||x.event_date)>=date);
   if(!selected.length)return '<div class="fe-cal-details"><h3>'+formatted(date)+'</h3><p>Sin eventos registrados en esta fecha.</p></div>';
   return '<div class="fe-cal-details"><h3>'+formatted(date)+' · '+selected.length+' evento'+(selected.length>1?'s':'')+'</h3>'+
    selected.map(r=>'<article class="fe-cal-detail"><strong>'+safe(r.client_label?.trim()||'Cliente no indicado')+'</strong><p><span>Lugar:</span> '+safe(r.venue?.trim()||'No indicado')+'</p>'+(r.schedule?'<p><span>Horario:</span> '+safe(r.schedule)+'</p>':'')+'</article>').join('')+'</div>';
@@ -42,7 +42,7 @@
    host.querySelector('[data-fe-cal-year]').value=String(year);
    host.querySelector('[data-fe-cal-month]').innerHTML=renderMonth(rows,year,month,selected);
    host.querySelector('[data-fe-cal-detail]').innerHTML=selected?renderDetails(rows,selected):'<p>Selecciona un día azul para consultar el cliente y el lugar de cada evento.</p>';
-   const total=rows.filter(r=>r.event_date.startsWith(year+'-'+pad(month+1)+'-')).length;
+   const firstDay=year+'-'+pad(month+1)+'-01',lastDay=year+'-'+pad(month+1)+'-'+pad(new Date(Date.UTC(year,month+1,0)).getUTCDate());const total=rows.filter(r=>r.event_date<=lastDay&&(r.account_values?.calendar_end_date||r.event_date)>=firstDay).length;
    host.querySelector('[data-fe-cal-summary]').textContent=total+' evento'+(total===1?'':'s')+' registrados este mes · Fuente: Cuentas Flamenco Events (lectura importada de 2026 y 2027).';
   }
   function navigate(delta){let n=year*12+month+delta;if(n<2026*12||n>2027*12+11)return;year=Math.floor(n/12);month=n%12;selected='';draw();}
@@ -55,7 +55,7 @@
     try{
      const auth=await db.auth.getUser();
      if(!auth.data?.user)throw Error('Debes iniciar sesión');
-     const [a,b]=await Promise.all([db.from('accounts_event_catalog').select('year,source_row,event_date,client_label,venue,schedule').eq('year',2026).order('event_date').limit(1000),db.from('accounts_event_catalog').select('year,source_row,event_date,client_label,venue,schedule').eq('year',2027).order('event_date').limit(1000)]);
+     const [a,b]=await Promise.all([db.from('accounts_event_catalog').select('year,source_row,event_date,client_label,venue,schedule,account_values').eq('year',2026).order('event_date').limit(1000),db.from('accounts_event_catalog').select('year,source_row,event_date,client_label,venue,schedule').eq('year',2027).order('event_date').limit(1000)]);
      if(a.error||b.error)throw (a.error||b.error);
      if(ticket!==current)return;
      rows=[...(a.data||[]),...(b.data||[])].filter(isEvent);
