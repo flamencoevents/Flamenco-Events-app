@@ -97,6 +97,24 @@ class PreservationTests(unittest.TestCase):
                     with self.assertRaisesRegex(audit.Blocked, reason):
                         audit.snapshot(path)
 
+    def test_rich_text_format_changes_are_detected(self):
+        ns = audit.NS['m']
+        for kind in ('s', 'inlineStr'):
+            def record(bold):
+                runs = '<r><rPr>' + ('<b/>' if bold else '') + '</rPr><t>Ficticio</t></r>'
+                if kind == 's':
+                    strings = [audit.ET.fromstring(f'<si xmlns="{ns}">{runs}</si>')]
+                    body = '<v>0</v>'
+                else:
+                    strings = []
+                    body = f'<is>{runs}</is>'
+                return audit.cell_record(audit.ET.fromstring(f'<c xmlns="{ns}" t="{kind}">{body}</c>'), strings)
+
+            with self.subTest(kind=kind):
+                self.source['sheets']['Other']['cells']['H3'] = record(True)
+                self.candidate['sheets']['Other']['cells']['H3'] = record(False)
+                self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
+
     def test_formula_change_fails(self):
         self.candidate['sheets'][audit.SHEET]['cells']['Q73']['formula'] = ('formula', 'CHANGED')
         self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
