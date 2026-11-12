@@ -842,3 +842,19 @@ expone una precondición de versión. Por tanto, sigue pendiente una
 escritura remota que compruebe la versión y escriba en una sola operación.
 El cambio local queda probado en modo prueba y sin despliegue.
 Sin operaciones sobre el libro real.
+
+## Conservación del formato dentro de las celdas · 12 noviembre 2026
+
+La auditoría conserva la estructura del texto enriquecido, tanto en
+cadenas compartidas como en celdas con texto en línea. La regresión
+reproduce la pérdida de negrita sin cambio de texto ni de estilo de
+celda, que antes pasaba inadvertida en texto en línea. Ahora se detecta
+en ambos tipos de almacenamiento.
+
+Doce pruebas afectadas superadas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify`.
+Código 8b3c4ba71c086ef870cc4b38eb9a91fde9bcd661 y prueba
+7a6378445ae39b14b4429f5c96b13e7041c8ebdb.
+Preparado y verificado localmente con datos ficticios. Pendientes el
+control de versión remoto y el despliegue. Sin operaciones sobre el
+libro real, asignaciones ni sesiones.
