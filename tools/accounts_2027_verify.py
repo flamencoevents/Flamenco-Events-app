@@ -71,7 +71,7 @@ def snapshot(path):
             cells = {c.get('r'): cell_record(c, strings) for c in root.findall('m:sheetData/m:row/m:c', NS)}
             structure = copy.deepcopy(root)
             for row in structure.findall('m:sheetData/m:row', NS):
-                for cell in list(row):
+                for cell in row.findall('m:c', NS):
                     row.remove(cell)
             sheets[sheet.get('name')] = {'cells': cells, 'structure': xml_signature(structure)}
         protected = {}
