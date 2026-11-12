@@ -6,6 +6,7 @@ signature, payment or permission to write. Never upload private input/output.
 import argparse
 import datetime as dt
 import hashlib
+import io
 import json
 from pathlib import Path
 import posixpath
@@ -46,9 +47,9 @@ def clean_text(value):
 
 
 def read_book(path):
-    raw = Path(path).read_bytes()
+    raw = path if isinstance(path, bytes) else Path(path).read_bytes()
     require(len(raw) <= 20_000_000, 'WORKBOOK_TOO_LARGE')
-    with zipfile.ZipFile(path) as z:
+    with zipfile.ZipFile(io.BytesIO(raw)) as z:
         names = z.namelist()
         require(len(names) == len(set(names)), 'DUPLICATE_ZIP_ENTRY')
         require(sum(x.file_size for x in z.infolist()) <= 80_000_000, 'WORKBOOK_TOO_LARGE')
