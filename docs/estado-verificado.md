@@ -785,3 +785,22 @@ Reproducción optativa con el runtime existente:
 Código de ensayo b5b204e0316d6839525b0a07b0bd7c009dc5e362. Temporal aislado y
 eliminado al terminar. Validado localmente en modo prueba.
 Pendientes Drive y despliegue. El libro real no intervino.
+
+## Copia ficticia privada en Drive · 12 noviembre 2026
+
+Se reutilizó la salida ficticia auditada del ensayo anterior. La huella
+SHA-256 local coincidió con candidate_sha256 y el informe tenía cero
+diferencias. Se subió a Mi unidad de la cuenta autorizada como archivo
+nuevo, sin convertirlo ni compartirlo. La lectura posterior confirmó MIME
+XLSX, 3872 bytes y shared=false. La descarga del conector devolvió una
+referencia autenticada, sin bytes materializados en el ensayo. No se
+certifica igualdad byte a byte tras la descarga.
+
+Limpieza confirmada: eliminación del único archivo ficticio creado y
+lectura posterior 404. No se crearon usuarios ni sesiones de prueba.
+Para reproducir la parte local usar
+`python3 tests/run_accounts_2027_artifact_trial.py` (b5b204e0316d6839525b0a07b0bd7c009dc5e362).
+La comprobación de Drive consistió en subir una salida ficticia auditada,
+leer metadatos, solicitar descarga y eliminar ese archivo temporal.
+No hubo despliegue ni escritura sobre el original. Pendientes la
+verificación de bytes descargados y el flujo remoto con control de versión.
