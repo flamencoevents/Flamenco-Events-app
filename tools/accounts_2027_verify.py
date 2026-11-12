@@ -6,7 +6,7 @@ them equivalent. Raw workbook values/formulas/links are never in the report.
 import argparse
 import copy
 import datetime as dt
-from decimal import Decimal
+from decimal import Decimal, localcontext
 import hashlib
 import json
 from pathlib import Path
@@ -36,7 +36,10 @@ def cell_record(cell, strings):
     elif kind == 'str':
         kind = 'text'
     elif kind == 'n' and text not in ('', None):
-        text = str(Decimal(text).normalize())
+        number = Decimal(text)
+        with localcontext() as context:
+            context.prec = max(context.prec, len(number.as_tuple().digits))
+            text = str(number.normalize())
     formula = cell.find('m:f', NS)
     # Formula cache recalculation is not counted as changing the formula itself.
     if formula is not None:
