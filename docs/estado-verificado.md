@@ -658,3 +658,20 @@ no se repitió navegación ni se usó push forzado. Pendiente contraste remoto a
 de publicar los cambios de ventana/límite. Sin envío real, usuarios, sesiones o
 asignaciones creados, ni escritura en CUENTAS 27. MODO PRUEBA y sincronización
 general apagada. Pruebas con dobles, no ensayo de extremo a extremo.
+
+
+## Recuperación ante servicios vacíos · 12 noviembre 2026
+
+Un elemento null en la lista de servicios de una fila GENERADO interrumpía
+todo el lote antes de la entrega. AppWhatsAppSync.js omite ese elemento,
+conserva la descripción de los servicios válidos y procesa la siguiente fila.
+La regresión con dos solicitudes ficticias falló antes del cambio y pasó
+después. Sintaxis y cinco pruebas afectadas superadas localmente mediante
+`node --check AppWhatsAppSync.js` y
+`node --test tests/whatsapp-sync-window.test.cjs`.
+
+Código fc83fc306072c566fd1e1e9dd3e9b857f369e4af y prueba
+5180fac091a0237736c03877ba96a511692a543d. Preparado en GitHub.
+La corrección queda pendiente de publicación y de validación de extremo a
+extremo. El ensayo empleó dobles de Sheets y transporte, con MODO PRUEBA
+y sin operaciones sobre el XLSX real.
