@@ -858,3 +858,19 @@ Código 8b3c4ba71c086ef870cc4b38eb9a91fde9bcd661 y prueba
 Preparado y verificado localmente con datos ficticios. Pendientes el
 control de versión remoto y el despliegue. Sin operaciones sobre el
 libro real, asignaciones ni sesiones.
+
+## Hipervínculo conservado en el ensayo del exportador · 12 noviembre 2026
+
+Se amplió la prueba optativa con un hipervínculo ficticio en A12, fuera de
+la fila de destino, con relación XLSX externa a example.invalid. El ensayo
+con el exportador real terminó con preservation_verified=true y comprobó
+que el vínculo sigue en A12 y que su parte de relaciones es idéntica
+byte a byte. Se mantuvieron los controles de importe y del archivo de
+partida. El primer montaje de la fixture asumía un cierre XML sin prefijo.
+Se corrigió usando el árbol XML de la hoja ficticia.
+
+Reproducción: `python3 tests/run_accounts_2027_artifact_trial.py` con
+el runtime existente. Prueba guardada en 4a359df07ea01533e19efe4c743ed64b80007560.
+Temporales eliminados al finalizar. Verificado localmente en modo prueba.
+Pendientes el control de versión en Drive y el despliegue.
+Sin operaciones sobre el libro real.
