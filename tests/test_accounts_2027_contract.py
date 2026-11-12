@@ -5,11 +5,14 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+from tempfile import TemporaryDirectory
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 import accounts_2027_contract as bridge
 from test_accounts_2027 import book
+from test_accounts_2027_package import fixture as workbook_fixture
+from accounts_2027_package import package
 
 PDF = b'%PDF-1.4\nFICTITIOUS CONTRACT - NO VALIDITY\n%%EOF'
 
@@ -61,6 +64,24 @@ class ContractRehearsalTests(unittest.TestCase):
         self.assertEqual(self.data, original)
         self.assertEqual(out, bridge.prepare(self.book, self.data, PDF))
         self.assertTrue(set('IJKLMNOPQ').isdisjoint(out['proposal']['proposed_cells']))
+
+    def test_contract_proposal_can_be_audited_in_a_synthetic_copy(self):
+        with TemporaryDirectory() as temp:
+            source, export, candidate = [Path(temp) / name for name in
+                                         ('source.xlsx', 'export.xlsx', 'copy.xlsx')]
+            workbook_fixture(source)
+            original = source.read_bytes()
+            prepared = bridge.prepare(bridge.read_book(source), self.data, PDF)
+            workbook_fixture(export, prepared['proposal'])
+            result = package(source, export, prepared['planner_request'], candidate)
+            self.assertEqual(result['audit']['differences'], [])
+            self.assertFalse(result['production_writable'])
+            self.assertEqual(bridge.read_book(candidate)['cells']['H11']['value'], '1060.01')
+            self.assertEqual(source.read_bytes(), original)
+
+    def test_numeric_overflow_in_saved_snapshot_is_rejected(self):
+        with self.assertRaisesRegex(bridge.Blocked, '^INVALID_JSON_NUMBER$'):
+            bridge.parsed('{"calculo":{"ajuste":1e999}}')
 
     def test_generated_contract_is_not_signed_paid_or_closed(self):
         out = bridge.prepare(self.book, self.data, PDF)
