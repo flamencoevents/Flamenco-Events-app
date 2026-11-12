@@ -53,6 +53,17 @@ class PreservationTests(unittest.TestCase):
         self.candidate['sheets']['Other']['cells']['H3']['value'] = '124'
         self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
 
+    def test_unrelated_precise_numeric_change_fails(self):
+        def record(value):
+            c = audit.ET.fromstring('<c xmlns="' + audit.NS['m'] + '"><v>' + value + '</v></c>')
+            return audit.cell_record(c, [])
+        left = '0.12345678901234567890123456781'
+        right = '0.12345678901234567890123456782'
+        self.assertEqual(record(left), record(left + '0'))
+        self.source['sheets']['Other']['cells']['H3'] = record(left)
+        self.candidate['sheets']['Other']['cells']['H3'] = record(right)
+        self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
+
     def test_formula_change_fails(self):
         self.candidate['sheets'][audit.SHEET]['cells']['Q73']['formula'] = ('formula', 'CHANGED')
         self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
