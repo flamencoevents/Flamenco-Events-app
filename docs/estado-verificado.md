@@ -874,3 +874,18 @@ el runtime existente. Prueba guardada en 4a359df07ea01533e19efe4c743ed64b8000756
 Temporales eliminados al finalizar. Verificado localmente en modo prueba.
 Pendientes el control de versión en Drive y el despliegue.
 Sin operaciones sobre el libro real.
+
+## Coherencia de coordenadas XLSX · 12 noviembre 2026
+
+El verificador rechaza referencias con sintaxis no canónica y celdas
+cuya coordenada no corresponde a la fila explícita que las contiene.
+Antes podía separar la celda de su fila y pasar por alto ese desajuste
+en una hoja secundaria. Los dos casos nuevos fallaron antes del cambio
+y pasaron después.
+
+Doce pruebas locales con datos ficticios superadas mediante
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify`.
+Código 0fac9f8db7da8d2133fee89e624dd25120b76366 y pruebas
+3f32c45e7431d8ae1d77a6bf32653d918db5e916.
+Preparado y verificado localmente. Pendiente control de versión remoto
+y despliegue. Sin acceso ni escritura al libro original.
