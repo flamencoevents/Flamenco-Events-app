@@ -12,6 +12,7 @@ import io
 import json
 from pathlib import Path
 import posixpath
+import re
 import zipfile
 import xml.etree.ElementTree as ET
 
@@ -74,11 +75,15 @@ def snapshot(path):
             root = xml(parts[name])
             ignored.add(name)
             cells = {}
-            for cell in root.findall('m:sheetData/m:row/m:c', NS):
-                ref = cell.get('r')
-                require(bool(ref), 'MISSING_CELL_REFERENCE')
-                require(ref not in cells, 'DUPLICATE_CELL')
-                cells[ref] = cell_record(cell, strings)
+            for row in root.findall('m:sheetData/m:row', NS):
+                for cell in row.findall('m:c', NS):
+                    ref = cell.get('r')
+                    require(bool(ref), 'MISSING_CELL_REFERENCE')
+                    match = re.fullmatch(r'[A-Z]{1,3}([1-9][0-9]*)', ref)
+                    require(match is not None, 'INVALID_CELL_REFERENCE')
+                    require(row.get('r') in (None, match[1]), 'CELL_ROW_MISMATCH')
+                    require(ref not in cells, 'DUPLICATE_CELL')
+                    cells[ref] = cell_record(cell, strings)
             structure = copy.deepcopy(root)
             for row in structure.findall('m:sheetData/m:row', NS):
                 for cell in row.findall('m:c', NS):
