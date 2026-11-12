@@ -88,6 +88,8 @@ class PreservationTests(unittest.TestCase):
             for cells, reason in (
                 ('<c r="H3"><v>123</v></c><c r="H3"><v>456</v></c>', 'DUPLICATE_CELL'),
                 ('<c><v>123</v></c>', 'MISSING_CELL_REFERENCE'),
+                ('<c r="H4"><v>123</v></c>', 'CELL_ROW_MISMATCH'),
+                ('<c r="H03"><v>123</v></c>', 'INVALID_CELL_REFERENCE'),
             ):
                 with self.subTest(reason=reason):
                     with audit.zipfile.ZipFile(path, 'w') as z:
