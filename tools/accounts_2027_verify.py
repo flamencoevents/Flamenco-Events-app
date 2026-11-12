@@ -68,7 +68,12 @@ def snapshot(path):
             name = target.lstrip('/') if target.startswith('/') else posixpath.normpath('xl/' + target)
             root = xml(parts[name])
             ignored.add(name)
-            cells = {c.get('r'): cell_record(c, strings) for c in root.findall('m:sheetData/m:row/m:c', NS)}
+            cells = {}
+            for cell in root.findall('m:sheetData/m:row/m:c', NS):
+                ref = cell.get('r')
+                require(bool(ref), 'MISSING_CELL_REFERENCE')
+                require(ref not in cells, 'DUPLICATE_CELL')
+                cells[ref] = cell_record(cell, strings)
             structure = copy.deepcopy(root)
             for row in structure.findall('m:sheetData/m:row', NS):
                 for cell in row.findall('m:c', NS):
