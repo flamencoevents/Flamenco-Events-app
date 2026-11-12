@@ -675,3 +675,20 @@ Código fc83fc306072c566fd1e1e9dd3e9b857f369e4af y prueba
 La corrección queda pendiente de publicación y de validación de extremo a
 extremo. El ensayo empleó dobles de Sheets y transporte, con MODO PRUEBA
 y sin operaciones sobre el XLSX real.
+
+
+## Precisión del verificador XLSX · 12 noviembre 2026
+
+El verificador podía aceptar un cambio numérico fuera de C:H si los dos
+valores solo diferían después del dígito significativo 28. El contexto
+decimal predeterminado los redondeaba al normalizar el XML. Ahora conserva
+los dígitos de la celda y sigue aceptando representaciones equivalentes,
+como un cero final adicional.
+
+La regresión con XML ficticio falló antes de la corrección y pasó después.
+Nueve pruebas afectadas superadas localmente con
+`PYTHONPATH=tests python3 -m unittest -v test_accounts_2027_verify`.
+Código 2ee91f612114dfee1aa9c8f9fb67a52fb6f7937a y prueba
+e4bfd02da51b4feb2b9d37478f46e45bee9e0612.
+Preparado en GitHub y validado con datos ficticios. Pendientes el despliegue
+y el ensayo integral. Sin acceso ni escritura al XLSX real.
