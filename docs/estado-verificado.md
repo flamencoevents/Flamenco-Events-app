@@ -736,3 +736,18 @@ Código ad0edb558bdf73cc4570b0d9e1b6c601f35eddb7 y prueba
 d33afe25845e3aba17d24aab0854b596e27db2bb.
 Validación local con fixtures ficticias, sin despliegue. Pendiente ensayo
 remoto aislado. Sin acceso ni escritura al original.
+
+## Huella del exportado en el ensayo XLSX · 12 noviembre 2026
+
+El empaquetador contrasta el SHA-256 de los bytes del exportado que consume
+con el obtenido al validarlo. Si cambia entre lecturas, devuelve
+ARTIFACT_CHANGED antes de generar la copia. La regresión modifica solo
+la representación XML del archivo ficticio entre ambas lecturas, sin
+alterar los valores propuestos. El código anterior aceptaba el cambio.
+
+Nueve pruebas de empaquetado superadas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_package`.
+Código dd736d6dde10a745a8567cc987e74f36b6c5cee6 y prueba
+35705e9a762263ef4c24c41c06f64a9587c0a9b7.
+Validado localmente con archivos ficticios eliminados al terminar.
+Despliegue y ensayo remoto pendientes. Sin acceso ni escritura al original.
