@@ -5,6 +5,8 @@ from decimal import Decimal
 import sys
 from pathlib import Path
 import unittest
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 import accounts_2027_verify as audit
@@ -63,6 +65,21 @@ class PreservationTests(unittest.TestCase):
         self.source['sheets']['Other']['cells']['H3'] = record(left)
         self.candidate['sheets']['Other']['cells']['H3'] = record(right)
         self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
+
+    def test_row_extension_change_is_visible_in_snapshot(self):
+        def write(path, extension):
+            ns = audit.NS['m']
+            with audit.zipfile.ZipFile(path, 'w') as z:
+                z.writestr('xl/workbook.xml', f'<workbook xmlns="{ns}"><sheets><sheet name="Other"/></sheets></workbook>')
+                z.writestr('xl/_rels/workbook.xml.rels', '<Relationships><Relationship Target="worksheets/sheet1.xml"/></Relationships>')
+                z.writestr('xl/worksheets/sheet1.xml', f'<worksheet xmlns="{ns}"><sheetData><row r="3"><c r="H3"><v>123</v></c><extLst><ext uri="{extension}"/></extLst></row></sheetData></worksheet>')
+        with TemporaryDirectory() as tmp, patch.object(audit, 'read_book'):
+            source, candidate = Path(tmp) / 'source.xlsx', Path(tmp) / 'copy.xlsx'
+            write(source, 'synthetic-original')
+            write(candidate, 'synthetic-changed')
+            self.source = audit.snapshot(source)
+            self.candidate = audit.snapshot(candidate)
+            self.assertIn('SHEET_STRUCTURE_CHANGED', self.reasons())
 
     def test_formula_change_fails(self):
         self.candidate['sheets'][audit.SHEET]['cells']['Q73']['formula'] = ('formula', 'CHANGED')
