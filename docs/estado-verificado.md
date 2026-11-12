@@ -751,3 +751,20 @@ Código dd736d6dde10a745a8567cc987e74f36b6c5cee6 y prueba
 35705e9a762263ef4c24c41c06f64a9587c0a9b7.
 Validado localmente con archivos ficticios eliminados al terminar.
 Despliegue y ensayo remoto pendientes. Sin acceso ni escritura al original.
+
+## Contrato ficticio a copia XLSX auditada · 12 noviembre 2026
+
+Una prueba enlaza filas FE3/FE_Contratos ficticias y bytes PDF de prueba
+con la propuesta mensual y el empaquetador real. Utiliza un exportado
+XLSX simulado, conserva el origen y verifica 1060,01 en H11 sin diferencias
+fuera de la propuesta. El adaptador también rechaza números JSON que
+desbordan a infinito dentro del cálculo guardado. La regresión reprodujo
+la aceptación indebida antes de la corrección.
+
+Trece pruebas superadas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_contract`.
+Código 6efb2d80012dc2683700b9ea26b843413ea7352b y pruebas
+cd539fe6ee1cce9d3baf47ac09b60462df30723c.
+Verificado localmente en modo prueba. El ensayo elimina sus temporales.
+Pendientes el exportador real en este recorrido, Drive y despliegue.
+Sin operaciones sobre el libro original.
