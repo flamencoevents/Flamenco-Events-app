@@ -692,3 +692,19 @@ Código 2ee91f612114dfee1aa9c8f9fb67a52fb6f7937a y prueba
 e4bfd02da51b4feb2b9d37478f46e45bee9e0612.
 Preparado en GitHub y validado con datos ficticios. Pendientes el despliegue
 y el ensayo integral. Sin acceso ni escritura al XLSX real.
+
+## Conservación de extensiones de fila XLSX · 12 noviembre 2026
+
+La comparación estructural descartaba todos los hijos de cada fila.
+Ahora separa únicamente las celdas, de forma que una modificación de
+extLst produce SHEET_STRUCTURE_CHANGED. La regresión con dos ZIP de
+XML ficticio falló antes del cambio y pasó después. La validación
+preliminar del libro se simula en ese caso para aislar la comparación.
+Diez pruebas afectadas pasaron con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify`.
+
+Código 85c5944cf93fb9746d4ac51cf55ca7a1f3ac4d21 y prueba
+73e7453fec9dc02c21961ea2870c569999f4f812.
+Preparado y probado localmente, pendiente de integración remota.
+Los archivos temporales se limpiaron al finalizar la prueba.
+Sin operaciones sobre el libro real ni cambios en la sincronización.
