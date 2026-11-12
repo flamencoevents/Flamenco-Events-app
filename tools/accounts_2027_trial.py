@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import subprocess
 
-from accounts_2027 import Blocked, read_book, require
+from accounts_2027 import Blocked, propose, read_book, require
 from accounts_2027_ledger import Ledger
 
 
@@ -47,13 +47,12 @@ def run_trial(source, request_path, output, database, workbook_key, owner_key,
     require(database.resolve() not in protected and
             Path(str(database.resolve()) + '.trial.lock').resolve() not in protected,
             'JOURNAL_INPUT_COLLISION')
+    book = read_book(source)
+    proposal = propose(book, request)
     with exclusive_trial(database):
         ledger = Ledger(database)
-        book = read_book(source)
-        # Validate destination before reserving. An accidental duplicate CLI
-        # must not turn a pending operation into a terminal failure.
-        from accounts_2027 import propose
-        proposal = propose(book, request)
+        # An accidental duplicate CLI must not turn a pending operation
+        # into a terminal failure.
         with ledger.transaction() as db:
             previous = db.execute('SELECT state FROM operations WHERE proposal_id = ?',
                                   (proposal['proposal_id'],)).fetchone()
