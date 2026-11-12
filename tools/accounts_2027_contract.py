@@ -10,6 +10,7 @@ import datetime as dt
 from decimal import Decimal, InvalidOperation
 import hashlib
 import json
+import math
 from pathlib import Path
 import re
 import zipfile
@@ -35,7 +36,12 @@ def parsed(raw):
             require(key not in obj, 'DUPLICATE_JSON_KEY')
             obj[key] = value
         return obj
-    value = json.loads(raw, object_pairs_hook=unique,
+    def finite_float(token):
+        value = float(token)
+        require(math.isfinite(value), 'INVALID_JSON_NUMBER')
+        return value
+
+    value = json.loads(raw, object_pairs_hook=unique, parse_float=finite_float,
                        parse_constant=lambda _: require(False, 'INVALID_JSON_NUMBER'))
     require(isinstance(value, dict), 'INVALID_SNAPSHOT')
     return value
