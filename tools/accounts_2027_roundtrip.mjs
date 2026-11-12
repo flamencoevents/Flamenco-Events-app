@@ -25,13 +25,13 @@ await fs.mkdir(outputDir);
 // exactly the bytes whose digest was checked, without reopening the input.
 const workbook = await SpreadsheetFile.importXlsx(
   raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength));
-const sheet = workbook.worksheets.getItemAt(0);
+const sheet = workbook.worksheets.getItem(proposal.sheet);
 if (sheet.name !== proposal.sheet) {
   throw new Error('IMPORT_SHEET_NAME_CHANGED');
 }
 const row = proposal.candidate_row;
 const saveRender = async (filename) => {
-  const image = await workbook.render({sheetIndex: 0,
+  const image = await workbook.render({sheetIndex: sheet.index,
     range: `A${row - 2}:Q${row + 2}`, scale: 1, format: 'png'});
   await fs.writeFile(path.join(outputDir, filename), new Uint8Array(await image.arrayBuffer()), {flag: 'wx'});
 };
