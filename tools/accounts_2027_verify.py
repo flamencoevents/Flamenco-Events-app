@@ -8,6 +8,7 @@ import copy
 import datetime as dt
 from decimal import Decimal, localcontext
 import hashlib
+import io
 import json
 from pathlib import Path
 import posixpath
@@ -51,8 +52,9 @@ def cell_record(cell, strings):
 
 def snapshot(path):
     # Reuse bounded ZIP/XML validation and exact header/name checks.
-    read_book(path)
-    with zipfile.ZipFile(path) as z:
+    raw = path if isinstance(path, bytes) else Path(path).read_bytes()
+    read_book(raw)
+    with zipfile.ZipFile(io.BytesIO(raw)) as z:
         parts = {name: z.read(name) for name in z.namelist()}
         def xml(raw):
             require(b'<!DOCTYPE' not in raw.upper() and b'<!ENTITY' not in raw.upper(), 'UNSUPPORTED_XML')
@@ -129,10 +131,12 @@ def compare(source, candidate, proposal):
 
 def verify(source, candidate, request):
     require(Path(source).resolve() != Path(candidate).resolve(), 'SAME_FILE_REJECTED')
-    proposal = propose(read_book(source), request)
-    result = compare(snapshot(source), snapshot(candidate), proposal)
+    source_raw = Path(source).read_bytes()
+    candidate_raw = Path(candidate).read_bytes()
+    proposal = propose(read_book(source_raw), request)
+    result = compare(snapshot(source_raw), snapshot(candidate_raw), proposal)
     result['source_sha256'] = proposal['workbook_sha256']
-    result['candidate_sha256'] = hashlib.sha256(Path(candidate).read_bytes()).hexdigest()
+    result['candidate_sha256'] = hashlib.sha256(candidate_raw).hexdigest()
     return result
 
 
