@@ -768,3 +768,20 @@ cd539fe6ee1cce9d3baf47ac09b60462df30723c.
 Verificado localmente en modo prueba. El ensayo elimina sus temporales.
 Pendientes el exportador real en este recorrido, Drive y despliegue.
 Sin operaciones sobre el libro original.
+
+## Exportador real con contrato ficticio · 12 noviembre 2026
+
+Ejecutado el importador, renderizado, exportador y empaquetador con Artifact
+Tool en un XLSX creado desde cero y un contrato ficticio. Resultado
+copy_audited_requires_review y preservation_verified=true. Auditoría sin
+diferencias, 1060,01 en H11, fórmula de V12 conservada y origen idéntico
+byte a byte. El nombre de la hoja pierde el espacio final al crear la
+fixture. El ensayo restaura ese espacio únicamente en el XML de la
+fixture, para probar la grafía exacta del origen. Con ese nombre, el
+recorrido pasó. Esto no determina la causa del antiguo error sheetId.
+
+Reproducción optativa con el runtime existente:
+`python3 tests/run_accounts_2027_artifact_trial.py`.
+Código de ensayo b5b204e0316d6839525b0a07b0bd7c009dc5e362. Temporal aislado y
+eliminado al terminar. Validado localmente en modo prueba.
+Pendientes Drive y despliegue. El libro real no intervino.
