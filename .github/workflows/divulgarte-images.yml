@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/divulgarte-images.yml'
       - 'scripts/divulgarte_import_images.py'
+      - 'scripts/divulgarte_collect_media.py'
   workflow_dispatch:
 permissions:
   contents: write
@@ -22,7 +23,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Recuperar imágenes del sitio original sin acceder a zona privada
+      - name: Guardar multimedia pública en el repositorio
+        run: python scripts/divulgarte_collect_media.py
+      - name: Recuperar referencias visuales de la galería original
         run: python scripts/divulgarte_import_images.py
       - name: Guardar imágenes y referencias
         run: |
