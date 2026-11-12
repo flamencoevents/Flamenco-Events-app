@@ -6,11 +6,12 @@ import subprocess
 import sys
 from tempfile import TemporaryDirectory
 from zipfile import ZipFile
+import xml.etree.ElementTree as ET
 
 from test_accounts_2027_contract import PDF, bridge, fixture
-from accounts_2027 import HEADERS, SHEET
+from accounts_2027 import HEADERS, NS, REL, SHEET
 
-BUILDER = "import fs from 'node:fs/promises';\nimport { Workbook, SpreadsheetFile } from '@oai/artifact-tool';\n\nconst [layoutPath, output] = process.argv.slice(2);\nconst {sheetName, headers} = JSON.parse(await fs.readFile(layoutPath, 'utf8'));\nconst wb = Workbook.create();\nconst sheet = wb.worksheets.add(sheetName);\nsheet.getRange('A3:Q3').values = [headers];\nsheet.getRange('A9').values = [['MARZO']];\nsheet.getRange('A15').values = [['ABRIL']];\nsheet.getRange('C11:H11').format.fill = '#eeeeee';\nsheet.getRange('D11').format.numberFormat = 'dd/mm/yyyy';\nsheet.getRange('H11').format.numberFormat = '0.00';\nsheet.getRange('V12').formulas = [['=1+2']];\nconst file = await SpreadsheetFile.exportXlsx(wb);\nawait file.save(output);\n"
+BUILDER = "import fs from 'node:fs/promises';\nimport { Workbook, SpreadsheetFile } from '@oai/artifact-tool';\n\nconst [layoutPath, output] = process.argv.slice(2);\nconst {sheetName, headers} = JSON.parse(await fs.readFile(layoutPath, 'utf8'));\nconst wb = Workbook.create();\nconst sheet = wb.worksheets.add(sheetName);\nsheet.getRange('A3:Q3').values = [headers];\nsheet.getRange('A9').values = [['MARZO']];\nsheet.getRange('A15').values = [['ABRIL']];\nsheet.getRange('A12').values = [['Enlace ficticio']];\nsheet.getRange('C11:H11').format.fill = '#eeeeee';\nsheet.getRange('D11').format.numberFormat = 'dd/mm/yyyy';\nsheet.getRange('H11').format.numberFormat = '0.00';\nsheet.getRange('V12').formulas = [['=1+2']];\nconst file = await SpreadsheetFile.exportXlsx(wb);\nawait file.save(output);\n"
 
 
 def main():
@@ -33,13 +34,35 @@ def main():
         exact = ('name="' + SHEET + '"').encode()
         trimmed = ('name="' + SHEET.rstrip() + '"').encode()
         with ZipFile(root / 'generated.xlsx') as initial, ZipFile(source, 'w') as synthetic:
+            sheets = [name for name in initial.namelist()
+                      if name.startswith('xl/worksheets/') and name.endswith('.xml')]
+            if len(sheets) != 1:
+                raise RuntimeError('Expected one synthetic worksheet')
+            sheet_xml = sheets[0]
+            sheet_path = Path(sheet_xml)
+            rels_xml = str(sheet_path.parent / '_rels' / (sheet_path.name + '.rels'))
+            if rels_xml in initial.namelist():
+                raise RuntimeError('Unexpected relationships in synthetic worksheet')
             for entry in initial.infolist():
                 data = initial.read(entry)
                 if entry.filename == 'xl/workbook.xml' and exact not in data:
                     if data.count(trimmed) != 1:
                         raise RuntimeError('Unexpected synthetic sheet name')
                     data = data.replace(trimmed, exact)
+                if entry.filename == sheet_xml:
+                    sheet = ET.fromstring(data)
+                    links = ET.Element('{' + NS['m'] + '}hyperlinks')
+                    ET.SubElement(links, '{' + NS['m'] + '}hyperlink',
+                                  {'ref': 'A12', REL: 'rIdFixture'})
+                    sheet.insert(list(sheet).index(sheet.find('m:sheetData', NS)) + 1, links)
+                    data = ET.tostring(sheet, encoding='utf-8')
                 synthetic.writestr(entry, data)
+            synthetic.writestr(
+                rels_xml,
+                '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+                '<Relationship Id="rIdFixture" TargetMode="External" Target="https://example.invalid/fixture" '
+                'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink"/>'
+                '</Relationships>')
 
         before = source.read_bytes()
         prepared = bridge.prepare(bridge.read_book(source), fixture(), PDF)
@@ -48,6 +71,12 @@ def main():
                        cwd=root, check=True, timeout=180,
                        env=dict(os.environ, FE_ACCOUNTS_PLANNER=str(planner),
                                 FE_ACCOUNTS_PYTHON=sys.executable))
+        candidate = root / 'result/preserved.candidate.xlsx'
+        with ZipFile(source) as original, ZipFile(candidate) as copy:
+            if copy.read(rels_xml) != original.read(rels_xml):
+                raise RuntimeError('Synthetic hyperlink relationship changed')
+        if bridge.read_book(candidate)['links'] != ['A12']:
+            raise RuntimeError('Synthetic hyperlink moved or disappeared')
         audit = json.loads((root / 'result/audit.json').read_text())
         if (audit['status'] != 'copy_preservation_checks_passed' or audit['differences']
                 or audit['production_writable'] is not False or source.read_bytes() != before
