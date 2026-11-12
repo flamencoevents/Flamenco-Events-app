@@ -19,12 +19,12 @@ function notice(msg,bad=false){$('notice').innerHTML='<p class="'+(bad?'error':'
 function card(text){return '<div class="panel">'+text+'</div>'}
 function date(x){return x?new Date(x).toLocaleDateString(lang==='es'?'es-ES':'en-GB'): '—'}
 async function read(table,cols='*'){const x=await db.from(table).select(cols);if(x.error)throw x.error;return x.data||[]}
-let refreshEpoch=0;async function refresh(){const epoch=++refreshEpoch;document.querySelector('[data-fe-calendar-button]')?.classList.add('hidden');window.feCalendar?.clear();window.FEAccounts?.clear();if(!db){$('login').innerHTML=card('La conexión todavía no está configurada.');return}try{
+let refreshEpoch=0;async function refresh(){const epoch=++refreshEpoch;document.querySelector?.('[data-fe-calendar-button]')?.classList.add('hidden');window.feCalendar?.clear();window.FEAccounts?.clear();if(!db){$('login').innerHTML=card('La conexión todavía no está configurada.');return}try{
 const auth=await db.auth.getUser();if(epoch!==refreshEpoch)return;user=auth.data?.user||null;if(!user){$('login').classList.remove('hidden');$('workspace').classList.add('hidden');$('logout').classList.add('hidden');$('content').innerHTML='';$('commercial-workflow').innerHTML='';return}
 const profile=await db.from('profiles').select('role').eq('id',user.id).maybeSingle();
 if(profile.error)throw profile.error;role=profile.data?.role;
 if(!['admin','sales'].includes(role)){await db.auth.signOut();user=null;$('workspace').classList.add('hidden');$('content').innerHTML='';$('commercial-workflow').innerHTML='';notice('Acceso denegado: esta página es exclusivamente para el equipo.',true);return}
-$('login').classList.add('hidden');$('workspace').classList.remove('hidden');$('logout').classList.remove('hidden');document.querySelector('[data-fe-calendar-button]').classList.remove('hidden');
+$('login').classList.add('hidden');$('workspace').classList.remove('hidden');$('logout').classList.remove('hidden');document.querySelector?.('[data-fe-calendar-button]')?.classList.remove('hidden');
 $('identity').textContent=user.email+' · '+role;
 [leads,events,messages,tasks,notifications,requests,documents]=await Promise.all([read('enquiries'),read('events'),read('event_messages'),read('event_tasks'),read('notifications'),read('event_change_requests'),read('event_documents')]);
 if(epoch!==refreshEpoch)return;render();
