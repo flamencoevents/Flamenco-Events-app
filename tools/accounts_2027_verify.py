@@ -11,11 +11,10 @@ import hashlib
 import io
 import json
 from pathlib import Path
-import posixpath
 import zipfile
 import xml.etree.ElementTree as ET
 
-from accounts_2027 import NS, REL, SHEET, Blocked, cell_payload, propose, read_book, require, shared_string, workbook_relationships, worksheet_cells
+from accounts_2027 import NS, SHEET, Blocked, cell_payload, propose, read_book, require, shared_string, workbook_relationships, worksheet_cells, worksheet_part
 
 
 def xml_signature(element):
@@ -73,8 +72,7 @@ def snapshot(path):
         for sheet in wb.find('m:sheets', NS):
             sheet_name = sheet.get('name')
             require(sheet_name not in sheets, 'DUPLICATE_SHEET_NAME')
-            target = rels[sheet.get(REL)]
-            name = target.lstrip('/') if target.startswith('/') else posixpath.normpath('xl/' + target)
+            name = worksheet_part(rels, sheet, parts)
             require(name not in ignored, 'DUPLICATE_SHEET_PART')
             root = xml(parts[name])
             ignored.add(name)

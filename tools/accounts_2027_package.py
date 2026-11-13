@@ -10,28 +10,22 @@ import hashlib
 import io
 import json
 from pathlib import Path
-import posixpath
 import tempfile
 import os
 import zipfile
 import xml.etree.ElementTree as ET
 from xml.parsers import expat
 
-from accounts_2027 import NS, REL, SHEET, Blocked, propose, read_book, require
+from accounts_2027 import NS, SHEET, Blocked, propose, read_book, require, workbook_relationships, worksheet_part
 from accounts_2027_verify import verify
 
 
 def sheet_part(archive):
     wb = ET.fromstring(archive.read('xl/workbook.xml'))
-    rels = {r.get('Id'): r for r in ET.fromstring(archive.read('xl/_rels/workbook.xml.rels'))}
+    rels = workbook_relationships(ET.fromstring(archive.read('xl/_rels/workbook.xml.rels')))
     sheets = [s for s in wb.find('m:sheets', NS) if s.get('name') == SHEET]
     require(len(sheets) == 1, 'SHEET_MISSING_OR_AMBIGUOUS')
-    rel = rels[sheets[0].get(REL)]
-    require(rel.get('TargetMode') != 'External', 'INVALID_SHEET_PATH')
-    target = rel.get('Target', '')
-    name = target.lstrip('/') if target.startswith('/') else posixpath.normpath('xl/' + target)
-    require(name.startswith('xl/') and name in archive.namelist(), 'INVALID_SHEET_PATH')
-    return name
+    return worksheet_part(rels, sheets[0], archive.namelist())
 
 
 def tag_end(raw, start):

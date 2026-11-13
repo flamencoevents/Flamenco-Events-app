@@ -269,6 +269,22 @@ class PackagingTests(unittest.TestCase):
             propose(read_book(self.source), self.req)
         self.assertEqual(self.source.read_bytes(), before)
 
+    def test_external_worksheet_relationship_cannot_select_local_part(self):
+        with zipfile.ZipFile(self.source) as archive:
+            parts = {name: archive.read(name) for name in archive.namelist()}
+        relationships = 'xl/_rels/workbook.xml.rels'
+        parts[relationships] = parts[relationships].replace(
+            b'Target="worksheets/sheet1.xml"',
+            b'TargetMode="External" Target="worksheets/sheet1.xml"')
+        with zipfile.ZipFile(self.source, 'w') as archive:
+            for name, data in parts.items():
+                archive.writestr(name, data)
+        before = self.source.read_bytes()
+        self.req['workbook_sha256'] = hashlib.sha256(before).hexdigest()
+        with self.assertRaisesRegex(Blocked, 'INVALID_SHEET_PATH'):
+            propose(read_book(self.source), self.req)
+        self.assertEqual(self.source.read_bytes(), before)
+
     def test_stale_source_rejected(self):
         self.req['workbook_sha256'] = 'f' * 64
         with self.assertRaisesRegex(Blocked, 'WORKBOOK_CHANGED'):

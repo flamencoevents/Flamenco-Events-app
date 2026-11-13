@@ -52,8 +52,20 @@ def workbook_relationships(root):
     for relationship in root:
         identity = relationship.get('Id')
         require(identity not in relationships, 'DUPLICATE_WORKBOOK_RELATIONSHIP')
-        relationships[identity] = relationship.get('Target')
+        relationships[identity] = relationship
     return relationships
+
+
+def worksheet_part(relationships, sheet, names):
+    relationship = relationships.get(sheet.get(REL))
+    require(relationship is not None and relationship.get('TargetMode') in (None, 'Internal'),
+            'INVALID_SHEET_PATH')
+    target = relationship.get('Target', '')
+    require(target and '..' not in target.split('/') and ':' not in target,
+            'INVALID_SHEET_PATH')
+    path = posixpath.normpath(target.lstrip('/') if target.startswith('/') else 'xl/' + target)
+    require(path.startswith('xl/') and path in names, 'INVALID_SHEET_PATH')
+    return path
 
 
 def shared_string(strings, value):
@@ -109,9 +121,7 @@ def read_book(path):
         rels = workbook_relationships(xml('xl/_rels/workbook.xml.rels'))
         sheets = [s for s in wb.find('m:sheets', NS) if s.get('name') == SHEET]
         require(len(sheets) == 1, 'SHEET_MISSING_OR_AMBIGUOUS')
-        target = rels[sheets[0].get(REL)]
-        require('..' not in target and not target.startswith(('http:', 'https:')), 'INVALID_SHEET_PATH')
-        sheet_path = target.lstrip('/') if target.startswith('/') else 'xl/' + target
+        sheet_path = worksheet_part(rels, sheets[0], names)
         root = xml(sheet_path)
         strings = [''.join(x.itertext()) for x in xml('xl/sharedStrings.xml').findall('m:si', NS)] if 'xl/sharedStrings.xml' in names else []
         cells = {}

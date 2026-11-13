@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 import accounts_2027_verify as audit
+from accounts_2027 import REL
 from test_accounts_2027 import book, request, mod
 
 
@@ -101,7 +102,7 @@ class PreservationTests(unittest.TestCase):
 
     def test_snapshot_rejects_duplicate_sheet_names_and_parts(self):
         ns = audit.NS['m']
-        rel_ns = audit.REL[1:].split('}')[0]
+        rel_ns = REL[1:].split('}')[0]
         with TemporaryDirectory() as tmp, patch.object(audit, 'read_book'):
             path = Path(tmp) / 'synthetic.xlsx'
             for name, target, reason in (
@@ -129,7 +130,7 @@ class PreservationTests(unittest.TestCase):
 
     def test_snapshot_rejects_ambiguous_relationships_and_non_string_indexes(self):
         ns = audit.NS['m']
-        rel_ns = audit.REL[1:].split('}')[0]
+        rel_ns = REL[1:].split('}')[0]
         with TemporaryDirectory() as tmp, patch.object(audit, 'read_book'):
             path = Path(tmp) / 'synthetic.xlsx'
             for second_id, index, reason in (

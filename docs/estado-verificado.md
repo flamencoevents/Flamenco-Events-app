@@ -1101,3 +1101,15 @@ de marzo a mayo sigue admitiendo la fila de marzo y bloquea abril.
 Pasaron 16 pruebas con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027`.
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Relaciones externas en la selección de hojas · 13 noviembre 2026
+
+El preparador, el empaquetador y el verificador resuelven las hojas con
+la misma validación de relaciones internas. La regresión reprodujo que
+una relación declarada externa con aspecto de ruta local podía generar
+una propuesta. Ahora se rechaza antes de proponer una fila. Los
+hipervínculos de las hojas siguen fuera de esta comprobación de destinos.
+
+Pasaron 52 pruebas ficticias con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_verify test_accounts_2027_package`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
