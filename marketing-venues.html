@@ -10,7 +10,13 @@
 <div class="note"><b>Listado inicial ≠ gestión realizada.</b> La inclusión en el directorio no implica haber contactado al establecimiento. Las reseñas corresponden al PDF original y pueden haber cambiado. Los datos introducidos aquí se guardan en el área privada; la tarea MKT-001 no se marca automáticamente como finalizada.</div>
 <div class="filters"><label>Buscar<input id="search" type="search" placeholder="Nombre del establecimiento…"></label><label>Provincia<select id="province"><option value="">Todas las provincias</option></select></label><label>Estado de relación<select id="filter-status"><option value="">Todos los estados</option></select></label><label>Experiencia anterior<select id="filter-worked"><option value="">Todas</option><option>Por verificar</option><option>Sí</option><option>No</option></select></label></div>
 <p class="status" id="feedback" role="status"></p>
-<div class="card scroll"><table><thead><tr><th>#</th><th>Establecimiento / Web</th><th>Provincia</th><th>Valoración histórica</th><th>Trabajo previo</th><th>Contacto conocido</th><th>Estado comercial</th><th>Próxima acción</th><th>Ficha</th></tr></thead><tbody id="rows"></tbody></table><p class="muted small" id="count"></p></div></div></main>
+<div class="card scroll"><table><thead><tr><th>#</th><th>Establecimiento / Web</th><th>Provincia</th><th>Valoración histórica</th><th>Trabajo previo</th><th>Contacto conocido</th><th>Estado comercial</th><th>Próxima acción</th><th>Ficha</th></tr></thead><tbody id="rows"></tbody></table><p class="muted small" id="count"></p></div>
+<section class="card" id="canva-records"><h2>Establecimientos identificados en Canva · 2026 y 2027</h2>
+<p>Listado complementario obtenido de presupuestos y contratos comerciales. Un documento no implica que el evento se haya celebrado ni que el presupuesto haya sido aceptado. El ranking original de 50 se conserva.</p>
+<div class="filters"><label>Año<select id="canva-year"><option value="">2026 y 2027</option><option>2026</option><option>2027</option></select></label><label>Tipo<select id="canva-kind"><option value="">Todos</option><option>Presupuesto</option><option>Contrato</option></select></label><label>Buscar establecimiento<input id="canva-search" type="search" placeholder="Nombre o provincia"></label></div>
+<p class="muted" id="canva-summary">Cargando documentos…</p>
+<div class="scroll"><table><thead><tr><th>Establecimiento</th><th>Provincia</th><th>Documentos</th><th>Fechas</th><th>Relación con el Top 50</th></tr></thead><tbody id="canva-rows"></tbody></table></div>
+<p class="muted small">Las referencias son internas y corresponden a los documentos leídos en Canva. No se muestran datos personales de clientes.</p></section></div></main>
 <div id="editor" class="editor hidden" role="dialog" aria-modal="true" aria-labelledby="edit-title"><form id="edit-form"><h2 id="edit-title">Seguimiento del establecimiento</h2><p id="edit-venue" class="muted"></p><div class="note">Los registros históricos coincidentes requieren verificar que la actuación realmente se celebró.</div><div id="historic-matches" class="card"></div><label>¿Ya hemos trabajado aquí?<select name="worked_before"><option>Por verificar</option><option>Sí</option><option>No</option></select></label><label>Evidencia de actuaciones previas<textarea name="worked_details" maxlength="2000"></textarea></label><label>¿Tenemos contacto directo del establecimiento?<select name="contact_known"><option>Por verificar</option><option>Sí</option><option>No</option></select></label><label>Estado comercial<select name="contact_status" required></select></label><label>Contacto en el establecimiento<input name="contact_person" maxlength="160" autocomplete="off"></label><label>Cargo/departamento<input name="contact_role" maxlength="160"></label><label>Origen del contacto<input name="contact_origin" maxlength="400"></label><label>Correo de contacto<input name="contact_email" type="email" maxlength="254"></label><label>Teléfono<input name="contact_phone" maxlength="40"></label><label>Fecha del último contacto<input name="last_contact_on" type="date"></label><label>Próxima acción<input name="next_action" maxlength="500" placeholder="Ej. Llamar a dirección de eventos"></label><label>Observaciones<textarea name="notes" maxlength="3000"></textarea></label><p id="save-result" class="status" role="status"></p><div class="actions"><button type="button" class="secondary" id="cancel">Cancelar</button><button type="submit" id="save">Guardar seguimiento</button></div></form></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./portal-config.js"></script><script src="./marketing-venues-data.js?v=20261113"></script><script src="./departments-nav.js?v=20261113"></script>
 <script>
@@ -19,10 +25,32 @@ const statuses=['Pendiente','Investigando','Por contactar','Contactado','Dossier
 const venues=window.FE_MARKETING_VENUES||[];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const tracking=new Map(),historicMatches=new Map();let db=null,selected=null,actor=null,historyLoadError='';
+const tracking=new Map(),historicMatches=new Map();let db=null,selected=null,actor=null,historyLoadError='',canvaDocuments=[];
 function matchRank(name){const n=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');if(n==='fincalaconcepcion'||n==='ficalaconcepcion')return 49;if(n==='hotellunagranada'||n==='granhotellunadegranada')return 15;return null}
 for(const province of [...new Set(venues.map(v=>v.province))].sort()){const o=document.createElement('option');o.value=o.textContent=province;$('province').append(o)}
 for(const st of statuses){for(const el of [$('filter-status'),$('edit-form').elements.contact_status]){let o=document.createElement('option');o.value=o.textContent=st;el.append(o)}}
+function normalizedName(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'')}
+const externalNames={
+'cortijobravo':'Cortijo Bravo','casadelospilatos':'Casa de Pilatos','casadelosbates':'Casa de los Bates',
+'haciendanadales':'Hacienda Nadales','fincamonasterio':'Finca Monasterio','hotelzambra':'La Zambra Resort',
+'lazambraresort':'La Zambra Resort','dunebeachmarbella':'Dune Beach Marbella','anantaravillapadierna':'Anantara Villa Padierna'
+};
+function drawCanva(){
+const year=$('canva-year').value,kind=$('canva-kind').value,term=$('canva-search').value.toLowerCase().trim();
+const list=canvaDocuments.filter(r=>(!year||String(r.event_year)===year)&&(!kind||r.document_type===kind)&&(!term||(r.venue_name+' '+(r.province||'')).toLowerCase().includes(term)));
+const groups=new Map();
+for(const doc of list){const key=externalNames[normalizedName(doc.venue_name)]||doc.venue_name;
+ if(!groups.has(key))groups.set(key,[]);
+ groups.get(key).push(doc);}
+const sorted=[...groups].sort((a,b)=>a[0].localeCompare(b[0],'es'));
+$('canva-rows').innerHTML=sorted.map(([name,docs])=>{
+const province=docs[0].province||'Por revisar',types=[...new Set(docs.map(d=>d.document_type))];
+const events=[...new Set(docs.map(d=>d.event_date).filter(Boolean))].sort();
+const matched=venues.find(v=>normalizedName(v.name)===normalizedName(name));
+return '<tr><td><b>'+esc(name)+'</b></td><td>'+esc(province)+'</td><td>'+docs.length+' · '+types.map(esc).join(' / ')+'<div class="small muted">Canva: '+docs.map(d=>esc(d.document_title)).join(', ')+'</div></td><td>'+events.map(esc).join('<div></div>')+'</td><td>'+(matched?'<a href="#" data-open-rank="'+matched.rank+'">Ya incluido #'+matched.rank+' · Abrir ficha</a>':'<span class="pill">Adicional al Top 50</span>')+'</td></tr>'}).join('');
+$('canva-summary').textContent=sorted.length+' establecimientos distintos en esta selección · '+list.length+' documentos identificados en Canva';}
+for(const id of ['canva-year','canva-kind','canva-search'])$(id).addEventListener(id==='canva-search'?'input':'change',drawCanva);
+$('canva-rows').addEventListener('click',e=>{const a=e.target.closest('[data-open-rank]');if(a){e.preventDefault();edit(Number(a.dataset.openRank))}});
 function draw(){
  const q=$('search').value.trim().toLowerCase(),p=$('province').value,s=$('filter-status').value,w=$('filter-worked').value;
  const shown=venues.filter(v=>v.name.toLowerCase().includes(q)&&(!p||v.province===p)&&(!s||(tracking.get(v.rank)?.contact_status||'Pendiente')===s)&&(!w||(tracking.get(v.rank)?.worked_before||'Por verificar')===w));
@@ -57,7 +85,10 @@ $('edit-form').addEventListener('submit',async e=>{
 const hist=await db.from('accounts_event_catalog').select('year,source_row,event_date,venue,client_label').not('venue','is',null).limit(1000);
 if(hist.error)historyLoadError='Error al consultar histórico: '+hist.error.message;
 else for(const entry of hist.data||[]){const rank=matchRank(entry.venue);if(rank){if(!historicMatches.has(rank))historicMatches.set(rank,[]);historicMatches.get(rank).push(entry)}}
- $('gate').classList.add('hidden');$('app').classList.remove('hidden');draw();
+ const canva=await db.from('marketing_venue_documents').select('design_id,document_title,document_type,venue_name,province,event_year,event_date,original_top50_rank').order('event_year',{ascending:false});
+if(canva.error){$('canva-summary').textContent='No se pudo consultar el catálogo de Canva: '+canva.error.message;}
+else{canvaDocuments=canva.data||[];drawCanva();}
+$('gate').classList.add('hidden');$('app').classList.remove('hidden');draw();
  }catch(err){$('gate').textContent='No se ha podido cargar el seguimiento: '+(err.message||'Error')}
 })();
 </script></body></html>
