@@ -993,3 +993,19 @@ Pasaron 41 pruebas con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_verify test_accounts_2027_package`.
 Verificado localmente en modo prueba. Sin despliegue ni acceso al XLSX
 original. Sigue pendiente la escritura remota con control de versión.
+
+## Vínculo entre propuesta, copia y auditoría · 13 noviembre 2026
+
+El ensayo XLSX conserva el identificador de la propuesta inicial durante
+el empaquetado y la auditoría. Un cambio de huella del contrato se
+rechaza aunque las seis celdas sigan teniendo los mismos valores.
+
+Con un contrato ficticio se reprodujo la aceptación anterior de esa
+sustitución. La regresión comprueba que ahora se rechaza sin dejar copia
+ni temporal y que la propuesta original se conserva. Pasaron 26 pruebas
+con `PYTHONPATH=tests python3 -m unittest test_accounts_2027_package test_accounts_2027_contract`.
+También pasó `python3 tests/run_accounts_2027_artifact_trial.py` con el
+exportador local, incluida la coincidencia del identificador auditado.
+
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX
+original. Siguen pendientes la revisión nativa y el control de versión remoto.

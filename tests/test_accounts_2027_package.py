@@ -176,6 +176,20 @@ class PackagingTests(unittest.TestCase):
                 self.assertFalse(list(self.root.glob('.fe-copy-*')))
                 self.assertEqual(self.source.read_bytes(), original)
 
+    def test_changed_request_cannot_publish_under_previous_proposal(self):
+        changed = copy.deepcopy(self.req)
+        changed['contract']['sha256'] = 'c' * 64
+        # Different contract identity with identical cell values.
+        with self.assertRaisesRegex(Blocked, 'PROPOSAL_CHANGED'):
+            pack.package(self.source, self.artifact, changed, self.output,
+                         expected_proposal_id=self.proposal['proposal_id'])
+        self.assertFalse(self.output.exists())
+        self.assertFalse(list(self.root.glob('.fe-copy-*')))
+        self.assertEqual(self.source.read_bytes(), self.before)
+        result = pack.package(self.source, self.artifact, self.req, self.output,
+                              expected_proposal_id=self.proposal['proposal_id'])
+        self.assertEqual(result['proposal_id'], self.proposal['proposal_id'])
+
     def test_stale_source_rejected(self):
         self.req['workbook_sha256'] = 'f' * 64
         with self.assertRaisesRegex(Blocked, 'WORKBOOK_CHANGED'):

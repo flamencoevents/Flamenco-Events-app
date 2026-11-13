@@ -85,6 +85,7 @@ def main():
         audit = json.loads((root / 'result/audit.json').read_text())
         if (audit['status'] != 'copy_preservation_checks_passed' or audit['differences']
                 or audit['production_writable'] is not False or source.read_bytes() != before
+                or audit['proposal_id'] != prepared['proposal']['proposal_id']
                 or bridge.read_book(root / 'result/preserved.candidate.xlsx')['cells']['H11']['value'] != '1060.01'):
             raise RuntimeError('Synthetic contract copy did not preserve the expected values')
 

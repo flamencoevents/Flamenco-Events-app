@@ -153,6 +153,7 @@ def verify(source, candidate, request):
     candidate_raw = Path(candidate).read_bytes()
     proposal = propose(read_book(source_raw), request)
     result = compare(snapshot(source_raw), snapshot(candidate_raw), proposal)
+    result['proposal_id'] = proposal['proposal_id']
     result['source_sha256'] = proposal['workbook_sha256']
     result['candidate_sha256'] = hashlib.sha256(candidate_raw).hexdigest()
     return result

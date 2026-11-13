@@ -105,11 +105,13 @@ def preserved_bytes(source_raw, artifact_raw, proposal):
     return output.getvalue()
 
 
-def package(source, artifact, request, output):
+def package(source, artifact, request, output, *, expected_proposal_id=None):
     source, artifact, output = Path(source), Path(artifact), Path(output)
     require(output.resolve() not in (source.resolve(), artifact.resolve()), 'SAME_FILE_REJECTED')
     require(not output.exists() and not output.is_symlink(), 'OUTPUT_ALREADY_EXISTS')
     proposal = propose(read_book(source), request)
+    require(expected_proposal_id is None or proposal['proposal_id'] == expected_proposal_id,
+            'PROPOSAL_CHANGED')
     # Bound and validate both packages before parsing them; read once, then
     # compare source bytes to the exact proposal digest to prevent stale input.
     artifact_sha256 = read_book(artifact)['sha256']
@@ -142,9 +144,11 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     for name in ('source', 'artifact', 'request', 'output'):
         p.add_argument(name)
+    p.add_argument('--expected-proposal-id')
     a = p.parse_args()
     try:
-        result = package(a.source, a.artifact, json.loads(Path(a.request).read_text()), a.output)
+        result = package(a.source, a.artifact, json.loads(Path(a.request).read_text()), a.output,
+                         expected_proposal_id=a.expected_proposal_id)
     except (Blocked, ValueError, TypeError, KeyError, IndexError, OSError, zipfile.BadZipFile,
             ET.ParseError, expat.ExpatError) as exc:
         result = {'status': 'blocked', 'production_writable': False,

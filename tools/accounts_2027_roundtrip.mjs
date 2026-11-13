@@ -52,12 +52,14 @@ await copy.save(path.join(outputDir, 'unverified.candidate.xlsx'));
 const candidatePath = path.join(outputDir, 'unverified.candidate.xlsx');
 const preservedPath = path.join(outputDir, 'preserved.candidate.xlsx');
 const packaging = spawnSync(process.env.FE_ACCOUNTS_PYTHON || 'python3',
-  [path.join(path.dirname(plannerPath), 'accounts_2027_package.py'), inputPath, candidatePath, requestPath, preservedPath],
+  [path.join(path.dirname(plannerPath), 'accounts_2027_package.py'), inputPath, candidatePath, requestPath, preservedPath,
+    '--expected-proposal-id', proposal.proposal_id],
   {encoding:'utf8',maxBuffer:100000});
 let packaged;
 try { packaged = JSON.parse(packaging.stdout); }
 catch { throw new Error('PACKAGE_PRESERVATION_UNAVAILABLE'); }
-if (packaging.status !== 0 || packaged.status !== 'isolated_copy_preserved' || packaged.production_writable !== false) {
+if (packaging.status !== 0 || packaged.status !== 'isolated_copy_preserved' || packaged.production_writable !== false ||
+    packaged.proposal_id !== proposal.proposal_id) {
   throw new Error(packaged.reason || 'PACKAGE_PRESERVATION_REJECTED');
 }
 const auditProcess = spawnSync(process.env.FE_ACCOUNTS_PYTHON || 'python3',
@@ -67,7 +69,7 @@ let audit;
 try { audit = JSON.parse(auditProcess.stdout); }
 catch { throw new Error('COPY_AUDIT_UNAVAILABLE'); }
 const verified = auditProcess.status === 0 && audit.status === 'copy_preservation_checks_passed'
-  && audit.production_writable === false && audit.source_sha256 === sourceSha256;
+  && audit.production_writable === false && audit.source_sha256 === sourceSha256 && audit.proposal_id === proposal.proposal_id;
 await fs.writeFile(path.join(outputDir, 'audit.json'), JSON.stringify(audit, null, 2), {flag:'wx'});
 await fs.writeFile(path.join(outputDir, 'trial.json'), JSON.stringify({
   mode: 'isolated_copy_trial', production_writable: false, preservation_verified: verified,
