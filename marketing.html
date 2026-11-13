@@ -29,7 +29,7 @@ button:hover{background:#79542d!important}
 .fe-departments a:not([aria-current]){background:#fff!important;color:#65482c!important}
 .fe-departments a[aria-current]{background:#74532f!important;color:#fff!important}
 #gate{color:#665d53}
-</style><link rel="stylesheet" href="./departments-nav.css?v=20261113"><style id="fe-public-brand-style">.fe-public-brand{display:inline-block;text-decoration:none;color:inherit}.fe-public-brand strong{color:#8a6438}.fe-public-brand:hover strong{text-decoration:underline;text-underline-offset:4px}.fe-public-brand:focus-visible{outline:2px solid #936a3b;outline-offset:4px;border-radius:3px}</style></head>
+</style><link rel="stylesheet" href="./departments-nav.css?v=20261114-sticky-public"><style id="fe-public-brand-style">.fe-public-brand{display:inline-block;text-decoration:none;color:inherit}.fe-public-brand strong{color:#8a6438}.fe-public-brand:hover strong{text-decoration:underline;text-underline-offset:4px}.fe-public-brand:focus-visible{outline:2px solid #936a3b;outline-offset:4px;border-radius:3px}</style></head>
 <body><header><div><a class="fe-public-brand" href="https://www.flamencoevents.net/" target="_blank" rel="noopener noreferrer" aria-label="Abrir la web pública de Flamenco Events" title="Ir a flamencoevents.net"><strong>Flamenco Events</strong></a><div class="muted small">Departamento de Marketing</div></div><nav><a href="./portal.html">Espacio de acceso</a> <button id="logout" class="hidden">Salir</button></nav></header><nav id="fe-departments" class="fe-departments" aria-label="Navegación entre departamentos" hidden></nav>
 <main><div id="gate" role="status">Comprobando acceso de administrador…</div><section id="workspace" class="hidden">
 <h1>Plan de marketing</h1><p class="muted">Plan inicial registrado el 13 de noviembre de 2026. Las ocho tareas están aprobadas como trabajo planificado, pero ninguna consta como ejecutada.</p>
@@ -98,4 +98,4 @@ gate.classList.add('hidden');$('workspace').classList.remove('hidden');draw();
 const out=$('logout');out.classList.remove('hidden');out.addEventListener('click',async()=>{await db.auth.signOut();location.replace('./portal.html')});
 }catch(error){gate.textContent='No se pudo cargar el panel: '+(error.message||'Error de conexión')}
 })();
-</script><script src="./departments-nav.js?v=20261113-sales-access"></script></body></html>
+</script><script src="./departments-nav.js?v=20261114-sticky-public"></script></body></html>
