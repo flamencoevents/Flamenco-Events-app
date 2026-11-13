@@ -1,5 +1,15 @@
 # Desarrollo Comercial — Organización y campañas (PRUEBAS)
 
+## Organización definitiva sin departamento duplicado
+
+**Desarrollo Comercial deja de existir como departamento independiente.** Sus tareas y pantallas se distribuyen entre los departamentos existentes:
+- **Marketing (responsable: Administración):** investigación, directorios nacionales, fuentes contrastadas, categorización, puntuación, fichas de candidatos, campañas sectoriales en borrador y cualificación. Acceso: `marketing.html` → Prospección → `desarrollo-comercial.html?tab=venues`.
+- **Comercial (responsable: Azahara):** bandeja de oportunidades traspasadas, contacto personalizado, llamadas, reuniones, propuestas, negociación y acuerdos. Acceso: `staff.html` → Oportunidades → `desarrollo-comercial.html?tab=pipeline`.
+- **Punto de traspaso único:** Marketing marca cualificado y crea oportunidad. Comercial gestiona el seguimiento. No duplicar fichas ni clasificar prospectos directamente desde Comercial.
+- **Navegación:** sin botón independiente Desarrollo Comercial. El mismo componente técnico ofrece vistas según perfil, mientras las tablas RLS deben asegurar permisos al desplegar.
+- **Sin campañas activas:** no se realizan comunicaciones automáticas. CRM operativo pendiente de migraciones y test de RLS.
+
+
 ## Regla de activación
 **Prohibido ejecutar campañas hasta que el conjunto de clientes potenciales haya sido diseñado, deduplicado, contrastado y aprobado por Administración.** La autorización se da por sector y por campaña, no globalmente. Ninguna función existente envía correos o WhatsApp desde este módulo.
 
