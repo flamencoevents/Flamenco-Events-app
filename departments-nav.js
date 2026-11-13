@@ -15,11 +15,11 @@ async function sync(){
   const {data,error}=await db.auth.getUser();if(error||!data?.user)return;
   const p=await db.from('profiles').select('role').eq('id',data.user.id).maybeSingle();
   if(epoch!==run||p.error||!['admin','sales'].includes(p.data?.role))return;
-  const allowed=p.data.role==='admin'?items:[['staff.html','Comercial'],['marketing.html','Marketing'],['rrhh.html','RR. HH.']];
+  const allowed=p.data.role==='admin'?items:[['staff.html','Comercial'],['rrhh.html','RR. HH.']];
   const label=document.createElement('span');label.className='fe-dept-label';label.textContent='Departamentos';nav.append(label);
   for(const [file,name] of allowed){
    const a=document.createElement('a');a.href='./'+file+(file==='marketing.html'?'?v=20261113-mobile-white':'');a.textContent=name;
-   if(page===file||(page==='desarrollo-comercial.html'&&file==='marketing.html'))a.setAttribute('aria-current','page');
+   if(page===file||(page==='desarrollo-comercial.html'&&((p.data.role==='admin'&&file==='marketing.html')||(p.data.role==='sales'&&file==='staff.html'))))a.setAttribute('aria-current','page');
    nav.append(a);
   }
   nav.hidden=false;
