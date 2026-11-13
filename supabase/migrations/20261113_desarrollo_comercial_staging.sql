@@ -58,7 +58,7 @@ alter table public.fe_commercial_opportunities enable row level security;
 alter table public.fe_commercial_activities enable row level security;
 -- The role is read from protected profiles, never editable user_metadata.
 create policy "fe_prospects_staff_read" on public.fe_prospects for select to authenticated
-using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales')));
+using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin') or (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='sales') and exists(select 1 from public.fe_commercial_opportunities o where o.prospect_id=fe_prospects.id)));
 create policy "fe_prospects_admin_insert" on public.fe_prospects for insert to authenticated
 with check (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin') and created_by=(select auth.uid()));
 create policy "fe_prospects_admin_update" on public.fe_prospects for update to authenticated
@@ -67,7 +67,7 @@ with check (exists(select 1 from public.profiles p where p.id=(select auth.uid()
 create policy "fe_opps_staff_read" on public.fe_commercial_opportunities for select to authenticated
 using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales')));
 create policy "fe_opps_staff_insert" on public.fe_commercial_opportunities for insert to authenticated
-with check (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales'))
+with check (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin')
  and exists(select 1 from public.fe_prospects p where p.id=prospect_id and p.marketing_status='cualificado'));
 create policy "fe_opps_staff_update" on public.fe_commercial_opportunities for update to authenticated
 using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales')))
