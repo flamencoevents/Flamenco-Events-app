@@ -117,6 +117,27 @@ class PreservationTests(unittest.TestCase):
                     with self.assertRaisesRegex(audit.Blocked, 'AMBIGUOUS_CELL_PAYLOAD'):
                         audit.snapshot(path)
 
+    def test_cell_extensions_are_preserved_in_and_outside_destination(self):
+        ns = audit.NS['m']
+
+        def record(value, extension):
+            return audit.cell_record(audit.ET.fromstring(
+                f'<c xmlns="{ns}" s="1">{value}{extension}</c>'), [])
+
+        extension = '<extLst><ext uri="urn:synthetic:cell"/></extLst>'
+        self.source['sheets']['Other']['cells']['H3'] = record('<v>123</v>', extension)
+        self.candidate['sheets']['Other']['cells']['H3'] = record('<v>123</v>', '')
+        with self.subTest(location='other sheet'):
+            self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
+        self.candidate['sheets']['Other']['cells']['H3'] = self.source['sheets']['Other']['cells']['H3']
+
+        self.source['sheets'][audit.SHEET]['cells']['H11'] = record('', extension)
+        self.candidate['sheets'][audit.SHEET]['cells']['H11'] = record('<v>1210.99</v>', '')
+        with self.subTest(location='destination'):
+            self.assertIn('TARGET_FORMAT_CHANGED', self.reasons())
+        self.candidate['sheets'][audit.SHEET]['cells']['H11'] = record('<v>1210.99</v>', extension)
+        self.assertEqual(self.result()['status'], 'copy_preservation_checks_passed')
+
     def test_rich_text_format_changes_are_detected(self):
         ns = audit.NS['m']
         for kind in ('s', 'inlineStr'):

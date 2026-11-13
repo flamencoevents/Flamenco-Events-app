@@ -936,3 +936,15 @@ ni archivo temporal de salida. Pasaron 24 pruebas mediante
 
 Verificado localmente en modo prueba. Sin despliegue ni acceso al libro
 original. Sigue pendiente la escritura remota con control de versión.
+
+## Metadatos dentro de las celdas · 13 noviembre 2026
+
+El verificador compara también los elementos XML de metadatos dentro
+de las celdas, incluidas las extensiones. Detecta su pérdida tanto en
+la celda de destino como en hojas ajenas, aunque se conserve el valor.
+Los dos casos ficticios pasaban antes de la corrección y ahora quedan
+bloqueados. Con los metadatos conservados, la copia de prueba pasa.
+
+Pasaron 25 pruebas locales con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify test_accounts_2027_package`.
+Verificado en modo prueba, sin despliegue ni acceso al XLSX original.

@@ -56,6 +56,10 @@ def cell_record(cell, strings):
             'attributes': {k: v for k, v in cell.attrib.items() if k not in ('r', 's', 't')}}
     if inline is not None and (len(inline) != 1 or inline[0].tag != '{' + NS['m'] + '}t'):
         record['rich_text'] = tuple(xml_signature(child) for child in inline)
+    payload_tags = {f"{{{NS['m']}}}{tag}" for tag in ('v', 'is', 'f')}
+    metadata = tuple(xml_signature(child) for child in cell if child.tag not in payload_tags)
+    if metadata:
+        record['metadata'] = metadata
     return record
 
 
@@ -127,7 +131,8 @@ def compare(source, candidate, proposal):
                 if right is None or any(right.get(k) != v for k, v in wanted.items()) or (right.get('formula') is not None or 'rich_text' in right):
                     changes.append({'reason': 'PROPOSED_VALUE_MISMATCH', 'cell': ref})
                 if right is not None and (right.get('style', '0') != (left or {}).get('style', '0') or
-                                          right.get('attributes', {}) != (left or {}).get('attributes', {})):
+                                          right.get('attributes', {}) != (left or {}).get('attributes', {}) or
+                                          right.get('metadata', ()) != (left or {}).get('metadata', ())):
                     changes.append({'reason': 'TARGET_FORMAT_CHANGED', 'cell': ref})
             elif left != right:
                 unintended += 1
