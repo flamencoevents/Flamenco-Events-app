@@ -4,8 +4,12 @@ create table if not exists public.fe_hospitality_opportunities (
  prospect_id uuid not null unique references public.fe_hospitality_prospects(id) on delete restrict,
  owner_id uuid references auth.users(id),
  stage text not null default 'pendiente_contacto'
-  check(stage in ('pendiente_contacto','contactado','reunion','propuesta','negociacion','acuerdo','recurrente','perdido')),
+  check(stage in ('pendiente_contacto','contactado','reunion','propuesta','negociacion','acuerdo','evento_puntual','perdido')),
  priority text not null default 'media' check(priority in ('alta','media','baja')),
+ event_type text check(event_type in ('boda_destino','gala','evento_corporativo','incentivo','lanzamiento_marca','celebracion_privada','otro')),
+ contracting_decision_maker text check(contracting_decision_maker in ('agencia_eventos','wedding_planner','empresa_cliente','departamento_eventos','proveedor_homologado','desconocido')),
+ external_suppliers_allowed boolean,
+ event_name text,
  next_action text, next_action_at timestamptz,
  notes text,
  created_at timestamptz not null default now(),
