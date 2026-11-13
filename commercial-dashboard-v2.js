@@ -56,15 +56,42 @@ return '<details class="fe-card fe-attachment-panel"><summary><b>Adjuntar docume
 '<p class="fe-muted">PDF, JPG, PNG o WebP. Máximo 10 MB.</p><button type="submit">Guardar documento</button><p role="status" class="fe-upload-feedback"></p></form>'+
 '<div class="fe-uploaded-list">'+(related.length?related.map(a=>'<p><b>'+safe(uploadKinds[a.kind]||a.kind)+'</b> · '+safe(a.original_filename)+' · '+new Date(a.created_at).toLocaleDateString('es-ES')+' <button type="button" class="fe-alt" data-fe-open-file="'+safe(a.id)+'">Abrir archivo</button></p>').join(''):'<p class="fe-muted">No hay archivos adjuntos.</p>')+'</div></details>'
 }
+function signedForRef(ref){return !!ref.eventId&&portalContracts.some(c=>c.event_id===ref.eventId&&!!c.signed_at)}
+function artistWhatsapp(artist,ref){
+ const phone=String(artist?.phone_whatsapp||'').replace(/[\s().-]/g,'');
+ if(!/^\+[1-9]\d{7,14}$/.test(phone))return null;
+ const ev=ref.eventId?clientEvents.find(e=>e.id===ref.eventId):closed.find(e=>Number(e.year)===Number(ref.year)&&Number(e.source_row)===Number(ref.sourceRow));
+ if(!ev)return null;
+ const content=['Hola '+artist.display_name+', te escribimos de Flamenco Events.',
+ 'Tenemos previsto contar contigo para el siguiente evento:',
+ 'Fecha: '+dateHuman(ev.event_date),
+ 'Lugar: '+(ev.venue||'Por confirmar'),
+ 'Formación: '+(ev.performance||ev.title||'Por confirmar'),
+ 'Horario: '+(ev.schedule||ev.schedule_notes||'Por confirmar'),
+ '¿Nos confirmas tu disponibilidad?',
+ 'Muchas gracias.'].join('\n');
+ return 'https://wa.me/'+phone.slice(1)+'?text='+encodeURIComponent(content);
+}
 function artistAssignmentsMarkup(ref,quoteNumber){
-const relevant=artistAssignments.filter(a=>ref.eventId?a.event_id===ref.eventId:Number(a.catalog_year)===Number(ref.year)&&Number(a.catalog_source_row)===Number(ref.sourceRow));
-const attr=ref.eventId?'data-fe-assign-event="'+safe(ref.eventId)+'"':'data-fe-assign-ledger="'+safe(ref.year)+'-'+safe(ref.sourceRow)+'"';
-const options=artistRoster.filter(a=>a.active).map(a=>'<option value="'+safe(a.id)+'">'+safe(a.display_name)+' · '+safe(a.specialty||'Sin especialidad')+'</option>').join('');
-return '<details class="fe-card fe-artist-panel"><summary><b>Artistas del evento</b> · '+relevant.length+' asignado(s)</summary>'+
-'<p class="fe-muted">El caché de gastos globales no establece sueldos individuales. El sueldo procede de las partidas económicas verificadas del presupuesto; hasta su conciliación, aparece como pendiente. Esta información es privada del equipo.</p>'+
-'<div class="fe-list">'+(relevant.length?relevant.map(a=>{const artist=artistRoster.find(x=>x.id===a.artist_id);return '<p><b>'+safe(artist?.display_name||'Artista sin nombre')+'</b> · '+safe(a.role_in_event||artist?.specialty||'Función pendiente')+' · <span class="fe-badge">'+(verifiedArtistFees.find(cost=>cost.artist_id===a.artist_id&&cost.quote_number===a.quote_number)?Number(verifiedArtistFees.find(cost=>cost.artist_id===a.artist_id&&cost.quote_number===a.quote_number).fee_eur).toLocaleString('es-ES',{style:'currency',currency:'EUR'})+' · coste del presupuesto '+safe(a.quote_number):'Sueldo pendiente de partida individual verificada')+'</span></p>'}).join(''):'<p class="fe-muted">Todavía no hay artistas asignados.</p>')+'</div>'+
-'<form '+attr+'><label>Seleccionar artista<select name="artist_id" required><option value="">Selecciona un artista…</option>'+options+'</select></label><label>Función en el evento<input name="role_in_event" maxlength="160" placeholder="Guitarra, cante, baile, percusión…"></label><p class="fe-muted">Referencia del presupuesto: '+safe(quoteNumber||'No identificada')+'. No se aplica un sueldo sin coste individual acreditado.</p><button type="submit">Asignar artista</button><p class="fe-artist-feedback" role="status"></p></form>'+
-'<details><summary>¿No aparece el artista? Añadir al catálogo</summary><form data-fe-add-artist><label>Nombre del artista<input name="display_name" maxlength="160" required minlength="2"></label><label>Especialidad<input name="specialty" maxlength="120" placeholder="Guitarra flamenca, cante, baile…"></label><button type="submit">Añadir artista al catálogo</button><p class="fe-artist-feedback" role="status"></p></form></details></details>';
+ const relevant=artistAssignments.filter(a=>ref.eventId?a.event_id===ref.eventId:Number(a.catalog_year)===Number(ref.year)&&Number(a.catalog_source_row)===Number(ref.sourceRow));
+ const ev=ref.eventId?clientEvents.find(x=>x.id===ref.eventId):closed.find(x=>Number(x.year)===Number(ref.year)&&Number(x.source_row)===Number(ref.sourceRow));
+ const isSuite=/suite\s*flamenca/i.test([ev?.performance,ev?.title,ev?.account_values?.ARTISTAS].join(' '));
+ const proposed=['Nacho Marroco','Azahara Molero',...(isSuite?['Maribel González']:[])];
+ const signed=signedForRef(ref);
+ const attr=ref.eventId?'data-fe-assign-event="'+safe(ref.eventId)+'"':'data-fe-assign-ledger="'+safe(ref.year)+'-'+safe(ref.sourceRow)+'"';
+ const options=artistRoster.filter(a=>a.active).map(a=>'<option value="'+safe(a.id)+'">'+safe(a.display_name)+' · '+safe(a.category||a.specialty||'Sin especialidad')+'</option>').join('');
+ const list=relevant.length?relevant.map(a=>{const artist=artistRoster.find(x=>x.id===a.artist_id),fee=verifiedArtistFees.find(c=>c.artist_id===a.artist_id&&c.quote_number===a.quote_number),wa=artistWhatsapp(artist,ref);
+ return '<div class="fe-card"><b>'+safe(artist?.display_name||'Artista')+'</b> · '+safe(a.role_in_event||artist?.specialty||'Función pendiente')+
+ '<p class="fe-muted">'+(fee?Number(fee.fee_eur).toLocaleString('es-ES',{style:'currency',currency:'EUR'})+' · coste según presupuesto '+safe(a.quote_number):'Caché pendiente de desglose verificable')+'</p>'+
+ (wa?'<a href="'+safe(wa)+'" target="_blank" rel="noopener noreferrer">Preparar WhatsApp al artista</a><p class="fe-muted">Revisar destinatario y pulsar Enviar en WhatsApp.</p>':'<p class="fe-muted">Añade un WhatsApp con prefijo internacional en su ficha de RR. HH. para preparar el aviso.</p>')+'</div>'}).join(''):'<p class="fe-muted">Todavía no hay artistas asignados.</p>';
+ const proposals='<p><b>Propuesta habitual según formación:</b> '+proposed.map(safe).join(' · ')+(isSuite?' (incluye bailaora principal)':'')+'</p><p class="fe-muted">Son sugerencias, no asignaciones confirmadas. Se revisará la composición exacta, especialmente en formaciones instrumentales sin cante.</p>';
+ return '<details class="fe-card fe-artist-panel"><summary><b>Artistas del evento</b> · '+relevant.length+' asignado(s)</summary>'+
+ proposals+list+
+ (signed?'<form '+attr+'><label>Seleccionar artista<select name="artist_id" required><option value="">Selecciona artista…</option>'+options+'</select></label>'+
+ '<label>Función en el evento<input name="role_in_event" maxlength="160" placeholder="Guitarra, cante, baile, percusión…"></label>'+
+ '<p class="fe-muted">Contrato firmado verificado. El caché individual se mostrará solo si está respaldado por una partida económica de este presupuesto: '+safe(quoteNumber||'sin referencia')+'.</p><button type="submit">Asignar artista</button><p class="fe-artist-feedback" role="status"></p></form>':
+ '<p class="fe-status"><b>Asignación bloqueada.</b> Se habilita cuando el contrato figure firmado y se vincule a este evento en el portal. En los eventos históricos hay que comprobar y vincular la firma; la presencia en Cuentas no basta.</p>')+
+ '<p><a href="./rrhh.html">Abrir catálogo y fichas de RR. HH.</a></p></details>';
 }
 function renderClosed(){let options=[2026,2027].map(y=>'<option value="'+y+'"'+(yearClosed===y?' selected':'')+'>'+y+'</option>').join('');
 let html='<h2>Fechas cerradas</h2><p class="fe-muted">Listado del libro de eventos con acceso a los documentos disponibles. La importación del libro no acredita por sí sola firma o cobro.</p><div class="fe-toolbar"><label>Año <select id="fe-year-closed">'+options+'</select></label><span class="fe-badge">'+allClosedInYear(yearClosed).length+' registros</span></div><div class="fe-list">';
@@ -123,6 +150,7 @@ const row={artist_id:form.elements.artist_id.value,role_in_event:form.elements.r
 if(form.dataset.feAssignEvent){row.event_id=form.dataset.feAssignEvent;const ev=clientEvents.find(e=>e.id===row.event_id);row.quote_number=quoteTerms.find(t=>t.id===ev?.quote_terms_id)?.quote_number||''}
 else{const parts=form.dataset.feAssignLedger.split('-');row.catalog_year=Number(parts[0]);row.catalog_source_row=Number(parts[1]);const ev=closed.find(e=>Number(e.year)===row.catalog_year&&Number(e.source_row)===row.catalog_source_row);row.quote_number=ev?.quote_number||''}
 if(!row.artist_id)throw Error('Selecciona un artista de la lista.');
+if(!signedForRef({eventId:row.event_id}))throw Error('Debe constar el contrato firmado antes de asignar artistas.');
 const response=await database.from('fe_artist_assignments').insert(row).select('*').single();
 if(response.error)throw response.error;
 artistAssignments.push(response.data);
@@ -163,7 +191,7 @@ finally{button.disabled=false}
 async function load(a,r){actor=a;role=r;if(!database||!a)return;const results=await Promise.all([
 database.from('accounts_event_catalog').select('year,source_row,event_date,venue,client_label,schedule,quote_number,source_link,quotation_url,contract_url,account_values').in('year',[2026,2027]).limit(1000),
 database.from('fe_quote_followups').select('source_key,quote_number,client_label,venue,event_date,commercial_status,sent_at,expires_at,reminder_status,pdf_url,is_test').limit(1000),
-database.from('events').select('id,title,venue,event_date,status,is_test,quotation_url,contract_url,wardrobe,repertoire,schedule_notes,onsite_contact,quote_terms_id').limit(1000),
+database.from('events').select('id,title,venue,event_date,performance,status,is_test,quotation_url,contract_url,wardrobe,repertoire,schedule_notes,onsite_contact,quote_terms_id').limit(1000),
 database.from('commercial_document_requests').select('*').order('created_at',{ascending:false}).limit(300),
 database.from('event_tasks').select('event_id,title,completed').limit(1000),
 database.from('event_payment_schedule').select('event_id,label,amount_eur,status,due_on').limit(1000),
@@ -172,7 +200,7 @@ database.from('event_change_requests').select('event_id,topic,status,details').l
 database.from('event_messages').select('event_id,created_at,message').limit(1000),
 database.from('event_documents').select('event_id,kind,version').limit(1000),
 database.from('commercial_event_attachments').select('id,event_id,catalog_year,catalog_source_row,kind,original_filename,storage_path,created_at').order('created_at',{ascending:false}).limit(1000),
-database.from('fe_artist_roster').select('id,display_name,specialty,active').order('display_name').limit(1000),
+database.from('fe_artist_roster').select('id,display_name,specialty,category,phone_whatsapp,active').order('display_name').limit(1000),
 database.from('fe_artist_assignments').select('id,artist_id,event_id,catalog_year,catalog_source_row,role_in_event,quote_number,payment_amount_eur,payment_source,payment_status').limit(1000),
 database.from('fe_quote_artist_cost_lines').select('quote_number,artist_id,fee_eur,source_reference').limit(1000),
 database.from('accepted_quote_terms').select('id,quote_number').limit(1000)
