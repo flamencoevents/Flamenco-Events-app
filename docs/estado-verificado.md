@@ -1156,3 +1156,16 @@ ni deja temporales. Pasaron 17 pruebas ficticias con
 
 Verificado localmente en modo prueba. Sin despliegue ni acceso a Drive
 o al XLSX original. La comprobación autenticada sigue pendiente.
+
+## Identidad de la auditoría en el diario local · 13 noviembre 2026
+
+El diario comprueba la propuesta y la huella del XLSX de origen que
+devuelve la auditoría antes de registrar una copia como verificada.
+La regresión reprodujo que un contrato distinto con las mismas celdas
+podía validar una reserva previa. Tras el cambio, el ensayo registra
+el fallo y no guarda una huella de copia verificada.
+
+Pasaron 21 pruebas ficticias con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_ledger test_accounts_2027_trial`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX
+original. El diario no acredita una escritura remota.

@@ -59,6 +59,22 @@ class TrialTests(unittest.TestCase):
         self.assertFalse(result['production_writable'])
         self.assertEqual(self.source.read_bytes(), self.original)
 
+    def test_audit_cannot_verify_a_different_contract_proposal(self):
+        from unittest.mock import patch
+        from accounts_2027_verify import verify
+
+        def audit_changed_request(source, candidate, request):
+            changed = dict(request, contract=dict(request['contract'], sha256='c' * 64))
+            return verify(source, candidate, changed)
+
+        with patch('accounts_2027_verify.verify', side_effect=audit_changed_request):
+            with self.assertRaisesRegex(Blocked, 'PROPOSAL_CHANGED'):
+                self.run_trial()
+        self.assertEqual(self.state(), 'failed')
+        self.assertEqual(self.source.read_bytes(), self.original)
+        with sqlite3.connect(self.database) as db:
+            self.assertIsNone(db.execute('SELECT candidate_sha256 FROM operations').fetchone()[0])
+
     def test_exit_zero_and_forged_audit_do_not_certify_invalid_copy(self):
         def forged(command, **kwargs):
             self.output.mkdir()

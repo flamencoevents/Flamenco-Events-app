@@ -108,6 +108,8 @@ class Ledger:
                     proposal['workbook_sha256'] == row['source_sha256'], 'PROPOSAL_CHANGED')
             audit = verify(source, candidate, request)
             require(audit['status'] == 'copy_preservation_checks_passed', 'PRESERVATION_AUDIT_REJECTED')
+            require(audit['proposal_id'] == proposal_id and
+                    audit['source_sha256'] == row['source_sha256'], 'PROPOSAL_CHANGED')
             require(row['candidate_sha256'] in (None, audit['candidate_sha256']), 'CANDIDATE_CHANGED')
             db.execute("UPDATE operations SET state = 'copy_verified', candidate_sha256 = ? WHERE proposal_id = ?",
                        (audit['candidate_sha256'], proposal_id))
