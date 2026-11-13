@@ -79,7 +79,7 @@ $('edit-form').addEventListener('submit',async e=>{
 (async()=>{
  try{const cfg=window.FE_PORTAL_CONFIG;if(!cfg?.url||!cfg?.anonKey||!window.supabase)throw Error('Configuración privada no disponible');db=window.supabase.createClient(cfg.url,cfg.anonKey);
  const {data,error}=await db.auth.getUser();if(error||!data?.user){$('gate').innerHTML='Debes <a href="./portal.html">iniciar sesión</a> con una cuenta de administración.';return}actor=data.user.id;
- const profile=await db.from('profiles').select('role').eq('id',actor).maybeSingle();if(profile.error)throw profile.error;if(profile.data?.role!=='admin'){$('gate').textContent='Acceso exclusivo para administración.';return}
+ const profile=await db.from('profiles').select('role').eq('id',actor).maybeSingle();if(profile.error)throw profile.error;if(!['admin','sales'].includes(profile.data?.role)){$('gate').textContent='Acceso exclusivo para el equipo autorizado.';return}
  const r=await db.from('marketing_venue_tracking').select('venue_rank,contact_status,worked_before,worked_details,contact_known,contact_person,contact_role,contact_origin,contact_email,contact_phone,last_contact_on,next_action,notes,updated_at').order('venue_rank');
  if(r.error)throw r.error;for(const t of r.data||[])tracking.set(t.venue_rank,t);
 const hist=await db.from('accounts_event_catalog').select('year,source_row,event_date,venue,client_label').not('venue','is',null).limit(1000);
