@@ -964,3 +964,19 @@ de la fuente y no dejaron temporales. Pasaron 25 pruebas con
 
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX
 original. Sigue pendiente la escritura remota con control de versión.
+
+## Validación del origen antes de solicitar el PDF · 13 noviembre 2026
+
+La conciliación de servidor valida la marca de prueba del origen firmado,
+los importes aceptados y el detalle fiscal antes de solicitar el PDF
+contractual. Si hay discrepancias, devuelve 409 sin pedir el PDF a Apps
+Script ni descargar la copia de Storage. La lectura de ambos PDF y la
+comparación de huellas se mantienen para un origen ficticio válido.
+
+La regresión con origen sin marca de prueba reprodujo la petición
+prematura del PDF. Tras el cambio, también se verificó el rechazo sin
+descarga ante cambios de un céntimo o del IVA. Pasaron las 15 pruebas de
+`node --test tests/accounts-preflight.test.cjs` con dobles de servicios.
+El ensayo no creó sesiones, asignaciones ni documentos. Preparado y
+verificado localmente en modo prueba. Despliegue y ensayo autenticado
+pendientes. Sin acceso ni escritura al XLSX original.

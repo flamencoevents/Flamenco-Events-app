@@ -21,7 +21,7 @@ test('Administrative accounts preflight links signed source, exact revision, met
  assert.equal(p.checks.accepted_financial_values,true);assert.equal(p.checks.stored_pdf_bytes,true);for(const k of ['event_schedule','workbook','signature','commercial_closure','payments'])assert.equal(p.checks[k],false);
  const text=JSON.stringify(p);for(const secret of ['PRIVATE_DRIVE_URL',e.tables.event_documents[0].storage_path,'pdf_base64','source_reference','total_payable_eur'])assert.ok(!text.includes(secret));
  assert.deepEqual(e.downloads,[{bucket:'event-documents',path:e.tables.event_documents[0].storage_path}]);assert.ok(!p.pending.includes('stored_pdf_bytes'));
- assert.deepEqual(e.network.map(x=>JSON.parse(JSON.parse(x.init.body).payload).operation),['contract_document','preview']);unchanged(e);
+ assert.deepEqual(e.network.map(x=>JSON.parse(JSON.parse(x.init.body).payload).operation),['preview','contract_document']);unchanged(e);
  assert.equal(e.tables.event_contracts[0].state,'draft');
 });
 test('Only valid administrator sessions may request accounts preflight, regardless of body role claims',async()=>{
@@ -41,6 +41,20 @@ test('Wrong source, enquiry, document event or revision and missing contract evi
   e=>e.tables.event_documents[0].event_id='other',e=>e.tables.event_documents[0].version=2,e=>e.tables.event_documents[0].kind='quotation',
   e=>e.tables.event_documents[0].source_reference='other',e=>e.tables.event_documents[0].sha256=null]){
   const e=fixture();change(e);assert.equal((await ask(e)).status,409);assert.equal(e.network.length,0);unchanged(e);
+ }
+});
+test('A source without its own test marker is rejected before fetching either PDF',async()=>{
+ const e=fixture();e.source.is_test=false;
+ const r=await ask(e);assert.equal(r.status,409);
+ assert.deepEqual(e.network.map(x=>JSON.parse(JSON.parse(x.init.body).payload).operation),['preview']);
+ assert.equal(e.downloads.length,0);unchanged(e);
+});
+test('Changed accepted amounts or taxes are rejected without fetching a PDF',async()=>{
+ for(const change of [source=>source.total_payable_eur+=0.01,source=>source.tax_details={...source.tax_details,vat_eur:1}]){
+  const e=fixture();change(e.source);
+  assert.equal((await ask(e)).status,409);
+  assert.deepEqual(e.network.map(x=>JSON.parse(JSON.parse(x.init.body).payload).operation),['preview']);
+  assert.equal(e.downloads.length,0);unchanged(e);
  }
 });
 test('Changed PDF bytes or financial source are rejected without creating another document or economic movement',async()=>{

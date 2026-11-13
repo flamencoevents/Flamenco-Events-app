@@ -26,6 +26,11 @@ Deno.serve(route(async request=>{
   if(doc.error||doc.data?.event_id!==ev.data.id||doc.data.kind!=='contract'||doc.data.version!==choice.version||doc.data.source_reference!==reference||!String(doc.data.sha256||'').match(/^[a-f0-9]{64}$/))throw new Problem(409,'El PDF privado no conserva versión, origen y huella comprobables');
   const storagePrefix=ev.data.id+'/contract-v'+choice.version+'-';
   if(typeof doc.data.storage_path!=='string'||!doc.data.storage_path.startsWith(storagePrefix)||!/^[a-f0-9]{64}\.pdf$/.test(doc.data.storage_path.slice(storagePrefix.length)))throw new Problem(409,'La ruta privada no corresponde al contrato y revisión del evento');
+  const current=quotation(await scriptRead('preview',choice),choice);
+  if(current.is_test!==true)throw new Problem(409,'La copia de origen no está marcada como ficticia');
+  for(const k of ['total_payable_eur','deposit_payable_eur','billing_mode'])if(current[k as keyof typeof current]!==terms.data[k])throw new Problem(409,'Las condiciones de origen han cambiado; requiere conciliación');
+  const fiscalKeys=['base_eur','invoiced_base_eur','vat_eur','withholding_eur','rounding_eur','payment_method'];
+  if(!current.tax_details||!terms.data.tax_details||fiscalKeys.some(k=>current.tax_details[k]!==terms.data.tax_details[k]))throw new Problem(409,'El detalle fiscal de origen no coincide con la versión aceptada');
   accountsDocument=doc.data;accountsContract=contract.data;
  }
  const file=await scriptRead(b.kind==='quotation'?'quotation_document':'contract_document',choice);
@@ -35,11 +40,6 @@ Deno.serve(route(async request=>{
  const checksum=[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
  if(accounts){
   if(checksum!==accountsDocument.sha256)throw new Problem(409,'El PDF de origen ha cambiado respecto al documento incorporado');
-  const current=quotation(await scriptRead('preview',choice),choice);
-  if(current.is_test!==true)throw new Problem(409,'La copia de origen no está marcada como ficticia');
-  for(const k of ['total_payable_eur','deposit_payable_eur','billing_mode'])if(current[k as keyof typeof current]!==terms.data[k])throw new Problem(409,'Las condiciones de origen han cambiado; requiere conciliación');
-  const fiscalKeys=['base_eur','invoiced_base_eur','vat_eur','withholding_eur','rounding_eur','payment_method'];
-  if(!current.tax_details||!terms.data.tax_details||fiscalKeys.some(k=>current.tax_details[k]!==terms.data.tax_details[k]))throw new Problem(409,'El detalle fiscal de origen no coincide con la versión aceptada');
   // Download internally from the fixed private bucket. Never mint a URL or
   // forward document bytes to the caller. Metadata alone is not byte evidence.
   let stored;
