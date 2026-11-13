@@ -1,0 +1,40 @@
+/* Comercial v2: navegación principal, calendario visible y áreas de gestión. */
+#fe-commercial-dashboard{margin:12px 0 25px}
+.fe-main-tabs{display:flex;gap:8px;flex-wrap:wrap;position:relative;border-bottom:1px solid #e7dbcd;padding:10px 0 16px;margin:0 0 20px!important}
+.fe-main-tabs button,.fe-main-tabs select{min-height:43px;border:1px solid #cdb99e;border-radius:7px;background:#fff;color:#634725;font-size:13px;padding:9px 12px;max-width:100%;cursor:pointer}
+.fe-main-tabs button[aria-current=page]{background:#805c32;color:#fff;border-color:#805c32}
+.fe-main-panel[hidden],.fe-old-extras[hidden]{display:none!important}
+.fe-home-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.fe-home-head h2{margin:0}
+.fe-cal-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.fe-cal-controls button{background:#fff!important;color:#76532d!important;border:1px solid #cdb99e!important}
+.fe-month-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:18px 0}
+.fe-month-calendar .fe-day-label{text-align:center;font-size:12px;color:#7b6d5c;padding:8px 0}
+.fe-month-calendar .fe-day{min-height:90px;padding:7px;border:1px solid #e3d9ce;border-radius:8px;display:flex;flex-direction:column;gap:4px;overflow-wrap:anywhere;background:#fff}
+.fe-month-calendar .fe-day.today{border-color:#946e42;box-shadow:inset 0 0 0 1px #946e42}
+.fe-month-calendar .fe-day.has-event{background:#eef5fc;border-color:#9ac1e7}
+.fe-month-calendar .fe-day small{color:#1f548b;display:block;font-size:11px;line-height:1.35}
+.fe-month-calendar .fe-day .fe-day-number{font-weight:700;color:#5c5145}
+.fe-main-panel .fe-card{border:1px solid #e8ddd2;border-radius:11px;padding:15px;margin:12px 0;background:#fff}
+.fe-main-panel .fe-muted{color:#665a50;font-size:13px}
+.fe-main-panel input,.fe-main-panel select,.fe-main-panel textarea{background:#fff!important;color:#29231e!important;border:1px solid #cdb9a2;border-radius:7px;padding:10px;max-width:100%}
+.fe-main-panel form label{display:block;margin:13px 0 5px}
+.fe-main-panel form textarea{min-height:100px}
+.fe-main-panel form input,.fe-main-panel form textarea{width:100%}
+.fe-main-panel button{background:#805c32;color:#fff;border:1px solid #805c32;border-radius:7px;padding:9px 12px;cursor:pointer}
+.fe-main-panel button.fe-alt{background:#fff;color:#805c32}
+.fe-main-panel button:disabled{opacity:.6}
+.fe-main-panel .fe-status{border-left:3px solid #ae8859;padding:10px;background:#faf6f0}
+.fe-main-panel .fe-list{display:grid;gap:10px}
+.fe-main-panel .fe-list .fe-card h3{margin:0 0 5px;font:21px Georgia,serif;color:#69451f}
+.fe-main-panel .fe-list .fe-card p{margin:7px 0}
+.fe-main-panel .fe-details{display:flex;gap:10px;flex-wrap:wrap}
+.fe-main-panel a{color:#715026}
+.fe-main-panel .fe-badge{display:inline-block;border:1px solid #d8c4aa;border-radius:20px;padding:3px 10px;font-size:12px}
+.fe-main-panel .fe-card[hidden]{display:none!important}
+.fe-main-panel .fe-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.fe-main-panel .fe-fields label{margin:0}
+.fe-main-panel .fe-fields input{margin:6px 0}
+.fe-main-panel .fe-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+.fe-main-panel .fe-toolbar select{width:auto}
+@media(max-width:760px){.fe-main-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.fe-main-tabs button{font-size:12px;padding:8px 5px}.fe-month-calendar .fe-day{min-height:65px;padding:4px;font-size:12px}.fe-month-calendar .fe-day small{font-size:9px;max-height:60px;overflow:hidden}.fe-main-panel .fe-fields{grid-template-columns:1fr}}
