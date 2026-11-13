@@ -154,6 +154,28 @@ class PackagingTests(unittest.TestCase):
                 self.assertFalse(list(self.root.glob('.fe-copy-*')))
                 self.assertEqual(self.source.read_bytes(), original)
 
+    def test_calculated_month_marker_blocks_packaging(self):
+        with zipfile.ZipFile(self.source) as archive:
+            parts = {name: archive.read(name) for name in archive.namelist()}
+        sheet = 'xl/worksheets/sheet1.xml'
+        for ref, month in (('A9', 'MARZO'), ('A15', 'ABRIL')):
+            with self.subTest(marker=ref):
+                original_marker = f'<c r="{ref}" t="inlineStr"><is><t>{month}</t></is></c>'
+                cached_marker = f'<c r="{ref}" t="str"><f>"{month}"</f><v>{month}</v></c>'
+                changed = parts[sheet].replace(original_marker.encode(), cached_marker.encode())
+                self.assertNotEqual(parts[sheet], changed)
+                with zipfile.ZipFile(self.source, 'w') as archive:
+                    for name, data in parts.items():
+                        archive.writestr(name, changed if name == sheet else data)
+                original = self.source.read_bytes()
+                self.req['workbook_sha256'] = hashlib.sha256(original).hexdigest()
+                output = self.root / f'{ref}.xlsx'
+                with self.assertRaisesRegex(Blocked, 'CALCULATED_MONTH_MARKER'):
+                    pack.package(self.source, self.artifact, self.req, output)
+                self.assertFalse(output.exists())
+                self.assertFalse(list(self.root.glob('.fe-copy-*')))
+                self.assertEqual(self.source.read_bytes(), original)
+
     def test_stale_source_rejected(self):
         self.req['workbook_sha256'] = 'f' * 64
         with self.assertRaisesRegex(Blocked, 'WORKBOOK_CHANGED'):

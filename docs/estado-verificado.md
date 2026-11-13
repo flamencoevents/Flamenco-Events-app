@@ -948,3 +948,19 @@ bloqueados. Con los metadatos conservados, la copia de prueba pasa.
 Pasaron 25 pruebas locales con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify test_accounts_2027_package`.
 Verificado en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Límites mensuales calculados · 13 noviembre 2026
+
+El preparador bloquea la propuesta si detecta un marcador mensual cuyo
+texto procede de una fórmula. Su valor en caché puede quedar obsoleto y
+hacer que se use un bloque incorrecto. Se conserva la inspección de
+solo lectura.
+
+Dos ensayos ficticios reprodujeron la aceptación anterior al sustituir
+por una fórmula el marcador de inicio o el siguiente. Tras el cambio,
+ambos se bloquearon antes de producir una copia, conservaron los bytes
+de la fuente y no dejaron temporales. Pasaron 25 pruebas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_package`.
+
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX
+original. Sigue pendiente la escritura remota con control de versión.

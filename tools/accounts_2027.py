@@ -159,6 +159,9 @@ def propose(book, request):
                    and str(c['value']).isdigit()
                    and str(c['value']).lstrip('0') == quote['number'].lstrip('0')]
         require(not aliases, 'POTENTIAL_NUMBER_ALIAS_REQUIRES_RECONCILIATION')
+    # Cached formula results cannot establish stable monthly boundaries.
+    require(not any(book['cells'].get(f'A{r}', {}).get('formula') for r, _ in book['markers']),
+            'CALCULATED_MONTH_MARKER')
     starts = [(r, m) for r, m in book['markers'] if m == date.month]
     require(len(starts) == 1, 'MONTH_MISSING_OR_AMBIGUOUS')
     start = starts[0][0]
