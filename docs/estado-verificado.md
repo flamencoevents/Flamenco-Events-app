@@ -1113,3 +1113,16 @@ hipervínculos de las hojas siguen fuera de esta comprobación de destinos.
 Pasaron 52 pruebas ficticias con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_verify test_accounts_2027_package`.
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Importes del contrato al leer el JSON · 13 noviembre 2026
+
+El ensayo contractual rechaza los números decimales cuyo valor cambia al
+leer el JSON. Antes, un total con precisión inferior al céntimo podía
+redondearse a un total admitido. Ahora se rechaza antes de preparar la
+propuesta. Se conservan las notaciones equivalentes del mismo importe.
+
+Pasaron 15 pruebas ficticias con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_contract`.
+Se verificaron el redondeo inadvertido, la conversión de un valor muy
+pequeño a cero y una notación científica equivalente. Verificado
+localmente en modo prueba, sin despliegue ni acceso al XLSX original.

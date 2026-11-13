@@ -83,6 +83,18 @@ class ContractRehearsalTests(unittest.TestCase):
         with self.assertRaisesRegex(bridge.Blocked, '^INVALID_JSON_NUMBER$'):
             bridge.parsed('{"calculo":{"ajuste":1e999}}')
 
+    def test_subcent_amount_cannot_be_rounded_by_json_parser(self):
+        for raw_amount in ('1060.01000000000001', '1e-400'):
+            with self.subTest(raw_amount=raw_amount):
+                self.data = fixture()
+                for row, index in (('quote_row', 4), ('contract_row', 2)):
+                    self.data[row][index] = self.data[row][index].replace(
+                        '"total": 1060.01', '"total": ' + raw_amount)
+                self.blocked('INVALID_JSON_NUMBER')
+
+    def test_equivalent_json_number_notation_is_accepted(self):
+        self.assertEqual(bridge.parsed('{"total":1.060010e3}')['total'], 1060.01)
+
     def test_generated_contract_is_not_signed_paid_or_closed(self):
         out = bridge.prepare(self.book, self.data, PDF)
         self.assertEqual(out['status'], 'pending_review')

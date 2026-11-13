@@ -38,7 +38,8 @@ def parsed(raw):
         return obj
     def finite_float(token):
         value = float(token)
-        require(math.isfinite(value), 'INVALID_JSON_NUMBER')
+        require(math.isfinite(value) and Decimal(str(value)) == Decimal(token),
+                'INVALID_JSON_NUMBER')
         return value
 
     value = json.loads(raw, object_pairs_hook=unique, parse_float=finite_float,
