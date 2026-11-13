@@ -50,7 +50,9 @@ def run_trial(source, request_path, output, database, workbook_key, owner_key,
     # Creating the journal inside a fresh output directory conflicts with the writer.
     output_path = output.resolve()
     journal_path = database.resolve()
-    require(journal_path != output_path and output_path not in journal_path.parents,
+    lock_path = Path(str(journal_path) + '.trial.lock').resolve()
+    require(all(path != output_path and output_path not in path.parents
+                for path in (journal_path, lock_path)),
             'JOURNAL_OUTPUT_COLLISION')
     book = read_book(source)
     proposal = propose(book, request)

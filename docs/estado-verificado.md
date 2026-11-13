@@ -1215,3 +1215,12 @@ Los dos casos ficticios se comprobaron con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027_trial`.
 Pasaron 11 pruebas locales en modo prueba, sin despliegue ni acceso
 al XLSX original.
+
+## Colisión con el archivo de bloqueo · 13 noviembre 2026
+
+El ensayo rechaza una salida que coincide con el archivo de bloqueo
+del diario antes de crear archivos. La regresión reprodujo que el
+propio ensayo ocupaba la ruta y luego fallaba por salida existente.
+Pasaron 12 pruebas locales con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_trial`.
+Verificado en modo prueba, sin despliegue ni acceso al XLSX original.

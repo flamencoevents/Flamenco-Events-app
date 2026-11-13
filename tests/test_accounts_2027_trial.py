@@ -69,6 +69,14 @@ class TrialTests(unittest.TestCase):
                 self.assertFalse(Path(str(database) + '.trial.lock').exists())
                 self.assertEqual(self.calls, 0)
 
+    def test_output_cannot_be_the_journal_lock(self):
+        output = Path(str(self.database) + '.trial.lock')
+        with self.assertRaisesRegex(Blocked, 'JOURNAL_OUTPUT_COLLISION'):
+            self.run_trial(output=output)
+        self.assertFalse(output.exists())
+        self.assertFalse(self.database.exists())
+        self.assertEqual(self.calls, 0)
+
     def test_copy_audited_and_identical_retry_skips_writer(self):
         result = self.run_trial()
         self.assertEqual(result['state'], 'copy_verified')
