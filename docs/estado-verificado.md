@@ -1074,3 +1074,16 @@ casos ficticios se rechazaron y los bytes de la fuente se conservaron.
 Pasaron 48 pruebas con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_verify test_accounts_2027_package`.
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Coordenadas de la hoja antes de preparar la propuesta · 13 noviembre 2026
+
+El preparador aplica los mismos controles de coordenadas que el
+verificador. Un XLSX ficticio con una celda V12 declarada dentro de
+la fila 11 antes permitía proponer la fila 11. Ahora se rechaza al
+leer la hoja, sin modificar los bytes de la fuente. La validación
+también conserva el rechazo de referencias ausentes, inválidas y
+duplicadas.
+
+Pasaron 49 pruebas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_verify test_accounts_2027_package`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.

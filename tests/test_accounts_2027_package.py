@@ -252,6 +252,23 @@ class PackagingTests(unittest.TestCase):
                     propose(read_book(self.source), self.req)
                 self.assertEqual(self.source.read_bytes(), before)
 
+    def test_source_cell_must_belong_to_declared_row(self):
+        with zipfile.ZipFile(self.source) as archive:
+            parts = {name: archive.read(name) for name in archive.namelist()}
+        sheet = 'xl/worksheets/sheet1.xml'
+        original = parts[sheet]
+        parts[sheet] = original.replace(
+            b'</row><row r="15">', b'<c r="V12"><v>1</v></c></row><row r="15">')
+        self.assertNotEqual(parts[sheet], original)
+        with zipfile.ZipFile(self.source, 'w') as archive:
+            for name, data in parts.items():
+                archive.writestr(name, data)
+        before = self.source.read_bytes()
+        self.req['workbook_sha256'] = hashlib.sha256(before).hexdigest()
+        with self.assertRaisesRegex(Blocked, 'CELL_ROW_MISMATCH'):
+            propose(read_book(self.source), self.req)
+        self.assertEqual(self.source.read_bytes(), before)
+
     def test_stale_source_rejected(self):
         self.req['workbook_sha256'] = 'f' * 64
         with self.assertRaisesRegex(Blocked, 'WORKBOOK_CHANGED'):

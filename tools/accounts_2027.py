@@ -76,6 +76,20 @@ def cell_payload(cell):
     return value, inline, formulas[0] if formulas else None
 
 
+def worksheet_cells(root):
+    seen = set()
+    for row in root.findall('m:sheetData/m:row', NS):
+        for cell in row.findall('m:c', NS):
+            ref = cell.get('r')
+            require(bool(ref), 'MISSING_CELL_REFERENCE')
+            match = re.fullmatch(r'[A-Z]{1,3}([1-9][0-9]*)', ref)
+            require(match is not None, 'INVALID_CELL_REFERENCE')
+            require(row.get('r') in (None, match[1]), 'CELL_ROW_MISMATCH')
+            require(ref not in seen, 'DUPLICATE_CELL')
+            seen.add(ref)
+            yield ref, cell
+
+
 def read_book(path):
     raw = path if isinstance(path, bytes) else Path(path).read_bytes()
     require(len(raw) <= 20_000_000, 'WORKBOOK_TOO_LARGE')
@@ -102,7 +116,7 @@ def read_book(path):
         strings = [''.join(x.itertext()) for x in xml('xl/sharedStrings.xml').findall('m:si', NS)] if 'xl/sharedStrings.xml' in names else []
         cells = {}
         formula_ranges = []
-        for c in root.findall('m:sheetData/m:row/m:c', NS):
+        for ref, c in worksheet_cells(root):
             v, inline, formula = cell_payload(c)
             value = v.text if v is not None else ''
             if c.get('t') == 's':
@@ -110,12 +124,11 @@ def read_book(path):
             elif inline is not None:
                 value = ''.join(inline.itertext())
             if formula is not None and formula.get('ref') is not None:
-                ref = formula.get('ref')
-                require(re.fullmatch(r'[A-Z]{1,3}[1-9][0-9]*(?::[A-Z]{1,3}[1-9][0-9]*)?', ref),
+                formula_ref = formula.get('ref')
+                require(re.fullmatch(r'[A-Z]{1,3}[1-9][0-9]*(?::[A-Z]{1,3}[1-9][0-9]*)?', formula_ref),
                         'INVALID_FORMULA_RANGE')
-                formula_ranges.append(ref)
-            require(c.get('r') not in cells, 'DUPLICATE_CELL')
-            cells[c.get('r')] = {'value': value, 'formula': formula is not None,
+                formula_ranges.append(formula_ref)
+            cells[ref] = {'value': value, 'formula': formula is not None,
                                  'kind': c.get('t', 'n') if inline is None else 'inlineStr'}
         for i, expected in enumerate(HEADERS):
             actual = cells.get(chr(65 + i) + '3', {}).get('value', '')
