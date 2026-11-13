@@ -14,7 +14,7 @@ function crmMessage(message){$('status').textContent=message}
 function crmRenderEditor(){
  const box=$('editor');if(!box)return;box.replaceChildren();
  if(!isStaff)return;
- if(kind==='pipeline'){
+ if(kind.startsWith('pipeline')){
   const tip=document.createElement('p');tip.textContent='Comercial: revisa las oportunidades y actualiza su etapa o próxima acción.';box.append(tip);return;
  }
  if(!isAdmin)return;
@@ -49,10 +49,23 @@ async function crmQualify(row){
  if(!result.error)await refresh();
 }
 async function crmHandoff(row){
- if(!isAdmin || kind!=='venues' || row.marketing_status!=='cualificado')return;
- if(!confirm('Crear una oportunidad para Comercial. No se enviarán mensajes.'))return;
- const result=await db.from('fe_commercial_opportunities').insert({prospect_id:row.id,priority:'media',stage:'pendiente_contacto'});
- crmMessage(result.error?result.error.message:'Prospecto traspasado a Comercial.');if(!result.error)await refresh();
+ if(!isAdmin || !['venues','hospitality','brands'].includes(kind))return;
+ const qualified=kind==='brands'?row.status==='cualificada':row.marketing_status==='cualificado';
+ if(!qualified)return;
+ if(!confirm('Crear oportunidad para Comercial sin enviar comunicaciones externas.'))return;
+ let table,payload;
+ if(kind==='venues'){table='fe_commercial_opportunities';payload={prospect_id:row.id,stage:'pendiente_contacto',priority:'media'}}
+ else if(kind==='hospitality'){table='fe_hospitality_opportunities';payload={prospect_id:row.id,stage:'pendiente_contacto',priority:'media'}}
+ else {
+  const options=['desfile_con_musica_en_directo','presentacion_coleccion','editorial_fotografico','evento_vip','activacion_marca','otro'];
+  const type=prompt('Tipo de colaboración:\n'+options.join('\n'));
+  if(type===null)return;
+  if(!options.includes(type)){crmMessage('Selecciona una modalidad admitida.');return}
+  table='fe_brand_collaborations';payload={brand_id:row.id,stage:'pendiente_contacto',collaboration_type:type};
+ }
+ const result=await db.from(table).insert(payload);
+ crmMessage(result.error?result.error.message:'Oportunidad traspasada a Comercial.');
+ if(!result.error)await refresh();
 }
 function crmEditOpportunity(row){
  if(!isStaff)return;
@@ -61,7 +74,8 @@ function crmEditOpportunity(row){
  const form=document.createElement('form');
  const l=document.createElement('label');l.textContent='Etapa comercial';
  const selector=document.createElement('select');selector.name='stage';selector.style.cssText='display:block;width:100%;padding:12px;background:#332924;color:white;margin:10px 0';
- for(const stage of ['pendiente_contacto','contactado','reunion','propuesta','negociacion','colaborador','ganado','perdido']){
+ const states=kind==='pipeline_hospitality'?['pendiente_contacto','contactado','reunion','propuesta','negociacion','acuerdo','recurrente','perdido']:kind==='pipeline_brands'?['pendiente_contacto','contactado','reunion','propuesta','negociacion','acuerdo','realizado','perdido']:['pendiente_contacto','contactado','reunion','propuesta','negociacion','colaborador','ganado','perdido'];
+ for(const stage of states){
   const item=document.createElement('option');item.value=stage;item.textContent=stage;selector.append(item);
  }selector.value=row.stage;l.append(selector);form.append(l);
  form.append(crmField('Próxima acción','next_action',row.next_action||'',false));
@@ -74,7 +88,7 @@ function crmEditOpportunity(row){
   if(values.next_action_at && !/^\d{4}-\d{2}-\d{2}$/.test(values.next_action_at)){crmMessage('Usa fecha AAAA-MM-DD');save.disabled=false;return}
   values.next_action_at=values.next_action_at||null;
   try{
-   const result=await db.from('fe_commercial_opportunities').update(values).eq('id',row.id).select('id').single();
+   const result=await db.from(screens[kind].table).update(values).eq('id',row.id).select('id').single();
    if(result.error)throw result.error;
    crmMessage('Seguimiento guardado.');await refresh();
   }catch(err){crmMessage(err.message||'No se pudo guardar.')}finally{save.disabled=false}
@@ -88,15 +102,15 @@ refresh=async function(){
  crmRenderEditor();
  const records=await db.from(screens[kind].table).select('*').order('created_at',{ascending:false}).limit(200);
  if(records.error)return;
- if(kind!=='pipeline'&&isAdmin){
+ if(!kind.startsWith('pipeline')&&isAdmin){
   const head=$('head').querySelector('tr');if(head){const th=document.createElement('th');th.textContent='Marketing';head.append(th)}
   records.data.forEach((row,i)=>{
    const tr=body.children[i],cell=document.createElement('td');
-   const change=document.createElement('button');change.textContent='Cambiar estado';change.onclick=()=>crmQualify(row);cell.append(change);if(kind==='venues'&&row.marketing_status==='cualificado'){const btn=document.createElement('button');btn.textContent='Traspasar';btn.style.marginLeft='6px';btn.onclick=()=>crmHandoff(row);cell.append(btn)}
+   const change=document.createElement('button');change.textContent='Cambiar estado';change.onclick=()=>crmQualify(row);cell.append(change);if((kind==='venues'&&row.marketing_status==='cualificado')||(kind==='hospitality'&&row.marketing_status==='cualificado')||(kind==='brands'&&row.status==='cualificada')){const btn=document.createElement('button');btn.textContent='Traspasar';btn.style.marginLeft='6px';btn.onclick=()=>crmHandoff(row);cell.append(btn)}
    if(tr)tr.append(cell);
   });
  }
- if(kind==='pipeline'){
+ if(kind.startsWith('pipeline')){
   const head=$('head').querySelector('tr');if(head){const th=document.createElement('th');th.textContent='Acción';head.append(th)}
   records.data.forEach((row,i)=>{const cell=document.createElement('td');const btn=document.createElement('button');btn.textContent='Actualizar';btn.onclick=()=>crmEditOpportunity(row);cell.append(btn);const tr=body.children[i];if(tr)tr.append(cell)});
  }
