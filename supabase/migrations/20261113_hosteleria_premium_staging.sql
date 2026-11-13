@@ -22,7 +22,7 @@ create index if not exists fe_hospitality_prov_idx on public.fe_hospitality_pros
 create index if not exists fe_hospitality_next_idx on public.fe_hospitality_prospects(next_action_at);
 alter table public.fe_hospitality_prospects enable row level security;
 create policy "fe_hospitality_staff_read" on public.fe_hospitality_prospects for select to authenticated
- using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales')));
+ using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin') or (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='sales') and exists(select 1 from public.fe_hospitality_opportunities o where o.prospect_id=fe_hospitality_prospects.id)));
 create policy "fe_hospitality_admin_insert" on public.fe_hospitality_prospects for insert to authenticated
  with check (created_by=(select auth.uid()) and exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin'));
 create policy "fe_hospitality_admin_update" on public.fe_hospitality_prospects for update to authenticated
