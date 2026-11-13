@@ -1126,3 +1126,19 @@ Pasaron 15 pruebas ficticias con
 Se verificaron el redondeo inadvertido, la conversión de un valor muy
 pequeño a cero y una notación científica equivalente. Verificado
 localmente en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Identidad del origen contractual en la propuesta · 13 noviembre 2026
+
+El ensayo contractual incorpora a la propuesta la huella conjunta de
+la hoja de origen, la referencia de presupuesto, el JSON contractual
+y el PDF. El identificador cambia si cambia la hoja o el JSON del
+contrato, aunque los valores de C:H sigan siendo los mismos. La
+propuesta guarda una huella, sin exponer el enlace privado. Las
+solicitudes directas al preparador conservan su formato anterior.
+
+Los dos casos ficticios reprodujeron el identificador compartido
+anterior. Pasaron 51 pruebas mediante
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_contract test_accounts_2027 test_accounts_2027_package`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX
+original. La huella local no acredita autenticación del origen,
+firma, cierre o cobro.

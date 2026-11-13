@@ -92,6 +92,11 @@ def prepare(book, envelope, pdf):
     # schedule; never infer one from duration/passes or invent a missing time.
     schedule = clean_text(event['schedule'])
     quote_sha = hashlib.sha256(qrow[4].encode()).hexdigest()
+    source = {'system': 'whatsapp', 'sheet': envelope['source_sheet'], 'key': q['key'],
+              'quotation_sha256': quote_sha,
+              'contract_snapshot_sha256': hashlib.sha256(crow[2].encode()).hexdigest(),
+              'pdf_sha256': pdf_sha}
+    source_sha = digest(source)
     planner = {'test_mode': True, 'workbook_sha256': book['sha256'], 'currency': 'EUR',
                'candidate_row': envelope['candidate_row'],
                'event': {'id': clean_text(event['id']), 'is_test': True, 'date': date, 'schedule': schedule,
@@ -100,15 +105,14 @@ def prepare(book, envelope, pdf):
                              'sha256': quote_sha, 'total_cents': amounts['total']}}
     planner['contract'] = dict(planner['quotation'], sha256=pdf_sha, quotation_sha256=quote_sha,
                                event_id=event['id'], event_date=date)
+    planner['contract']['source_sha256'] = source_sha
     proposal = propose(book, planner)
     saved = copy.deepcopy(c)
     result = {'mode': 'offline_contract_rehearsal', 'status': 'pending_review', 'production_writable': False,
               'signature_verified': False, 'payment_verified': False, 'commercial_closure_verified': False,
               'remote_origin_verified': False, 'balances_changed': False,
               'proposal': proposal, 'planner_request': planner,
-              'source': {'system': 'whatsapp', 'sheet': envelope['source_sheet'], 'key': q['key'],
-                         'quotation_sha256': quote_sha, 'contract_snapshot_sha256': hashlib.sha256(crow[2].encode()).hexdigest(),
-                         'pdf_sha256': pdf_sha},
+              'source': source,
               'saved_calculation': saved,
               'contract_payment': {k: copy.deepcopy(contract['cliente'][k]) for k in ('bizum', 'reservaBizum')
                                    if k in contract.get('cliente', {})},

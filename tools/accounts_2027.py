@@ -253,6 +253,11 @@ def propose(book, request):
     identity = {'event_id': event_id, 'number': quote['number'], 'key': quote['key'],
                 'revision': quote['revision'], 'quotation_sha256': quote['sha256'],
                 'contract_sha256': contract['sha256']}
+    if 'source_sha256' in contract:
+        source_sha = contract['source_sha256']
+        require(isinstance(source_sha, str) and re.fullmatch('[a-f0-9]{64}', source_sha),
+                'INVALID_DIGEST')
+        identity['contract_source_sha256'] = source_sha
     result = {'mode': 'dry_run', 'writable': False, 'status': 'pending_review',
               'workbook_sha256': book['sha256'], 'sheet': SHEET, 'candidate_row': row,
               'identity': identity, 'proposed_cells': proposed,

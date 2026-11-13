@@ -65,6 +65,22 @@ class ContractRehearsalTests(unittest.TestCase):
         self.assertEqual(out, bridge.prepare(self.book, self.data, PDF))
         self.assertTrue(set('IJKLMNOPQ').isdisjoint(out['proposal']['proposed_cells']))
 
+    def test_proposal_binds_source_sheet_and_contract_snapshot(self):
+        initial = bridge.prepare(self.book, self.data, PDF)
+        other_sheet = copy.deepcopy(self.data)
+        other_sheet['source_sheet'] = 'FE_Cola'
+        other_snapshot = copy.deepcopy(self.data)
+        contract = json.loads(other_snapshot['contract_row'][2])
+        contract['cliente']['nombre'] = 'OTRA PERSONA FICTICIA'
+        other_snapshot['contract_row'][2] = json.dumps(contract)
+        for changed in (other_sheet, other_snapshot):
+            with self.subTest(sheet=changed['source_sheet']):
+                result = bridge.prepare(self.book, changed, PDF)
+                self.assertEqual(result['proposal']['proposed_cells'],
+                                 initial['proposal']['proposed_cells'])
+                self.assertNotEqual(result['proposal']['proposal_id'],
+                                    initial['proposal']['proposal_id'])
+
     def test_contract_proposal_can_be_audited_in_a_synthetic_copy(self):
         with TemporaryDirectory() as temp:
             source, export, candidate = [Path(temp) / name for name in
