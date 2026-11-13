@@ -151,7 +151,19 @@ refresh=async function(){
   });
  }
  if(kind.startsWith('pipeline')){
-  const head=$('head').querySelector('tr');if(head){const th=document.createElement('th');th.textContent='Acción';head.append(th)}
-  records.data.forEach((row,i)=>{const cell=document.createElement('td');const btn=document.createElement('button');btn.textContent='Actualizar';btn.onclick=()=>crmEditOpportunity(row);cell.append(btn);const tr=body.children[i];if(tr)tr.append(cell)});
+  const relation=kind==='pipeline_brands'
+   ?{field:'brand_id',table:'fe_brand_partners',name:'brand_name'}
+   :{field:'prospect_id',table:kind==='pipeline_hospitality'?'fe_hospitality_prospects':'fe_prospects',name:'name'};
+  const ids=[...new Set(records.data.map(row=>row[relation.field]).filter(Boolean))];
+  const linked=ids.length?await db.from(relation.table).select('id,'+relation.name).in('id',ids):{data:[],error:null};
+  if(linked.error){crmMessage('No se pudieron recuperar los nombres asociados: '+linked.error.message);return}
+  const byId=new Map((linked.data||[]).map(row=>[row.id,row[relation.name]]));
+  const head=$('head').querySelector('tr');
+  if(head){const h=document.createElement('th');h.textContent='Cliente potencial';head.prepend(h);const th=document.createElement('th');th.textContent='Seguimiento';head.append(th)}
+  records.data.forEach((row,i)=>{
+   const tr=body.children[i];if(!tr)return;
+   const name=document.createElement('td');name.textContent=byId.get(row[relation.field])||'Ficha no disponible';tr.prepend(name);
+   const cell=document.createElement('td');const btn=document.createElement('button');btn.textContent='Actualizar';btn.onclick=()=>crmEditOpportunity(row);cell.append(btn);tr.append(cell);
+  });
  }
 };
