@@ -132,6 +132,25 @@ class PlannerTests(unittest.TestCase):
 
 
 class ReaderTests(unittest.TestCase):
+    def test_shared_string_index_must_point_to_existing_entry(self):
+        ns = mod.NS['m']
+        rel_ns = mod.REL[1:].split('}')[0]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'fixture.xlsx'
+            for index in ('-1', '17', '0_0'):
+                with self.subTest(index=index):
+                    headers = ''.join(
+                        f'<c r="{chr(65+i)}3" t="s"><v>{index if i == 16 else i}</v></c>'
+                        for i in range(17))
+                    strings = ''.join(f'<si><t>{escape(header)}</t></si>' for header in mod.HEADERS)
+                    with zipfile.ZipFile(path, 'w') as archive:
+                        archive.writestr('xl/workbook.xml', f'<workbook xmlns="{ns}" xmlns:r="{rel_ns}"><sheets><sheet name="{mod.SHEET}" r:id="rId1"/></sheets></workbook>')
+                        archive.writestr('xl/_rels/workbook.xml.rels', '<Relationships><Relationship Id="rId1" Target="worksheets/sheet1.xml"/></Relationships>')
+                        archive.writestr('xl/worksheets/sheet1.xml', f'<worksheet xmlns="{ns}"><sheetData><row r="3">{headers}</row></sheetData></worksheet>')
+                        archive.writestr('xl/sharedStrings.xml', f'<sst xmlns="{ns}">{strings}</sst>')
+                    with self.assertRaisesRegex(mod.Blocked, 'INVALID_SHARED_STRING_INDEX'):
+                        mod.read_book(path)
+
     def test_reads_fixture_without_writing_or_exposing_private_values(self):
         # Minimal XML fixture, not an authored or delivered business workbook.
         with tempfile.TemporaryDirectory() as directory:

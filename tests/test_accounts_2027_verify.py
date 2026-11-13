@@ -138,6 +138,16 @@ class PreservationTests(unittest.TestCase):
         self.candidate['sheets'][audit.SHEET]['cells']['H11'] = record('<v>1210.99</v>', extension)
         self.assertEqual(self.result()['status'], 'copy_preservation_checks_passed')
 
+    def test_secondary_sheet_shared_string_cannot_use_negative_index(self):
+        ns = audit.NS['m']
+        strings = [audit.ET.fromstring(f'<si xmlns="{ns}"><t>Ficticio</t></si>')]
+        def cell(index):
+            return audit.ET.fromstring(f'<c xmlns="{ns}" t="s"><v>{index}</v></c>')
+
+        self.assertEqual(audit.cell_record(cell('0'), strings)['value'], 'Ficticio')
+        with self.assertRaisesRegex(audit.Blocked, 'INVALID_SHARED_STRING_INDEX'):
+            audit.cell_record(cell('-1'), strings)
+
     def test_rich_text_format_changes_are_detected(self):
         ns = audit.NS['m']
         for kind in ('s', 'inlineStr'):

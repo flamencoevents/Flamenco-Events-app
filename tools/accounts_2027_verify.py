@@ -16,7 +16,7 @@ import re
 import zipfile
 import xml.etree.ElementTree as ET
 
-from accounts_2027 import NS, REL, SHEET, Blocked, propose, read_book, require
+from accounts_2027 import NS, REL, SHEET, Blocked, propose, read_book, require, shared_string
 
 
 def xml_signature(element):
@@ -37,7 +37,7 @@ def cell_record(cell, strings):
     text = value.text if value is not None else ''
     kind = cell.get('t', 'n')
     if kind == 's':
-        inline = strings[int(text)]
+        inline = shared_string(strings, text)
     if kind in ('s', 'inlineStr'):
         kind, text = 'text', ''.join(inline.itertext()) if inline is not None else ''
     elif kind == 'str':

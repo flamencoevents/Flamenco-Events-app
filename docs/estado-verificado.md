@@ -980,3 +980,16 @@ descarga ante cambios de un céntimo o del IVA. Pasaron las 15 pruebas de
 El ensayo no creó sesiones, asignaciones ni documentos. Preparado y
 verificado localmente en modo prueba. Despliegue y ensayo autenticado
 pendientes. Sin acceso ni escritura al XLSX original.
+
+## Referencias a cadenas compartidas · 13 noviembre 2026
+
+El preparador y el verificador de CUENTAS 27 rechazan índices de texto
+compartido negativos, fuera de rango o con caracteres ajenos a un índice.
+Antes, un índice negativo podía seleccionar el último texto de la tabla
+y hacer pasar una cabecera o una celda de otra hoja con referencia inválida.
+
+Los casos ficticios reprodujeron el fallo y pasaron con la corrección.
+Pasaron 41 pruebas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_verify test_accounts_2027_package`.
+Verificado localmente en modo prueba. Sin despliegue ni acceso al XLSX
+original. Sigue pendiente la escritura remota con control de versión.

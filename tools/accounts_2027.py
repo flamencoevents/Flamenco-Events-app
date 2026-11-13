@@ -46,6 +46,15 @@ def clean_text(value):
     return value
 
 
+def shared_string(strings, value):
+    require(isinstance(value, str) and re.fullmatch(r'[0-9]+', value), 'INVALID_SHARED_STRING_INDEX')
+    digits = value.lstrip('0') or '0'
+    require(len(digits) <= len(str(len(strings))), 'INVALID_SHARED_STRING_INDEX')
+    index = int(digits)
+    require(index < len(strings), 'INVALID_SHARED_STRING_INDEX')
+    return strings[index]
+
+
 def read_book(path):
     raw = path if isinstance(path, bytes) else Path(path).read_bytes()
     require(len(raw) <= 20_000_000, 'WORKBOOK_TOO_LARGE')
@@ -76,7 +85,7 @@ def read_book(path):
             v, inline = c.find('m:v', NS), c.find('m:is', NS)
             value = v.text if v is not None else ''
             if c.get('t') == 's':
-                value = strings[int(value)]
+                value = shared_string(strings, value)
             elif inline is not None:
                 value = ''.join(inline.itertext())
             formula = c.find('m:f', NS)
