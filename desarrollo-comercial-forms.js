@@ -44,7 +44,13 @@ async function crmQualify(row){
  const target=prompt('Nuevo estado Marketing: '+allowed.join(', '),current);
  if(target===null)return;
  if(!allowed.includes(target)){crmMessage('Estado no admitido');return}
- const result=await db.from(screens[kind].table).update({[field]:target}).eq('id',row.id).select('id').single();
+ if(['cualificado','cualificada'].includes(target) && !row.source_url?.trim()){
+  crmMessage('Antes de cualificar, registra una fuente pública verificable.');return;
+ }
+ const checkedField=kind==='venues'?'source_checked_at':'checked_at';
+ const changes={[field]:target};
+ if(['cualificado','cualificada'].includes(target))changes[checkedField]=new Date().toISOString();
+ const result=await db.from(screens[kind].table).update(changes).eq('id',row.id).select('id').single();
  crmMessage(result.error?result.error.message:'Estado de Marketing actualizado.');
  if(!result.error)await refresh();
 }
