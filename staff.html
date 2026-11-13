@@ -23,7 +23,7 @@ function renderStaffDepartments(){
 const nav=$('fe-departments');if(!nav)return;nav.replaceChildren();nav.hidden=true;
 if(!user||!['admin','sales'].includes(role))return;
 const routes=role==='admin'?
-[['admin.html','Administración'],['staff.html','Comercial'],['marketing.html','Marketing'],['rrhh.html','RR. HH.'],['desarrollo-comercial.html','Desarrollo Comercial']]:
+[['admin.html','Administración'],['staff.html','Comercial'],['marketing.html','Marketing'],['rrhh.html','RR. HH.']]:
 [['staff.html','Comercial'],['marketing.html','Marketing'],['rrhh.html','RR. HH.'],['desarrollo-comercial.html','Desarrollo Comercial']];
 const title=document.createElement('span');title.className='fe-dept-label';title.textContent='Departamentos';nav.append(title);
 for(const [file,label] of routes){
