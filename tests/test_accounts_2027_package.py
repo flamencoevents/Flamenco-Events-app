@@ -215,6 +215,26 @@ class PackagingTests(unittest.TestCase):
         self.assertFalse(list(self.root.glob('.fe-copy-*')))
         self.assertEqual(self.source.read_bytes(), self.before)
 
+    def test_numeric_budget_alias_blocks_packaging(self):
+        with zipfile.ZipFile(self.source) as archive:
+            parts = {name: archive.read(name) for name in archive.namelist()}
+        sheet = 'xl/worksheets/sheet1.xml'
+        for value in ('926.0', '9.26E2'):
+            with self.subTest(value=value):
+                existing = f'<row r="10"><c r="C10" t="n"><v>{value}</v></c></row>'.encode()
+                updated = parts[sheet].replace(b'<row r="11">', existing + b'<row r="11">')
+                with zipfile.ZipFile(self.source, 'w') as archive:
+                    for name, data in parts.items():
+                        archive.writestr(name, updated if name == sheet else data)
+                before = self.source.read_bytes()
+                self.req['workbook_sha256'] = hashlib.sha256(before).hexdigest()
+                output = self.root / f'{value}.xlsx'
+                with self.assertRaisesRegex(Blocked, 'POTENTIAL_NUMBER_ALIAS_REQUIRES_RECONCILIATION'):
+                    pack.package(self.source, self.artifact, self.req, output)
+                self.assertFalse(output.exists())
+                self.assertFalse(list(self.root.glob('.fe-copy-*')))
+                self.assertEqual(self.source.read_bytes(), before)
+
     def test_stale_source_rejected(self):
         self.req['workbook_sha256'] = 'f' * 64
         with self.assertRaisesRegex(Blocked, 'WORKBOOK_CHANGED'):

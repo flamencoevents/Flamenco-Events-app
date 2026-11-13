@@ -1047,3 +1047,16 @@ ambos se rechazaron y se comprobó también la lectura de un índice válido
 en una tabla con extensiones. Pasaron 31 pruebas con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify test_accounts_2027`.
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Presupuestos existentes guardados como número · 13 noviembre 2026
+
+El preparador detecta posibles duplicados si un presupuesto textual con
+ceros iniciales coincide con una celda numérica guardada en notación
+decimal o científica. La coincidencia obliga a conciliar. Se conserva
+la referencia textual exacta de la propuesta.
+
+Dos casos ficticios reprodujeron la aceptación previa. Ambos se
+bloquearon después del cambio, sin crear copias ni dejar temporales.
+Pasaron 30 pruebas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_package`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.

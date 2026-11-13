@@ -5,6 +5,7 @@ signature, payment or permission to write. Never upload private input/output.
 """
 import argparse
 import datetime as dt
+from decimal import Decimal, InvalidOperation
 import hashlib
 import io
 import json
@@ -104,7 +105,8 @@ def read_book(path):
                         'INVALID_FORMULA_RANGE')
                 formula_ranges.append(ref)
             require(c.get('r') not in cells, 'DUPLICATE_CELL')
-            cells[c.get('r')] = {'value': value, 'formula': formula is not None}
+            cells[c.get('r')] = {'value': value, 'formula': formula is not None,
+                                 'kind': c.get('t', 'n') if inline is None else 'inlineStr'}
         for i, expected in enumerate(HEADERS):
             actual = cells.get(chr(65 + i) + '3', {}).get('value', '')
             require(' '.join(actual.split()) == expected, 'HEADER_CHANGED')
@@ -148,6 +150,19 @@ def intersects_row(ref, row):
     return min(bounds) <= row <= max(bounds)
 
 
+def number_alias(cell, number):
+    value = cell['value']
+    if not value:
+        return False
+    if cell.get('kind') != 'n' and not re.fullmatch(r'[0-9]+', value):
+        return False
+    try:
+        candidate = Decimal(value)
+    except InvalidOperation:
+        return False
+    return candidate.is_finite() and candidate == number
+
+
 def propose(book, request):
     require(request.get('test_mode') is True, 'FICTIONAL_ONLY')
     require(request.get('workbook_sha256') == book['sha256'], 'WORKBOOK_CHANGED')
@@ -172,10 +187,10 @@ def propose(book, request):
     existing = [ref for ref, c in book['cells'].items()
                 if re.fullmatch(r'C\d+', ref) and c['value'] == quote['number']]
     require(not existing, 'EXISTING_NUMBER_REQUIRES_RECONCILIATION')
-    if quote['number'].isdigit():
-        aliases = [c for ref, c in book['cells'].items() if re.fullmatch(r'C\d+', ref)
-                   and str(c['value']).isdigit()
-                   and str(c['value']).lstrip('0') == quote['number'].lstrip('0')]
+    if re.fullmatch(r'[0-9]+', quote['number']):
+        number = Decimal(quote['number'])
+        aliases = [cell for ref, cell in book['cells'].items()
+                   if re.fullmatch(r'C\d+', ref) and number_alias(cell, number)]
         require(not aliases, 'POTENTIAL_NUMBER_ALIAS_REQUIRES_RECONCILIATION')
     # Cached formula results cannot establish stable monthly boundaries.
     require(not any(book['cells'].get(f'A{r}', {}).get('formula') for r, _ in book['markers']),
