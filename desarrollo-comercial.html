@@ -1,0 +1,45 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Marketing · Prospección | Flamenco Events</title>
+<style>:root{color-scheme:dark;--bg:#171311;--panel:#271f1b;--gold:#dcbc89;--text:#f6eee6;--muted:#c8b8a7}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui}header,main{max-width:1100px;margin:auto;padding:22px}header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}a,h1,h2{color:var(--gold)}h1,h2{font-family:Georgia;font-weight:400}.notice{padding:12px;text-align:center;background:#51402f}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px}.card{background:var(--panel);border:1px solid #574538;border-radius:13px;padding:18px}.muted{color:var(--muted)}.tabs{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}button,input{font:inherit;padding:11px;border:1px solid #665444;border-radius:8px}button{cursor:pointer;background:var(--gold);color:#231813;font-weight:700}button[aria-selected=false]{background:#382d27;color:var(--text)}input{max-width:100%;width:100%;background:#332924;color:#fff}label{display:block;margin:14px 0}.hidden{display:none}table{width:100%;border-collapse:collapse}th,td{padding:10px;text-align:left;border-bottom:1px solid #514035}th{color:var(--gold)}.scroll{overflow:auto}small{color:var(--muted)}</style><link rel="stylesheet" href="./departments-nav.css?v=20261114-unified"></head><body>
+<div class="notice">ÁREA DE PRUEBAS · NO SE REALIZAN ENVÍOS COMERCIALES</div>
+<header><strong>Flamenco Events · Prospección y oportunidades</strong><a id="return-department" href="./marketing.html">Volver a Marketing</a></header><nav id="fe-departments" class="fe-departments" aria-label="Navegación entre departamentos" hidden></nav><main><h1>Marketing · Prospección de clientes potenciales</h1><p><a href="./directorio-espana.html" target="_blank" rel="noopener">Consultar directorio nacional de espacios para bodas · 52 provincias</a></p><p class="muted">Primero investigación y cualificación; después campañas sectoriales supervisadas.</p>
+<section id="auth"><div class="card"><h2>Acceso restringido</h2><form id="login"><label>Correo del equipo<input type="email" name="email" required></label><button>Enviar enlace de acceso</button></form></div></section>
+<section id="workspace" class="hidden"><div class="grid">
+<article class="card"><h2>Marketing</h2><p>Investiga, comprueba datos, puntúa y prepara dosieres.</p><small>Administración: validación de las bases de datos.</small></article>
+<article class="card"><h2>Comercial</h2><p>Llamadas, reuniones, propuestas y acuerdos.</p><small>Azahara: relación y negociación.</small></article>
+<article class="card"><h2>Campañas</h2><p>Mensajes y materiales específicos para cada sector.</p><small>Bloqueadas hasta aprobación de Administración.</small></article>
+</div><nav class="tabs">
+<button data-kind="venues" aria-selected="true">Bodas y agencias</button>
+<button data-kind="hospitality" aria-selected="false">Hostelería premium</button>
+<button data-kind="brands" aria-selected="false">Moda, joyas y complementos</button>
+<button data-kind="pipeline" aria-selected="false">Oportunidades · Bodas</button><button data-kind="pipeline_hospitality" aria-selected="false">Oportunidades · Hoteles</button><button data-kind="pipeline_brands" aria-selected="false">Colaboraciones · Marcas</button></nav>
+<div class="card"><h2 id="section-title"></h2><p id="description" class="muted"></p><p id="count"></p>
+<div class="scroll"><table><thead id="head"></thead><tbody id="body"></tbody></table></div><div id="editor"></div></div>
+</section><p id="status" role="status"></p></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./portal-config.js"></script><script>
+'use strict';
+const $=id=>document.getElementById(id),c=window.FE_PORTAL_CONFIG,db=c?.url&&c?.anonKey&&window.supabase?.createClient?window.supabase.createClient(c.url,c.anonKey):null;
+let kind=(new URLSearchParams(location.search).get('tab')||'venues'),isStaff=false,isAdmin=false,accountId=null;if(!['venues','hospitality','brands','pipeline','pipeline_hospitality','pipeline_brands'].includes(kind))kind='venues';
+const screens={venues:{title:'Bodas y agencias',description:'Fincas, haciendas, wedding planners y organizadores de eventos.',table:'fe_prospects',cols:[['name','Nombre'],['province','Provincia'],['category','Categoría'],['marketing_status','Marketing']]},hospitality:{title:'Hostelería premium',description:'Sedes de bodas de destino, galas, incentivos y eventos corporativos puntuales; buscar el organizador o decisor del evento.',table:'fe_hospitality_prospects',cols:[['name','Nombre'],['province','Provincia'],['establishment_type','Tipo'],['marketing_status','Marketing']]},brands:{title:'Alianzas con marcas de prestigio',description:'Moda flamenca, joyería y complementos; presentaciones y eventos VIP.',table:'fe_brand_partners',cols:[['brand_name','Firma'],['sector','Sector'],['status','Marketing']]},pipeline:{title:'Seguimiento Comercial · Bodas',description:'Oportunidades cualificadas con contacto y próximas acciones.',table:'fe_commercial_opportunities',cols:[['stage','Etapa'],['priority','Prioridad'],['next_action','Acción siguiente']]},pipeline_hospitality:{title:'Seguimiento Comercial · Hostelería',description:'Eventos privados y corporativos de alta gama; identificar agencia, organizador y responsables del evento.',table:'fe_hospitality_opportunities',cols:[['stage','Etapa'],['priority','Prioridad'],['next_action','Acción siguiente']]},pipeline_brands:{title:'Colaboraciones · Marcas',description:'Acuerdos con firmas de moda flamenca, joyería y complementos.',table:'fe_brand_collaborations',cols:[['collaboration_type','Modalidad'],['stage','Etapa'],['compensation_type','Contraprestación'],['next_action','Acción siguiente']]}};
+function show(id,yes){$(id).classList.toggle('hidden',!yes)}
+async function refresh(){
+ if(!isStaff)return;const s=screens[kind];$('section-title').textContent=s.title;$('description').textContent=s.description;
+ $('head').replaceChildren();$('body').replaceChildren();const tr=document.createElement('tr');s.cols.forEach(([k,v])=>{let th=document.createElement('th');th.textContent=v;tr.append(th)});$('head').append(tr);
+ const q=await db.from(s.table).select('*').order('created_at',{ascending:false}).limit(200);
+ if(q.error){$('status').textContent='Este módulo aún requiere despliegue de las tablas de pruebas: '+q.error.message;$('count').textContent='Datos no disponibles';return}
+ $('status').textContent='';$('count').textContent=q.data.length+' registros';
+ for(const x of q.data){const r=document.createElement('tr');for(const [field] of s.cols){const td=document.createElement('td');td.textContent=x[field]??'—';r.append(td)}$('body').append(r)}
+}
+async function load(){
+ if(!db){$('status').textContent='No hay conexión configurada.';return}
+ const {data}=await db.auth.getUser(),u=data?.user;
+ if(!u){show('auth',true);show('workspace',false);return}
+ const p=await db.from('profiles').select('role').eq('id',u.id).single();
+ isStaff=['admin','sales'].includes(p.data?.role);isAdmin=p.data?.role==='admin';accountId=u.id;
+ if(isStaff){if(!isAdmin&&!kind.startsWith('pipeline'))kind='pipeline';document.querySelectorAll('[data-kind]').forEach(x=>{x.hidden=isAdmin?x.dataset.kind.startsWith('pipeline'):!x.dataset.kind.startsWith('pipeline')});const back=$('return-department');back.href=isAdmin?'./marketing.html':'./staff.html';back.textContent=isAdmin?'Volver a Marketing':'Volver a Comercial';document.querySelector('main h1').textContent=isAdmin?'Marketing · Prospección y cualificación':'Comercial · Oportunidades y seguimiento';}
+ show('auth',!isStaff);show('workspace',isStaff);
+ if(!isStaff){$('status').textContent='Acceso restringido a Administración y Comercial.';return}document.querySelectorAll('[data-kind]').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.kind===kind)));await refresh();
+}
+document.querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{kind=b.dataset.kind;document.querySelectorAll('[data-kind]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));refresh()});
+$('login').onsubmit=async e=>{e.preventDefault();if(!db)return;const email=e.target.elements.email.value;const {error}=await db.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:new URL('staff.html',location.href).href}});$('status').textContent=error?error.message:'Comprueba tu correo.'};
+if(db){db.auth.onAuthStateChange(()=>setTimeout(load,0));load()}else load();
+</script><script src="./desarrollo-comercial-forms.js"></script><script src="./departments-nav.js?v=20261114-unified"></script></body></html>

@@ -1,0 +1,366 @@
+[
+  {
+    "community": "Andalucía",
+    "province": "Almería",
+    "slug": "almeria",
+    "source_url": "https://www.bodas.net/bodas/banquetes/almeria",
+    "first_page_records": 37
+  },
+  {
+    "community": "Andalucía",
+    "province": "Cádiz",
+    "slug": "cadiz",
+    "source_url": "https://www.bodas.net/bodas/banquetes/cadiz",
+    "first_page_records": 36
+  },
+  {
+    "community": "Andalucía",
+    "province": "Córdoba",
+    "slug": "cordoba",
+    "source_url": "https://www.bodas.net/bodas/banquetes/cordoba",
+    "first_page_records": 36
+  },
+  {
+    "community": "Andalucía",
+    "province": "Granada",
+    "slug": "granada",
+    "source_url": "https://www.bodas.net/bodas/banquetes/granada",
+    "first_page_records": 36
+  },
+  {
+    "community": "Andalucía",
+    "province": "Huelva",
+    "slug": "huelva",
+    "source_url": "https://www.bodas.net/bodas/banquetes/huelva",
+    "first_page_records": 36
+  },
+  {
+    "community": "Andalucía",
+    "province": "Jaén",
+    "slug": "jaen",
+    "source_url": "https://www.bodas.net/bodas/banquetes/jaen",
+    "first_page_records": 34
+  },
+  {
+    "community": "Andalucía",
+    "province": "Málaga",
+    "slug": "malaga",
+    "source_url": "https://www.bodas.net/bodas/banquetes/malaga",
+    "first_page_records": 36
+  },
+  {
+    "community": "Andalucía",
+    "province": "Sevilla",
+    "slug": "sevilla",
+    "source_url": "https://www.bodas.net/bodas/banquetes/sevilla",
+    "first_page_records": 35
+  },
+  {
+    "community": "Aragón",
+    "province": "Huesca",
+    "slug": "huesca",
+    "source_url": "https://www.bodas.net/bodas/banquetes/huesca",
+    "first_page_records": 35
+  },
+  {
+    "community": "Aragón",
+    "province": "Teruel",
+    "slug": "teruel",
+    "source_url": "https://www.bodas.net/bodas/banquetes/teruel",
+    "first_page_records": 30
+  },
+  {
+    "community": "Aragón",
+    "province": "Zaragoza",
+    "slug": "zaragoza",
+    "source_url": "https://www.bodas.net/bodas/banquetes/zaragoza",
+    "first_page_records": 37
+  },
+  {
+    "community": "Asturias",
+    "province": "Asturias",
+    "slug": "asturias",
+    "source_url": "https://www.bodas.net/bodas/banquetes/asturias",
+    "first_page_records": 36
+  },
+  {
+    "community": "Illes Balears",
+    "province": "Islas Baleares",
+    "slug": "islas-baleares",
+    "source_url": "https://www.bodas.net/bodas/banquetes/islas-baleares",
+    "first_page_records": 36
+  },
+  {
+    "community": "Canarias",
+    "province": "Las Palmas",
+    "slug": "las-palmas",
+    "source_url": "https://www.bodas.net/bodas/banquetes/las-palmas",
+    "first_page_records": 36
+  },
+  {
+    "community": "Canarias",
+    "province": "Santa Cruz de Tenerife",
+    "slug": "santa-cruz-de-tenerife",
+    "source_url": "https://www.bodas.net/bodas/banquetes/santa-cruz-de-tenerife",
+    "first_page_records": 37
+  },
+  {
+    "community": "Cantabria",
+    "province": "Cantabria",
+    "slug": "cantabria",
+    "source_url": "https://www.bodas.net/bodas/banquetes/cantabria",
+    "first_page_records": 36
+  },
+  {
+    "community": "Castilla y León",
+    "province": "Ávila",
+    "slug": "avila",
+    "source_url": "https://www.bodas.net/bodas/banquetes/avila",
+    "first_page_records": 36
+  },
+  {
+    "community": "Castilla y León",
+    "province": "Burgos",
+    "slug": "burgos",
+    "source_url": "https://www.bodas.net/bodas/banquetes/burgos",
+    "first_page_records": 37
+  },
+  {
+    "community": "Castilla y León",
+    "province": "León",
+    "slug": "leon",
+    "source_url": "https://www.bodas.net/bodas/banquetes/leon",
+    "first_page_records": 35
+  },
+  {
+    "community": "Castilla y León",
+    "province": "Palencia",
+    "slug": "palencia",
+    "source_url": "https://www.bodas.net/bodas/banquetes/palencia",
+    "first_page_records": 16
+  },
+  {
+    "community": "Castilla y León",
+    "province": "Salamanca",
+    "slug": "salamanca",
+    "source_url": "https://www.bodas.net/bodas/banquetes/salamanca",
+    "first_page_records": 36
+  },
+  {
+    "community": "Castilla y León",
+    "province": "Segovia",
+    "slug": "segovia",
+    "source_url": "https://www.bodas.net/bodas/banquetes/segovia",
+    "first_page_records": 37
+  },
+  {
+    "community": "Castilla y León",
+    "province": "Soria",
+    "slug": "soria",
+    "source_url": "https://www.bodas.net/bodas/banquetes/soria",
+    "first_page_records": 18
+  },
+  {
+    "community": "Castilla y León",
+    "province": "Valladolid",
+    "slug": "valladolid",
+    "source_url": "https://www.bodas.net/bodas/banquetes/valladolid",
+    "first_page_records": 36
+  },
+  {
+    "community": "Castilla y León",
+    "province": "Zamora",
+    "slug": "zamora",
+    "source_url": "https://www.bodas.net/bodas/banquetes/zamora",
+    "first_page_records": 19
+  },
+  {
+    "community": "Castilla-La Mancha",
+    "province": "Albacete",
+    "slug": "albacete",
+    "source_url": "https://www.bodas.net/bodas/banquetes/albacete",
+    "first_page_records": 36
+  },
+  {
+    "community": "Castilla-La Mancha",
+    "province": "Ciudad Real",
+    "slug": "ciudad-real",
+    "source_url": "https://www.bodas.net/bodas/banquetes/ciudad-real",
+    "first_page_records": 33
+  },
+  {
+    "community": "Castilla-La Mancha",
+    "province": "Cuenca",
+    "slug": "cuenca",
+    "source_url": "https://www.bodas.net/bodas/banquetes/cuenca",
+    "first_page_records": 32
+  },
+  {
+    "community": "Castilla-La Mancha",
+    "province": "Guadalajara",
+    "slug": "guadalajara",
+    "source_url": "https://www.bodas.net/bodas/banquetes/guadalajara",
+    "first_page_records": 34
+  },
+  {
+    "community": "Castilla-La Mancha",
+    "province": "Toledo",
+    "slug": "toledo",
+    "source_url": "https://www.bodas.net/bodas/banquetes/toledo",
+    "first_page_records": 35
+  },
+  {
+    "community": "Cataluña",
+    "province": "Barcelona",
+    "slug": "barcelona",
+    "source_url": "https://www.bodas.net/bodas/banquetes/barcelona",
+    "first_page_records": 36
+  },
+  {
+    "community": "Cataluña",
+    "province": "Girona",
+    "slug": "girona",
+    "source_url": "https://www.bodas.net/bodas/banquetes/girona",
+    "first_page_records": 36
+  },
+  {
+    "community": "Cataluña",
+    "province": "Lleida",
+    "slug": "lleida",
+    "source_url": "https://www.bodas.net/bodas/banquetes/lleida",
+    "first_page_records": 37
+  },
+  {
+    "community": "Cataluña",
+    "province": "Tarragona",
+    "slug": "tarragona",
+    "source_url": "https://www.bodas.net/bodas/banquetes/tarragona",
+    "first_page_records": 36
+  },
+  {
+    "community": "Comunitat Valenciana",
+    "province": "Alicante",
+    "slug": "alicante",
+    "source_url": "https://www.bodas.net/bodas/banquetes/alicante",
+    "first_page_records": 34
+  },
+  {
+    "community": "Comunitat Valenciana",
+    "province": "Castellón",
+    "slug": "castellon",
+    "source_url": "https://www.bodas.net/bodas/banquetes/castellon",
+    "first_page_records": 36
+  },
+  {
+    "community": "Comunitat Valenciana",
+    "province": "Valencia",
+    "slug": "valencia",
+    "source_url": "https://www.bodas.net/bodas/banquetes/valencia",
+    "first_page_records": 35
+  },
+  {
+    "community": "Extremadura",
+    "province": "Badajoz",
+    "slug": "badajoz",
+    "source_url": "https://www.bodas.net/bodas/banquetes/badajoz",
+    "first_page_records": 34
+  },
+  {
+    "community": "Extremadura",
+    "province": "Cáceres",
+    "slug": "caceres",
+    "source_url": "https://www.bodas.net/bodas/banquetes/caceres",
+    "first_page_records": 37
+  },
+  {
+    "community": "Galicia",
+    "province": "A Coruña",
+    "slug": "a-coruna",
+    "source_url": "https://www.bodas.net/bodas/banquetes/a-coruna",
+    "first_page_records": 36
+  },
+  {
+    "community": "Galicia",
+    "province": "Lugo",
+    "slug": "lugo",
+    "source_url": "https://www.bodas.net/bodas/banquetes/lugo",
+    "first_page_records": 21
+  },
+  {
+    "community": "Galicia",
+    "province": "Ourense",
+    "slug": "orense",
+    "source_url": "https://www.bodas.net/bodas/banquetes/orense",
+    "first_page_records": 25
+  },
+  {
+    "community": "Galicia",
+    "province": "Pontevedra",
+    "slug": "pontevedra",
+    "source_url": "https://www.bodas.net/bodas/banquetes/pontevedra",
+    "first_page_records": 36
+  },
+  {
+    "community": "Comunidad de Madrid",
+    "province": "Madrid",
+    "slug": "madrid",
+    "source_url": "https://www.bodas.net/bodas/banquetes/madrid",
+    "first_page_records": 36
+  },
+  {
+    "community": "Región de Murcia",
+    "province": "Murcia",
+    "slug": "murcia",
+    "source_url": "https://www.bodas.net/bodas/banquetes/murcia",
+    "first_page_records": 36
+  },
+  {
+    "community": "Navarra",
+    "province": "Navarra",
+    "slug": "navarra",
+    "source_url": "https://www.bodas.net/bodas/banquetes/navarra",
+    "first_page_records": 36
+  },
+  {
+    "community": "País Vasco",
+    "province": "Álava",
+    "slug": "alava",
+    "source_url": "https://www.bodas.net/bodas/banquetes/alava",
+    "first_page_records": 27
+  },
+  {
+    "community": "País Vasco",
+    "province": "Guipúzcoa",
+    "slug": "guipuzcoa",
+    "source_url": "https://www.bodas.net/bodas/banquetes/guipuzcoa",
+    "first_page_records": 37
+  },
+  {
+    "community": "País Vasco",
+    "province": "Vizcaya",
+    "slug": "vizcaya",
+    "source_url": "https://www.bodas.net/bodas/banquetes/vizcaya",
+    "first_page_records": 37
+  },
+  {
+    "community": "La Rioja",
+    "province": "La Rioja",
+    "slug": "la-rioja",
+    "source_url": "https://www.bodas.net/bodas/banquetes/la-rioja",
+    "first_page_records": 37
+  },
+  {
+    "community": "Ceuta",
+    "province": "Ceuta",
+    "slug": "ceuta",
+    "source_url": "https://www.bodas.net/bodas/banquetes/ceuta",
+    "first_page_records": 2
+  },
+  {
+    "community": "Melilla",
+    "province": "Melilla",
+    "slug": "melilla",
+    "source_url": "https://www.bodas.net/bodas/banquetes/melilla",
+    "first_page_records": 3
+  }
+]
