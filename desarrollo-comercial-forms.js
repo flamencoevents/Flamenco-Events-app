@@ -83,7 +83,7 @@ function crmEditOpportunity(row){
  const form=document.createElement('form');
  const l=document.createElement('label');l.textContent='Etapa comercial';
  const selector=document.createElement('select');selector.name='stage';selector.style.cssText='display:block;width:100%;padding:12px;background:#332924;color:white;margin:10px 0';
- const states=kind==='pipeline_hospitality'?['pendiente_contacto','contactado','reunion','propuesta','negociacion','acuerdo','recurrente','perdido']:kind==='pipeline_brands'?['pendiente_contacto','contactado','reunion','propuesta','negociacion','acuerdo','realizado','perdido']:['pendiente_contacto','contactado','reunion','propuesta','negociacion','colaborador','ganado','perdido'];
+ const states=kind==='pipeline_hospitality'?['pendiente_contacto','contactado','reunion','propuesta','negociacion','acuerdo','evento_puntual','perdido']:kind==='pipeline_brands'?['pendiente_contacto','contactado','reunion','propuesta','negociacion','acuerdo','realizado','perdido']:['pendiente_contacto','contactado','reunion','propuesta','negociacion','colaborador','ganado','perdido'];
  for(const stage of states){
   const item=document.createElement('option');item.value=stage;item.textContent=stage;selector.append(item);
  }selector.value=row.stage;l.append(selector);form.append(l);
