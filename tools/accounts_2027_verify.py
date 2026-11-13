@@ -79,8 +79,11 @@ def snapshot(path):
         sheets = {}
         ignored = {'xl/sharedStrings.xml'}
         for sheet in wb.find('m:sheets', NS):
+            sheet_name = sheet.get('name')
+            require(sheet_name not in sheets, 'DUPLICATE_SHEET_NAME')
             target = rels[sheet.get(REL)]
             name = target.lstrip('/') if target.startswith('/') else posixpath.normpath('xl/' + target)
+            require(name not in ignored, 'DUPLICATE_SHEET_PART')
             root = xml(parts[name])
             ignored.add(name)
             cells = {}
@@ -97,7 +100,7 @@ def snapshot(path):
             for row in structure.findall('m:sheetData/m:row', NS):
                 for cell in row.findall('m:c', NS):
                     row.remove(cell)
-            sheets[sheet.get('name')] = {'cells': cells, 'structure': xml_signature(structure)}
+            sheets[sheet_name] = {'cells': cells, 'structure': xml_signature(structure)}
         protected = {}
         for name, raw in parts.items():
             if name in ignored:

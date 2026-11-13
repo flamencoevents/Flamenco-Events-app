@@ -1009,3 +1009,16 @@ exportador local, incluida la coincidencia del identificador auditado.
 
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX
 original. Siguen pendientes la revisión nativa y el control de versión remoto.
+
+## Identidad de las hojas del XLSX · 13 noviembre 2026
+
+El verificador rechaza nombres de hoja repetidos y dos hojas que apuntan
+a la misma parte del XLSX. Antes, un nombre repetido podía ocultar la
+primera hoja en el informe y dos nombres distintos podían contar el
+mismo contenido dos veces.
+
+Los dos casos ficticios reprodujeron el fallo y quedaron bloqueados tras
+la corrección. Se comprobó también que dos hojas independientes pasan.
+Pasaron 29 pruebas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify test_accounts_2027_package`.
+Verificado en modo prueba, sin despliegue ni acceso al XLSX original.

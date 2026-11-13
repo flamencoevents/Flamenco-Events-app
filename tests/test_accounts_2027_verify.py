@@ -99,6 +99,34 @@ class PreservationTests(unittest.TestCase):
                     with self.assertRaisesRegex(audit.Blocked, reason):
                         audit.snapshot(path)
 
+    def test_snapshot_rejects_duplicate_sheet_names_and_parts(self):
+        ns = audit.NS['m']
+        rel_ns = audit.REL[1:].split('}')[0]
+        with TemporaryDirectory() as tmp, patch.object(audit, 'read_book'):
+            path = Path(tmp) / 'synthetic.xlsx'
+            for name, target, reason in (
+                ('First', 'worksheets/sheet2.xml', 'DUPLICATE_SHEET_NAME'),
+                ('Second', '/xl/worksheets/sheet1.xml', 'DUPLICATE_SHEET_PART'),
+                ('Second', 'worksheets/sheet2.xml', None),
+            ):
+                with self.subTest(name=name, target=target):
+                    with audit.zipfile.ZipFile(path, 'w') as archive:
+                        archive.writestr('xl/workbook.xml',
+                                         f'<workbook xmlns="{ns}" xmlns:r="{rel_ns}"><sheets>'
+                                         f'<sheet name="First" r:id="r1"/><sheet name="{name}" r:id="r2"/>'
+                                         '</sheets></workbook>')
+                        archive.writestr('xl/_rels/workbook.xml.rels', '<Relationships>'
+                                         '<Relationship Id="r1" Target="worksheets/sheet1.xml"/>'
+                                         f'<Relationship Id="r2" Target="{target}"/></Relationships>')
+                        for index in (1, 2):
+                            archive.writestr(f'xl/worksheets/sheet{index}.xml',
+                                             f'<worksheet xmlns="{ns}"><sheetData/></worksheet>')
+                    if reason:
+                        with self.assertRaisesRegex(audit.Blocked, reason):
+                            audit.snapshot(path)
+                    else:
+                        self.assertEqual(set(audit.snapshot(path)['sheets']), {'First', 'Second'})
+
     def test_snapshot_rejects_multiple_payloads_in_one_cell(self):
         ns = audit.NS['m']
         with TemporaryDirectory() as tmp, patch.object(audit, 'read_book'):
