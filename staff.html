@@ -65,5 +65,5 @@ $('logout').addEventListener('click',async()=>{window.FEAccounts?.clear();await 
 $('language').addEventListener('click',()=>{lang=lang==='es'?'en':'es';if(user)render();else $('language').textContent=lang==='es'?'EN':'ES'});
 document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{activeTab=b.dataset.tab;render()}));
 if(db){db.auth.onAuthStateChange(()=>{setTimeout(refresh,0)});refresh()}else refresh();
-</script><script src="./departments-nav.js?v=20261113"></script></body></html>
+</script><script src="./departments-nav.js?v=20261113-sales-access"></script></body></html>
 
