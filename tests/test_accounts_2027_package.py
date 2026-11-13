@@ -190,6 +190,31 @@ class PackagingTests(unittest.TestCase):
                               expected_proposal_id=self.proposal['proposal_id'])
         self.assertEqual(result['proposal_id'], self.proposal['proposal_id'])
 
+    def test_request_changed_during_audit_cannot_publish_copy(self):
+        def audit_changed_request(source, candidate, request):
+            request['contract']['sha256'] = 'c' * 64
+            return verify(source, candidate, request)
+
+        with patch.object(pack, 'verify', side_effect=audit_changed_request):
+            with self.assertRaisesRegex(Blocked, 'PROPOSAL_CHANGED'):
+                pack.package(self.source, self.artifact, self.req, self.output)
+        self.assertFalse(self.output.exists())
+        self.assertFalse(list(self.root.glob('.fe-copy-*')))
+        self.assertEqual(self.source.read_bytes(), self.before)
+
+    def test_audit_of_different_candidate_bytes_cannot_publish_copy(self):
+        def audit_changed_candidate(source, candidate, request):
+            with zipfile.ZipFile(candidate, 'a') as archive:
+                archive.comment = b'CHANGED SYNTHETIC COMMENT'
+            return verify(source, candidate, request)
+
+        with patch.object(pack, 'verify', side_effect=audit_changed_candidate):
+            with self.assertRaisesRegex(Blocked, 'CANDIDATE_CHANGED'):
+                pack.package(self.source, self.artifact, self.req, self.output)
+        self.assertFalse(self.output.exists())
+        self.assertFalse(list(self.root.glob('.fe-copy-*')))
+        self.assertEqual(self.source.read_bytes(), self.before)
+
     def test_stale_source_rejected(self):
         self.req['workbook_sha256'] = 'f' * 64
         with self.assertRaisesRegex(Blocked, 'WORKBOOK_CHANGED'):

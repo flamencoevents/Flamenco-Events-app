@@ -1022,3 +1022,15 @@ la corrección. Se comprobó también que dos hojas independientes pasan.
 Pasaron 29 pruebas con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify test_accounts_2027_package`.
 Verificado en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Comprobación de la auditoría antes de publicar la copia local · 13 noviembre 2026
+
+El empaquetador comprueba que la auditoría corresponde a la propuesta
+inicial y a la huella de los bytes que preparó antes de publicar la copia
+local. Dos pruebas ficticias reprodujeron la aceptación previa de una
+auditoría con otro contrato o con bytes distintos. Ambos casos se
+bloquean y eliminan el temporal sin producir una copia de salida.
+
+Pasaron 15 pruebas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_package`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.

@@ -129,6 +129,8 @@ def package(source, artifact, request, output, *, expected_proposal_id=None):
             os.fsync(f.fileno())
         audit = verify(source, temporary, request)
         require(audit['status'] == 'copy_preservation_checks_passed', 'PRESERVATION_AUDIT_REJECTED')
+        require(audit['proposal_id'] == proposal['proposal_id'], 'PROPOSAL_CHANGED')
+        require(audit['candidate_sha256'] == hashlib.sha256(candidate).hexdigest(), 'CANDIDATE_CHANGED')
         require(hashlib.sha256(source.read_bytes()).hexdigest() == proposal['workbook_sha256'], 'WORKBOOK_CHANGED')
         # Atomic exclusive publication of a NEW local copy, never an overwrite.
         os.link(temporary, output)
