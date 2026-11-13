@@ -36,6 +36,18 @@ function crmRenderEditor(){
   }catch(err){crmMessage(err.message||'No se pudo guardar.')}finally{submit.disabled=false}
  };
 }
+async function crmQualify(row){
+ if(!isAdmin)return;
+ const field=kind==='brands'?'status':'marketing_status';
+ const allowed=kind==='brands'?['investigacion','verificar','cualificada','descartada']:['investigacion','verificar','cualificado','descartado'];
+ const current=row[field];
+ const target=prompt('Nuevo estado Marketing: '+allowed.join(', '),current);
+ if(target===null)return;
+ if(!allowed.includes(target)){crmMessage('Estado no admitido');return}
+ const result=await db.from(screens[kind].table).update({[field]:target}).eq('id',row.id).select('id').single();
+ crmMessage(result.error?result.error.message:'Estado de Marketing actualizado.');
+ if(!result.error)await refresh();
+}
 async function crmHandoff(row){
  if(!isAdmin || kind!=='venues' || row.marketing_status!=='cualificado')return;
  if(!confirm('Crear una oportunidad para Comercial. No se enviarán mensajes.'))return;
@@ -76,11 +88,11 @@ refresh=async function(){
  crmRenderEditor();
  const records=await db.from(screens[kind].table).select('*').order('created_at',{ascending:false}).limit(200);
  if(records.error)return;
- if(kind==='venues'&&isAdmin){
-  const head=$('head').querySelector('tr');if(head){const th=document.createElement('th');th.textContent='Traspaso';head.append(th)}
+ if(kind!=='pipeline'&&isAdmin){
+  const head=$('head').querySelector('tr');if(head){const th=document.createElement('th');th.textContent='Marketing';head.append(th)}
   records.data.forEach((row,i)=>{
    const tr=body.children[i],cell=document.createElement('td');
-   if(row.marketing_status==='cualificado'){const btn=document.createElement('button');btn.textContent='Enviar a Comercial';btn.onclick=()=>crmHandoff(row);cell.append(btn)}
+   const change=document.createElement('button');change.textContent='Cambiar estado';change.onclick=()=>crmQualify(row);cell.append(change);if(kind==='venues'&&row.marketing_status==='cualificado'){const btn=document.createElement('button');btn.textContent='Traspasar';btn.style.marginLeft='6px';btn.onclick=()=>crmHandoff(row);cell.append(btn)}
    if(tr)tr.append(cell);
   });
  }
