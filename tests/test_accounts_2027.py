@@ -96,6 +96,18 @@ class PlannerTests(unittest.TestCase):
         self.book['markers'] = [(9, 3)]
         self.blocked('LAST_MONTH_REQUIRES_AUDITED_BOUNDARY')
 
+    def test_reversed_month_boundaries_require_reconciliation(self):
+        for markers in ([(9, 3), (15, 2)], [(5, 4), (9, 3), (15, 5)]):
+            with self.subTest(markers=markers):
+                self.book['markers'] = markers
+                self.blocked('MONTH_MARKERS_OUT_OF_ORDER')
+
+    def test_missing_intermediate_month_does_not_create_a_boundary(self):
+        self.book['markers'] = [(9, 3), (15, 5)]
+        self.assertEqual(mod.propose(self.book, self.req)['candidate_row'], 11)
+        self.req['event']['date'] = self.req['contract']['event_date'] = '2027-04-12'
+        self.blocked('MONTH_MISSING_OR_AMBIGUOUS')
+
     def test_wrong_month_marker_and_boundary(self):
         for row in (8, 9, 15, 16, True):
             self.req['candidate_row'] = row

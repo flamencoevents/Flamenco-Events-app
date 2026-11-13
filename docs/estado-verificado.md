@@ -1087,3 +1087,17 @@ duplicadas.
 Pasaron 49 pruebas con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_verify test_accounts_2027_package`.
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Orden de los bloques mensuales · 13 noviembre 2026
+
+El preparador comprueba el orden cronológico de los marcadores por fila
+antes de proponer un destino. Un marcador de otro mes fuera de orden
+impide la propuesta. Se permiten saltos entre meses existentes. Un mes
+ausente sigue sin admitir propuestas.
+
+Dos secuencias ficticias fuera de orden reprodujeron la aceptación
+anterior. Tras el cambio se bloquearon ambas y se comprobó que un salto
+de marzo a mayo sigue admitiendo la fila de marzo y bloquea abril.
+Pasaron 16 pruebas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.

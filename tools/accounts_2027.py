@@ -220,6 +220,8 @@ def propose(book, request):
             'CALCULATED_MONTH_MARKER')
     starts = [(r, m) for r, m in book['markers'] if m == date.month]
     require(len(starts) == 1, 'MONTH_MISSING_OR_AMBIGUOUS')
+    months = [month for _, month in sorted(book['markers'])]
+    require(months == sorted(set(months)), 'MONTH_MARKERS_OUT_OF_ORDER')
     start = starts[0][0]
     following = [r for r, _ in book['markers'] if r > start]
     # Last section has no safe inferred boundary (totals may follow).
