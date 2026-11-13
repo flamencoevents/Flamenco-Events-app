@@ -1142,3 +1142,17 @@ anterior. Pasaron 51 pruebas mediante
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX
 original. La huella local no acredita autenticación del origen,
 firma, cierre o cobro.
+
+## Referencia privada del PDF en la propuesta · 13 noviembre 2026
+
+La huella de origen contractual incorpora la referencia privada de
+Drive. Dos archivos con bytes idénticos producen propuestas distintas
+si cambia la referencia. El enlace no aparece en el resultado.
+
+La prueba reprodujo que el empaquetador admitía el cambio bajo el
+identificador anterior. Tras la corrección lo rechaza y no crea copia
+ni deja temporales. Pasaron 17 pruebas ficticias con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_contract`.
+
+Verificado localmente en modo prueba. Sin despliegue ni acceso a Drive
+o al XLSX original. La comprobación autenticada sigue pendiente.

@@ -96,7 +96,7 @@ def prepare(book, envelope, pdf):
               'quotation_sha256': quote_sha,
               'contract_snapshot_sha256': hashlib.sha256(crow[2].encode()).hexdigest(),
               'pdf_sha256': pdf_sha}
-    source_sha = digest(source)
+    source_sha = digest({'source': source, 'drive_reference': crow[6]})
     planner = {'test_mode': True, 'workbook_sha256': book['sha256'], 'currency': 'EUR',
                'candidate_row': envelope['candidate_row'],
                'event': {'id': clean_text(event['id']), 'is_test': True, 'date': date, 'schedule': schedule,

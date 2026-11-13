@@ -81,6 +81,27 @@ class ContractRehearsalTests(unittest.TestCase):
                 self.assertNotEqual(result['proposal']['proposal_id'],
                                     initial['proposal']['proposal_id'])
 
+    def test_proposal_binds_private_drive_reference_even_for_identical_pdf_bytes(self):
+        with TemporaryDirectory() as temp:
+            source, export, candidate = [Path(temp) / name for name in
+                                         ('source.xlsx', 'export.xlsx', 'copy.xlsx')]
+            workbook_fixture(source)
+            book = bridge.read_book(source)
+            initial = bridge.prepare(book, self.data, PDF)
+            original_reference = self.data['contract_row'][6]
+            other_reference = original_reference.rsplit('/', 2)[0] + '/OTHER_SYNTHETIC_PDF/view'
+            self.data['contract_row'][6] = other_reference
+            changed = bridge.prepare(book, self.data, PDF)
+            self.assertEqual(initial['source']['pdf_sha256'], changed['source']['pdf_sha256'])
+            self.assertEqual(initial['proposal']['proposed_cells'], changed['proposal']['proposed_cells'])
+            self.assertNotIn(other_reference, json.dumps(changed))
+            workbook_fixture(export, initial['proposal'])
+            with self.assertRaisesRegex(bridge.Blocked, 'PROPOSAL_CHANGED'):
+                package(source, export, changed['planner_request'], candidate,
+                        expected_proposal_id=initial['proposal']['proposal_id'])
+            self.assertFalse(candidate.exists())
+            self.assertFalse(list(Path(temp).glob('.fe-copy-*')))
+
     def test_contract_proposal_can_be_audited_in_a_synthetic_copy(self):
         with TemporaryDirectory() as temp:
             source, export, candidate = [Path(temp) / name for name in
