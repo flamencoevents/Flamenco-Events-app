@@ -11,8 +11,7 @@ const subpages={
  'marketing.html':[
   ['marketing.html','Plan de Marketing'],
   ['marketing-venues.html','Espacios prioritarios'],
-  ['marketing-planners.html','Wedding planners'],
-  ['marketing-task.html','Fichas de tareas']
+  ['marketing-planners.html','Wedding planners']
  ],
  'staff.html':[['staff.html','Panel Comercial']],
  'rrhh.html':[['rrhh.html','Artistas y RR. HH.']]
