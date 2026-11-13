@@ -23,7 +23,7 @@ const samples={
  marcas:[],
  corporativo:[]
 };
-const labels={bodas:['Bodas y wedding planners','Fincas, haciendas, hoteles y organizadores de celebraciones.'],hosteleria:['Hostelería de alto standing','Hoteles de lujo, resorts, restaurantes gastronómicos y beach clubs.'],marcas:['Marcas de moda, joyería y complementos','Firmas de prestigio para desfiles, presentaciones y experiencias VIP.'],corporativo:['Agencias y eventos corporativos','Organizadores de eventos de empresa, incentivos y experiencias exclusivas.'],flujo:['División de responsabilidades','Cada área tiene una función clara en el proceso comercial.'],campanas:['Campañas de marketing por sector','Primero se verifica el directorio; después se prepara y autoriza cada campaña.']};
+const labels={bodas:['Bodas y wedding planners','Fincas, haciendas, hoteles y organizadores de celebraciones.'],hosteleria:['Hostelería de alto standing','Hoteles y espacios premium donde se celebran bodas de destino, galas, incentivos y eventos privados puntuales.'],marcas:['Marcas de moda, joyería y complementos','Firmas de prestigio para desfiles, presentaciones y experiencias VIP.'],corporativo:['Agencias y eventos corporativos','Organizadores de eventos de empresa, incentivos y experiencias exclusivas.'],flujo:['División de responsabilidades','Cada área tiene una función clara en el proceso comercial.'],campanas:['Campañas de marketing por sector','Primero se verifica el directorio; después se prepara y autoriza cada campaña.']};
 let active='bodas';const escapeText=s=>String(s).toLocaleLowerCase('es');
 function render(){
  const [title,desc]=labels[active];byId('section').textContent=title;byId('subtitle').textContent=desc;
