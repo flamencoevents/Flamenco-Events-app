@@ -18,7 +18,7 @@ async function sync(){
   const allowed=p.data.role==='admin'?items:items.filter(([file])=>file==='staff.html');
   const label=document.createElement('span');label.className='fe-dept-label';label.textContent='Departamentos';nav.append(label);
   for(const [file,name] of allowed){
-   const a=document.createElement('a');a.href='./'+file;a.textContent=name;
+   const a=document.createElement('a');a.href='./'+file+(file==='marketing.html'?'?v=20261113-mobile-white':'');a.textContent=name;
    if(page===file)a.setAttribute('aria-current','page');
    nav.append(a);
   }
