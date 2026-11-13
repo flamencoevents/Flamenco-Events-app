@@ -3,7 +3,7 @@ create table if not exists public.fe_hospitality_prospects (
  id uuid primary key default gen_random_uuid(),
  name text not null check(length(trim(name)) between 2 and 180),
  establishment_type text not null check(establishment_type in ('hotel_5_estrellas','hotel_boutique','resort','restaurante_gastronomico','beach_club','club_privado','otro')),
- province text not null check(province in ('Almería','Cádiz','Córdoba','Granada','Huelva','Jaén','Málaga','Sevilla','Otra')),
+ province text not null,
  town text, website text, phone text, email text, contact_name text, contact_position text,
  chain_or_group text, international_guests boolean, live_music_existing boolean,
  preferred_products text, estimated_event_frequency text, seasonality text, prestige_evidence text,
