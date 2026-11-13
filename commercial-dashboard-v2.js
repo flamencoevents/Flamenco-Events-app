@@ -164,5 +164,10 @@ closed=results[0].data||[];quotes=results[1].data||[];clientEvents=results[2].da
 const info=el('fe-commercial-alert');if(info)info.textContent=errors.length?'No se pudieron consultar algunos datos: '+errors.join(' | '):'';
 render();
 }
-root.FECommercialDashboard={init,load};
+function openLedger(year,sourceRow){
+ yearClosed=Number(year);active='fechas';visible('fechas');el('fe-commercial-dashboard').hidden=false;el('fe-old-extras').hidden=true;render();
+ const form=[...document.querySelectorAll('[data-fe-assign-ledger]')].find(x=>x.dataset.feAssignLedger===year+'-'+sourceRow);
+ if(form){const panel=form.closest('details');if(panel)panel.open=true;panel.scrollIntoView({behavior:'smooth',block:'center'});}
+}
+root.FECommercialDashboard={init,load,openLedger};
 })(window);
