@@ -127,6 +127,37 @@ class PreservationTests(unittest.TestCase):
                     else:
                         self.assertEqual(set(audit.snapshot(path)['sheets']), {'First', 'Second'})
 
+    def test_snapshot_rejects_ambiguous_relationships_and_non_string_indexes(self):
+        ns = audit.NS['m']
+        rel_ns = audit.REL[1:].split('}')[0]
+        with TemporaryDirectory() as tmp, patch.object(audit, 'read_book'):
+            path = Path(tmp) / 'synthetic.xlsx'
+            for second_id, index, reason in (
+                ('r1', 0, 'DUPLICATE_WORKBOOK_RELATIONSHIP'),
+                ('r2', 1, 'INVALID_SHARED_STRING_INDEX'),
+                ('r2', 0, None),
+            ):
+                with self.subTest(second_id=second_id, index=index):
+                    with audit.zipfile.ZipFile(path, 'w') as archive:
+                        archive.writestr('xl/workbook.xml',
+                                         f'<workbook xmlns="{ns}" xmlns:r="{rel_ns}"><sheets>'
+                                         '<sheet name="Other" r:id="r1"/></sheets></workbook>')
+                        archive.writestr('xl/_rels/workbook.xml.rels',
+                                         '<Relationships><Relationship Id="r1" Target="worksheets/sheet1.xml"/>'
+                                         f'<Relationship Id="{second_id}" Target="worksheets/sheet1.xml"/>'
+                                         '</Relationships>')
+                        archive.writestr('xl/sharedStrings.xml',
+                                         f'<sst xmlns="{ns}"><si><t>Ficticio</t></si><extLst/></sst>')
+                        archive.writestr('xl/worksheets/sheet1.xml',
+                                         f'<worksheet xmlns="{ns}"><sheetData><row r="3">'
+                                         f'<c r="A3" t="s"><v>{index}</v></c></row></sheetData></worksheet>')
+                    if reason:
+                        with self.assertRaisesRegex(audit.Blocked, reason):
+                            audit.snapshot(path)
+                    else:
+                        cells = audit.snapshot(path)['sheets']['Other']['cells']
+                        self.assertEqual(cells['A3']['value'], 'Ficticio')
+
     def test_snapshot_rejects_multiple_payloads_in_one_cell(self):
         ns = audit.NS['m']
         with TemporaryDirectory() as tmp, patch.object(audit, 'read_book'):

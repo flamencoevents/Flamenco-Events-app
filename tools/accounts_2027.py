@@ -46,6 +46,15 @@ def clean_text(value):
     return value
 
 
+def workbook_relationships(root):
+    relationships = {}
+    for relationship in root:
+        identity = relationship.get('Id')
+        require(identity not in relationships, 'DUPLICATE_WORKBOOK_RELATIONSHIP')
+        relationships[identity] = relationship.get('Target')
+    return relationships
+
+
 def shared_string(strings, value):
     require(isinstance(value, str) and re.fullmatch(r'[0-9]+', value), 'INVALID_SHARED_STRING_INDEX')
     digits = value.lstrip('0') or '0'
@@ -71,7 +80,7 @@ def read_book(path):
         wb = xml('xl/workbook.xml')
         require(wb.find('m:workbookPr', NS) is None or
                 wb.find('m:workbookPr', NS).get('date1904', '0') not in ('1', 'true'), 'DATE_SYSTEM_UNSUPPORTED')
-        rels = {r.get('Id'): r.get('Target') for r in xml('xl/_rels/workbook.xml.rels')}
+        rels = workbook_relationships(xml('xl/_rels/workbook.xml.rels'))
         sheets = [s for s in wb.find('m:sheets', NS) if s.get('name') == SHEET]
         require(len(sheets) == 1, 'SHEET_MISSING_OR_AMBIGUOUS')
         target = rels[sheets[0].get(REL)]

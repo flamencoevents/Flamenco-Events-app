@@ -1034,3 +1034,16 @@ bloquean y eliminan el temporal sin producir una copia de salida.
 Pasaron 15 pruebas con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027_package`.
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Relaciones del libro y entradas de texto compartido · 13 noviembre 2026
+
+El preparador y el verificador rechazan identificadores repetidos en
+las relaciones del libro. El verificador cuenta únicamente entradas de
+texto al resolver índices en la tabla de cadenas compartidas. Una
+extensión de la tabla no puede ocupar el lugar de una cadena.
+
+Dos casos ficticios reprodujeron la aceptación previa. Tras el cambio,
+ambos se rechazaron y se comprobó también la lectura de un índice válido
+en una tabla con extensiones. Pasaron 31 pruebas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_verify test_accounts_2027`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.

@@ -16,7 +16,7 @@ import re
 import zipfile
 import xml.etree.ElementTree as ET
 
-from accounts_2027 import NS, REL, SHEET, Blocked, propose, read_book, require, shared_string
+from accounts_2027 import NS, REL, SHEET, Blocked, propose, read_book, require, shared_string, workbook_relationships
 
 
 def xml_signature(element):
@@ -73,9 +73,9 @@ def snapshot(path):
             require(b'<!DOCTYPE' not in raw.upper() and b'<!ENTITY' not in raw.upper(), 'UNSUPPORTED_XML')
             return ET.fromstring(raw)
         wb = xml(parts['xl/workbook.xml'])
-        rels = {r.get('Id'): r.get('Target') for r in xml(parts['xl/_rels/workbook.xml.rels'])}
-        ss = xml(parts['xl/sharedStrings.xml']) if 'xl/sharedStrings.xml' in parts else []
-        strings = list(ss)
+        rels = workbook_relationships(xml(parts['xl/_rels/workbook.xml.rels']))
+        ss = xml(parts['xl/sharedStrings.xml']) if 'xl/sharedStrings.xml' in parts else None
+        strings = ss.findall('m:si', NS) if ss is not None else []
         sheets = {}
         ignored = {'xl/sharedStrings.xml'}
         for sheet in wb.find('m:sheets', NS):
