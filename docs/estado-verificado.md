@@ -1184,3 +1184,15 @@ la auditoría confirmó la conservación de la copia sintética y su enlace.
 
 Verificado localmente en modo prueba, sin despliegue, acceso a Drive
 ni escritura en el XLSX original.
+
+## Exportador y diario en el mismo ensayo · 13 noviembre 2026
+
+El ensayo reproducible `python3 tests/run_accounts_2027_artifact_trial.py`
+ejecutó el contrato ficticio, la propuesta, la reserva SQLite, el exportador
+XLSX y la auditoría independiente. La huella registrada coincide con los
+bytes de la copia. Un segundo intento verificó la misma copia sin invocar
+el exportador. Se conservó el hipervínculo y el origen ficticio quedó
+intacto. El directorio temporal se elimina al terminar.
+
+Verificado localmente en modo prueba. Sin despliegue ni acceso al libro real.
+La autenticación de origen y la escritura remota siguen pendientes.

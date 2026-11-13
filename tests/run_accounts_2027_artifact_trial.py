@@ -1,4 +1,5 @@
 """Opt-in local Artifact Tool roundtrip using a wholly synthetic contract and XLSX."""
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -10,6 +11,7 @@ import xml.etree.ElementTree as ET
 
 from test_accounts_2027_contract import PDF, bridge, fixture
 from accounts_2027 import HEADERS, NS, REL, SHEET
+from accounts_2027_trial import run_trial
 
 BUILDER = "import fs from 'node:fs/promises';\nimport { Workbook, SpreadsheetFile } from '@oai/artifact-tool';\n\nconst [layoutPath, output] = process.argv.slice(2);\nconst {sheetName, headers} = JSON.parse(await fs.readFile(layoutPath, 'utf8'));\nconst wb = Workbook.create();\nconst notes = wb.worksheets.add('Notas ficticias');\nnotes.getRange('A1').values = [['Hoja ajena intacta']];\nconst sheet = wb.worksheets.add(sheetName);\nsheet.getRange('A3:Q3').values = [headers];\nsheet.getRange('A9').values = [['MARZO']];\nsheet.getRange('A15').values = [['ABRIL']];\nsheet.getRange('A12').values = [['Enlace ficticio']];\nsheet.getRange('C11:H11').format.fill = '#eeeeee';\nsheet.getRange('D11').format.numberFormat = 'dd/mm/yyyy';\nsheet.getRange('H11').format.numberFormat = '0.00';\nsheet.getRange('V12').formulas = [['=1+2']];\nconst file = await SpreadsheetFile.exportXlsx(wb);\nawait file.save(output);\n"
 
@@ -77,10 +79,18 @@ def main():
         if (blocked.returncode != 2 or json.loads(blocked.stderr.splitlines()[-1])['reason'] != 'PROPOSAL_CHANGED'
                 or (root / 'blocked').exists()):
             raise RuntimeError('A different proposal reached the exporter')
-        subprocess.run([node, 'roundtrip.mjs', 'source.xlsx', 'request.json', 'result'],
-                       cwd=root, check=True, timeout=180,
-                       env=dict(writer_env, FE_ACCOUNTS_EXPECTED_PROPOSAL_ID=prepared['proposal']['proposal_id']))
+        args = (source, root / 'request.json', root / 'result',
+                root / 'journal.sqlite', 'a' * 64, 'b' * 64)
+        result = run_trial(*args, [node, str(root / 'roundtrip.mjs')])
+        if (result['state'] != 'copy_verified' or result['remote_committed'] is not False
+                or result['proposal_id'] != prepared['proposal']['proposal_id']):
+            raise RuntimeError('The journal did not verify the synthetic proposal')
+        # The retry must audit the existing copy without running an exporter.
+        if run_trial(*args, ['unused-writer']) != result:
+            raise RuntimeError('The retry did not preserve the journal entry')
         candidate = root / 'result/preserved.candidate.xlsx'
+        if hashlib.sha256(candidate.read_bytes()).hexdigest() != result['candidate_sha256']:
+            raise RuntimeError('The journal digest differs from the verified copy')
         with ZipFile(source) as original, ZipFile(candidate) as copy:
             for part in original.namelist():
                 if part != sheet_xml and copy.read(part) != original.read(part):
