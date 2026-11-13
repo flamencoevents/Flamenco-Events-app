@@ -16,6 +16,10 @@ const proposal = JSON.parse(execFileSync(process.env.FE_ACCOUNTS_PYTHON || 'pyth
 if (proposal.mode !== 'dry_run' || proposal.writable !== false || proposal.status !== 'pending_review') {
   throw new Error('Expected a fictitious pending proposal');
 }
+const expectedProposal = process.env.FE_ACCOUNTS_EXPECTED_PROPOSAL_ID;
+if (expectedProposal !== undefined && proposal.proposal_id !== expectedProposal) {
+  throw new Error('PROPOSAL_CHANGED');
+}
 const raw = await fs.readFile(inputPath);
 const sourceSha256 = crypto.createHash('sha256').update(raw).digest('hex');
 if (sourceSha256 !== proposal.workbook_sha256) throw new Error('WORKBOOK_CHANGED');

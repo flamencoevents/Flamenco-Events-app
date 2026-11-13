@@ -1169,3 +1169,18 @@ Pasaron 21 pruebas ficticias con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027_ledger test_accounts_2027_trial`.
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX
 original. El diario no acredita una escritura remota.
+
+## Reserva local vinculada al exportador · 13 noviembre 2026
+
+El ensayo con diario pasa al exportador el identificador reservado.
+El exportador vuelve a calcularlo antes de importar el XLSX y bloquea
+cualquier discrepancia antes de crear el directorio de salida.
+
+Pasaron 10 pruebas de `PYTHONPATH=tests python3 -m unittest test_accounts_2027_trial`
+y la comprobación de sintaxis. Con
+`python3 tests/run_accounts_2027_artifact_trial.py`, el exportador local
+rechazó una reserva distinta sin dejar salida. Con la reserva correcta,
+la auditoría confirmó la conservación de la copia sintética y su enlace.
+
+Verificado localmente en modo prueba, sin despliegue, acceso a Drive
+ni escritura en el XLSX original.

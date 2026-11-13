@@ -66,7 +66,8 @@ def run_trial(source, request_path, output, database, workbook_key, owner_key,
             return ledger.verify_copy(operation['proposal_id'], owner_key, source, candidate, request)
         try:
             env = dict(os.environ, FE_ACCOUNTS_PLANNER=str(Path(__file__).with_name('accounts_2027.py')),
-                       FE_ACCOUNTS_PYTHON=os.sys.executable)
+                       FE_ACCOUNTS_PYTHON=os.sys.executable,
+                       FE_ACCOUNTS_EXPECTED_PROPOSAL_ID=operation['proposal_id'])
             result = runner([*node_command, str(source.resolve()), str(request_path.resolve()),
                              str(output.resolve())], env=env, stdout=subprocess.DEVNULL,
                             stderr=subprocess.DEVNULL, check=False, timeout=180)

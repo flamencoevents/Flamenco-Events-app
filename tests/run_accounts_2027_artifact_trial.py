@@ -69,10 +69,17 @@ def main():
         before = source.read_bytes()
         prepared = bridge.prepare(bridge.read_book(source), fixture(), PDF)
         (root / 'request.json').write_text(json.dumps(prepared['planner_request']))
+        writer_env = dict(os.environ, FE_ACCOUNTS_PLANNER=str(planner),
+                          FE_ACCOUNTS_PYTHON=sys.executable)
+        blocked = subprocess.run([node, 'roundtrip.mjs', 'source.xlsx', 'request.json', 'blocked'],
+                                 cwd=root, capture_output=True, text=True, timeout=180,
+                                 env=dict(writer_env, FE_ACCOUNTS_EXPECTED_PROPOSAL_ID='0' * 64))
+        if (blocked.returncode != 2 or json.loads(blocked.stderr.splitlines()[-1])['reason'] != 'PROPOSAL_CHANGED'
+                or (root / 'blocked').exists()):
+            raise RuntimeError('A different proposal reached the exporter')
         subprocess.run([node, 'roundtrip.mjs', 'source.xlsx', 'request.json', 'result'],
                        cwd=root, check=True, timeout=180,
-                       env=dict(os.environ, FE_ACCOUNTS_PLANNER=str(planner),
-                                FE_ACCOUNTS_PYTHON=sys.executable))
+                       env=dict(writer_env, FE_ACCOUNTS_EXPECTED_PROPOSAL_ID=prepared['proposal']['proposal_id']))
         candidate = root / 'result/preserved.candidate.xlsx'
         with ZipFile(source) as original, ZipFile(candidate) as copy:
             for part in original.namelist():

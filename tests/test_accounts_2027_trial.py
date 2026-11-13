@@ -50,6 +50,15 @@ class TrialTests(unittest.TestCase):
         with sqlite3.connect(self.database) as db:
             return db.execute('SELECT state FROM operations').fetchone()[0]
 
+    def test_writer_receives_reserved_proposal_id(self):
+        expected = propose(read_book(self.source), self.req)['proposal_id']
+
+        def check_reservation(command, **kwargs):
+            self.assertEqual(kwargs['env'].get('FE_ACCOUNTS_EXPECTED_PROPOSAL_ID'), expected)
+            return self.writer(command, **kwargs)
+
+        self.assertEqual(self.run_trial(check_reservation)['state'], 'copy_verified')
+
     def test_copy_audited_and_identical_retry_skips_writer(self):
         result = self.run_trial()
         self.assertEqual(result['state'], 'copy_verified')
