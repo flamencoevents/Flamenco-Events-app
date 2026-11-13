@@ -10,7 +10,7 @@ from zipfile import ZipFile
 import xml.etree.ElementTree as ET
 
 from test_accounts_2027_contract import PDF, bridge, fixture
-from accounts_2027 import HEADERS, NS, REL, SHEET
+from accounts_2027 import Blocked, HEADERS, NS, REL, SHEET
 from accounts_2027_trial import run_trial
 
 BUILDER = "import fs from 'node:fs/promises';\nimport { Workbook, SpreadsheetFile } from '@oai/artifact-tool';\n\nconst [layoutPath, output] = process.argv.slice(2);\nconst {sheetName, headers} = JSON.parse(await fs.readFile(layoutPath, 'utf8'));\nconst wb = Workbook.create();\nconst notes = wb.worksheets.add('Notas ficticias');\nnotes.getRange('A1').values = [['Hoja ajena intacta']];\nconst sheet = wb.worksheets.add(sheetName);\nsheet.getRange('A3:Q3').values = [headers];\nsheet.getRange('A9').values = [['MARZO']];\nsheet.getRange('A15').values = [['ABRIL']];\nsheet.getRange('A12').values = [['Enlace ficticio']];\nsheet.getRange('C11:H11').format.fill = '#eeeeee';\nsheet.getRange('D11').format.numberFormat = 'dd/mm/yyyy';\nsheet.getRange('H11').format.numberFormat = '0.00';\nsheet.getRange('V12').formulas = [['=1+2']];\nconst file = await SpreadsheetFile.exportXlsx(wb);\nawait file.save(output);\n"
@@ -91,6 +91,21 @@ def main():
         candidate = root / 'result/preserved.candidate.xlsx'
         if hashlib.sha256(candidate.read_bytes()).hexdigest() != result['candidate_sha256']:
             raise RuntimeError('The journal digest differs from the verified copy')
+        verified_bytes = candidate.read_bytes()
+        try:
+            with ZipFile(candidate, 'a') as changed:
+                changed.comment = b'Synthetic revision after verification'
+            try:
+                run_trial(*args, ['unused-writer'])
+            except Blocked as error:
+                if str(error) != 'CANDIDATE_CHANGED':
+                    raise
+            else:
+                raise RuntimeError('The journal accepted different bytes on retry')
+        finally:
+            candidate.write_bytes(verified_bytes)
+        if run_trial(*args, ['unused-writer']) != result:
+            raise RuntimeError('The rejected retry changed the original journal entry')
         with ZipFile(source) as original, ZipFile(candidate) as copy:
             for part in original.namelist():
                 if part != sheet_xml and copy.read(part) != original.read(part):

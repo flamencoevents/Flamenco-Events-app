@@ -1196,3 +1196,13 @@ intacto. El directorio temporal se elimina al terminar.
 
 Verificado localmente en modo prueba. Sin despliegue ni acceso al libro real.
 La autenticación de origen y la escritura remota siguen pendientes.
+
+## Reintento con una copia modificada · 13 noviembre 2026
+
+El ensayo `python3 tests/run_accounts_2027_artifact_trial.py` modifica
+el comentario ZIP de la copia ficticia después de verificarla. El
+reintento rechaza los bytes distintos con CANDIDATE_CHANGED. Al restaurar
+la copia exacta se recupera el resultado original del diario sin invocar
+el exportador. La prueba pasó con el exportador XLSX local.
+
+Verificado en modo prueba, sin despliegue ni acceso al libro original.
