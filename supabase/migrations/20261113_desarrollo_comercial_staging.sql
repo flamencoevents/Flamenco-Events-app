@@ -4,7 +4,7 @@ create table if not exists public.fe_prospects (
  id uuid primary key default gen_random_uuid(),
  name text not null check (length(trim(name)) between 2 and 180),
  category text not null check (category in ('finca','hacienda','hotel','restaurante','wedding_planner','agencia','otro')),
- province text not null check (province in ('Almería','Cádiz','Córdoba','Granada','Huelva','Jaén','Málaga','Sevilla','Otra')),
+ province text not null,
  town text,
  website text,
  phone text,
