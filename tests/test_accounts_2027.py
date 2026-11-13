@@ -124,6 +124,14 @@ class PlannerTests(unittest.TestCase):
         self.book['cells']['C10']['value'] = '926'
         self.blocked('POTENTIAL_NUMBER_ALIAS_REQUIRES_RECONCILIATION')
 
+    def test_malformed_link_and_merge_ranges_block_proposal(self):
+        for field, ref in (('links', 'missing11'), ('merges', 'A9:B10:C12'),
+                           ('links', None)):
+            with self.subTest(field=field, ref=ref):
+                self.book = book()
+                self.book[field] = [ref]
+                self.blocked('INVALID_WORKSHEET_RANGE')
+
     def test_link_merge_hidden_and_object(self):
         for field, value, code in [('links', ['C11'], 'ROW_HAS_LINK_OR_MERGE'),
                                    ('merges', ['A10:Q12'], 'ROW_HAS_LINK_OR_MERGE'),

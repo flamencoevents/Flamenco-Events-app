@@ -178,6 +178,9 @@ def inspect(book):
 
 
 def intersects_row(ref, row):
+    require(isinstance(ref, str) and
+            re.fullmatch(r'[A-Z]{1,3}[1-9][0-9]*(?::[A-Z]{1,3}[1-9][0-9]*)?', ref),
+            'INVALID_WORKSHEET_RANGE')
     parts = ref.split(':')
     bounds = [int(re.search(r'\d+$', p).group()) for p in parts]
     return min(bounds) <= row <= max(bounds)

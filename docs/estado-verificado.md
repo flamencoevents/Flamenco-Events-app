@@ -1224,3 +1224,12 @@ propio ensayo ocupaba la ruta y luego fallaba por salida existente.
 Pasaron 12 pruebas locales con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027_trial`.
 Verificado en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Referencias de rangos en la hoja · 13 noviembre 2026
+
+El preparador rechaza referencias de hipervínculos o combinaciones
+sin una coordenada válida o con más de dos extremos. Las pruebas
+ficticias reprodujeron una propuesta indebida y errores imprecisos.
+Pasaron 17 pruebas mediante
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
