@@ -6,12 +6,21 @@ const crmFields={
  hospitality:[['Nombre del establecimiento','name'],['Provincia','province'],['Categoría: hotel_5_estrellas / hotel_boutique / resort / restaurante_gastronomico / beach_club / club_privado / otro','establishment_type'],['Web oficial','website'],['Enlace de la fuente','source_url']],
  brands:[['Nombre de marca','brand_name'],['Sector: moda_flamenca / joyeria / complementos / alta_costura / otro','sector'],['Web oficial','website'],['Enlace de la fuente','source_url']]
 };
+const crmChoices={
+ category:['finca','hacienda','hotel','restaurante','wedding_planner','agencia','otro'],
+ establishment_type:['hotel_5_estrellas','hotel_boutique','resort','restaurante_gastronomico','beach_club','club_privado','hotel_patrimonial','hotel_urbano_premium','otro'],
+ sector:['moda_flamenca','joyeria','complementos','alta_costura','otro']
+};
 function crmField(label,name,value,required){
  const wrap=document.createElement('label');wrap.textContent=label;
- const node=document.createElement(name==='province'?'select':'input');node.name=name;
- if(name==='province'){const blank=document.createElement('option');blank.value='';blank.textContent='Selecciona una provincia';node.append(blank);for(const province of crmProvinceOptions){const opt=document.createElement('option');opt.value=province;opt.textContent=province;node.append(opt)}node.style.cssText='display:block;width:100%;padding:10px;margin:7px 0 12px;background:#332924;color:white';}
- node.value=value||'';
- node.required=Boolean(required);node.style.cssText='display:block;margin:7px 0 12px;width:100%';wrap.append(node);return wrap;
+ const choices=name==='province'?crmProvinceOptions:crmChoices[name];
+ const node=document.createElement(choices?'select':'input');node.name=name;
+ if(choices){const blank=document.createElement('option');blank.value='';blank.textContent='Seleccionar…';node.append(blank);
+  for(const choice of choices){const option=document.createElement('option');option.value=choice;option.textContent=choice.replaceAll('_',' ');node.append(option)}
+ }else if(name==='source_url'||name==='website'){node.type='url';node.placeholder='https://…'}
+ node.value=value||'';node.required=Boolean(required);
+ node.style.cssText='display:block;margin:7px 0 12px;width:100%;padding:10px;border-radius:8px;background:#332924;color:white;border:1px solid #665444';
+ wrap.append(node);return wrap;
 }
 function crmMessage(message){$('status').textContent=message}
 function crmRenderEditor(){
@@ -50,6 +59,7 @@ async function crmQualify(row){
  if(['cualificado','cualificada'].includes(target) && !row.source_url?.trim()){
   crmMessage('Antes de cualificar, registra una fuente pública verificable.');return;
  }
+ if(['cualificado','cualificada'].includes(target) && !confirm('Confirma que has consultado personalmente la fuente, comprobado la identidad del establecimiento y que sus datos son actuales.'))return;
  const checkedField=kind==='venues'?'source_checked_at':'checked_at';
  const changes={[field]:target};
  if(['cualificado','cualificada'].includes(target))changes[checkedField]=new Date().toISOString();
@@ -75,6 +85,26 @@ async function crmHandoff(row){
  const result=await db.from(table).insert(payload);
  crmMessage(result.error?result.error.message:'Oportunidad traspasada a Comercial.');
  if(!result.error)await refresh();
+}
+function crmEditSource(row){
+ if(!isAdmin)return;
+ const box=$('editor');box.replaceChildren();
+ const title=document.createElement('h2');title.textContent='Marketing · Verificar procedencia';
+ const form=document.createElement('form');
+ form.append(crmField('Fuente pública o web oficial','source_url',row.source_url||'',true));
+ form.append(crmField('Web oficial del candidato','website',row.website||'',false));
+ const button=document.createElement('button');button.textContent='Guardar fuente';form.append(button);
+ box.append(title,form);
+ form.onsubmit=async event=>{
+  event.preventDefault();button.disabled=true;
+  try{
+   const values=Object.fromEntries(new FormData(form).entries());
+   if(!values.source_url.startsWith('https://'))throw Error('La fuente debe ser HTTPS y verificable.');
+   const result=await db.from(screens[kind].table).update(values).eq('id',row.id).select('id').single();
+   if(result.error)throw result.error;
+   crmMessage('Fuente actualizada. Verifica el contenido antes de cualificar.');await refresh();
+  }catch(err){crmMessage(err.message||'Error al guardar la fuente.')}finally{button.disabled=false}
+ };
 }
 function crmEditOpportunity(row){
  if(!isStaff)return;
@@ -115,7 +145,8 @@ refresh=async function(){
   const head=$('head').querySelector('tr');if(head){const th=document.createElement('th');th.textContent='Marketing';head.append(th)}
   records.data.forEach((row,i)=>{
    const tr=body.children[i],cell=document.createElement('td');
-   const change=document.createElement('button');change.textContent='Cambiar estado';change.onclick=()=>crmQualify(row);cell.append(change);if((kind==='venues'&&row.marketing_status==='cualificado')||(kind==='hospitality'&&row.marketing_status==='cualificado')||(kind==='brands'&&row.status==='cualificada')){const btn=document.createElement('button');btn.textContent='Traspasar';btn.style.marginLeft='6px';btn.onclick=()=>crmHandoff(row);cell.append(btn)}
+   const change=document.createElement('button');change.textContent='Cambiar estado';change.onclick=()=>crmQualify(row);cell.append(change);
+   const source=document.createElement('button');source.textContent='Verificar fuente';source.style.marginLeft='6px';source.onclick=()=>crmEditSource(row);cell.append(source);if((kind==='venues'&&row.marketing_status==='cualificado')||(kind==='hospitality'&&row.marketing_status==='cualificado')||(kind==='brands'&&row.status==='cualificada')){const btn=document.createElement('button');btn.textContent='Traspasar';btn.style.marginLeft='6px';btn.onclick=()=>crmHandoff(row);cell.append(btn)}
    if(tr)tr.append(cell);
   });
  }
