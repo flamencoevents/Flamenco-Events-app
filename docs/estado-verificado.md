@@ -1233,3 +1233,11 @@ ficticias reprodujeron una propuesta indebida y errores imprecisos.
 Pasaron 17 pruebas mediante
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027`.
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Límites de los rangos XLSX · 14 noviembre 2026
+
+El preparador bloquea rangos que superan la columna XFD o la fila
+1048576. Los casos ficticios de combinación y de hipervínculo antes
+permitían proponer una fila. Pasaron 17 pruebas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.

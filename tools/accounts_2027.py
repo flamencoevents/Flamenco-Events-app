@@ -182,7 +182,12 @@ def intersects_row(ref, row):
             re.fullmatch(r'[A-Z]{1,3}[1-9][0-9]*(?::[A-Z]{1,3}[1-9][0-9]*)?', ref),
             'INVALID_WORKSHEET_RANGE')
     parts = ref.split(':')
-    bounds = [int(re.search(r'\d+$', p).group()) for p in parts]
+    bounds = []
+    for part in parts:
+        column, digits = re.fullmatch(r'([A-Z]+)([0-9]+)', part).groups()
+        require((len(column), column) <= (3, 'XFD') and
+                (len(digits), digits) <= (7, '1048576'), 'INVALID_WORKSHEET_RANGE')
+        bounds.append(int(digits))
     return min(bounds) <= row <= max(bounds)
 
 
