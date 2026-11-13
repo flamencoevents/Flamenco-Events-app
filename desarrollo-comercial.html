@@ -13,12 +13,12 @@
 <button data-kind="brands" aria-selected="false">Moda, joyas y complementos</button>
 <button data-kind="pipeline" aria-selected="false">Oportunidades</button></nav>
 <div class="card"><h2 id="section-title"></h2><p id="description" class="muted"></p><p id="count"></p>
-<div class="scroll"><table><thead id="head"></thead><tbody id="body"></tbody></table></div></div>
+<div class="scroll"><table><thead id="head"></thead><tbody id="body"></tbody></table></div><div id="editor"></div></div>
 </section><p id="status" role="status"></p></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script><script src="./portal-config.js"></script><script>
 'use strict';
 const $=id=>document.getElementById(id),c=window.FE_PORTAL_CONFIG,db=c?.url&&c?.anonKey&&window.supabase?.createClient?window.supabase.createClient(c.url,c.anonKey):null;
-let kind='venues',isStaff=false;
+let kind='venues',isStaff=false,isAdmin=false,accountId=null;
 const screens={venues:{title:'Bodas y agencias',description:'Fincas, haciendas, wedding planners y organizadores de eventos.',table:'fe_prospects',cols:[['name','Nombre'],['province','Provincia'],['category','Categoría'],['marketing_status','Marketing']]},hospitality:{title:'Hostelería premium',description:'Hoteles 5 estrellas, resorts, restaurantes gastronómicos y beach clubs.',table:'fe_hospitality_prospects',cols:[['name','Nombre'],['province','Provincia'],['establishment_type','Tipo'],['marketing_status','Marketing']]},brands:{title:'Alianzas con marcas de prestigio',description:'Moda flamenca, joyería y complementos; presentaciones y eventos VIP.',table:'fe_brand_partners',cols:[['brand_name','Firma'],['sector','Sector'],['status','Marketing']]},pipeline:{title:'Seguimiento Comercial',description:'Oportunidades cualificadas con contacto y próximas acciones.',table:'fe_commercial_opportunities',cols:[['stage','Etapa'],['priority','Prioridad'],['next_action','Acción siguiente']]}};
 function show(id,yes){$(id).classList.toggle('hidden',!yes)}
 async function refresh(){
@@ -34,11 +34,11 @@ async function load(){
  const {data}=await db.auth.getUser(),u=data?.user;
  if(!u){show('auth',true);show('workspace',false);return}
  const p=await db.from('profiles').select('role').eq('id',u.id).single();
- isStaff=['admin','sales'].includes(p.data?.role);
+ isStaff=['admin','sales'].includes(p.data?.role);isAdmin=p.data?.role==='admin';accountId=u.id;
  show('auth',!isStaff);show('workspace',isStaff);
  if(!isStaff){$('status').textContent='Acceso restringido a Administración y Comercial.';return}await refresh();
 }
 document.querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{kind=b.dataset.kind;document.querySelectorAll('[data-kind]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));refresh()});
-$('login').onsubmit=async e=>{e.preventDefault();if(!db)return;const email=e.target.elements.email.value;const {error}=await db.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:c.redirectUrl}});$('status').textContent=error?error.message:'Comprueba tu correo.'};
+$('login').onsubmit=async e=>{e.preventDefault();if(!db)return;const email=e.target.elements.email.value;const {error}=await db.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:new URL('staff.html',location.href).href}});$('status').textContent=error?error.message:'Comprueba tu correo.'};
 if(db){db.auth.onAuthStateChange(()=>setTimeout(load,0));load()}else load();
-</script></body></html>
+<script src="./desarrollo-comercial-forms.js"></script></body></html>
