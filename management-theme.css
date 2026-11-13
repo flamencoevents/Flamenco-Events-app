@@ -186,3 +186,30 @@ small,.muted,header small,.accounts-links .muted{color:#333}
 #accounts-events .fe-event-actions .fe-event-note{display:block;border-left:2px solid #999;padding:7px 9px;background:#fafafa;overflow-wrap:anywhere;font-size:.8rem;color:#444}
 @media(max-width:900px){#accounts-events .fe-event-entry{grid-template-columns:minmax(0,1fr)}#accounts-events .fe-event-docs{border-left:0;border-top:1px solid #e2e2e2;padding:15px 0 0}}
 @media(max-width:540px){#accounts-events .fe-event-entry{padding:15px;gap:14px}#accounts-events .fe-event-data{grid-template-columns:minmax(0,1fr);gap:12px}#accounts-events .fe-event-field{border-bottom:1px solid #eee;padding-bottom:10px}#accounts-events .fe-event-field:last-child{border-bottom:0}}
+
+/* 2026-11-13 · Identidad Flamenco Events: gestión clara sobre blanco. */
+:root{color-scheme:light;--bg:#fff;--panel:#fff;--line:#e9e1d8;--gold:#9a713d;--fg:#28211c;--sub:#665b53}
+html{background:#fff}
+body{background:#fff!important;color:#28211c!important;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#fff;color:#28211c;border-bottom:1px solid #e9e1d8}
+header strong,h1,h2,h3{color:#2d241d}
+h1,h2,h3,.fe-brand-title{font-family:Georgia,"Times New Roman",serif}
+h1{letter-spacing:-.015em}
+h2{color:#785528}
+.fe-brand-title{font-size:1.25rem;color:#765329}
+section,.panel,article.card,#accounts-events,.fe-event-entry{background:#fff!important;color:#28211c;border-color:#e9e1d8}
+a{color:#805b2d}
+a:hover{color:#573b1f}
+button,button.alt{background:#fff;color:#5c401e;border:1px solid #b49b7c;transition:background .15s,border-color .15s}
+button:hover,button.alt:hover{background:#fcf7f0;border-color:#805b2d}
+input,select,textarea{background:#fff!important;color:#29231e!important;border-color:#c9bcb0}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #9a713d;outline-offset:2px}
+.accounts-table th,.history-table th{background:#faf6f0;color:#513c25;border-bottom-color:#d8c9b7}
+.accounts-table td,.history-table td{color:#29231e;border-color:#ece4da}
+.accounts-table tbody tr:hover{background:#fdf9f4}
+#accounts-events .fe-event-entry{border-color:#e6dbcf}
+#accounts-events .fe-event-actions>a,#accounts-events .fe-event-actions>button{border-color:#c3ac90;color:#684720;background:#fff}
+#accounts-events .fe-event-actions>a:hover,#accounts-events .fe-event-actions>button:hover{background:#fcf7f0}
+.management-notice{background:#faf7f2!important;color:#654b2f!important;border-color:#e9e1d8}
+small,.muted,header small{color:#665b53}
+@media(max-width:760px){header,main{width:calc(100% - 28px)}.fe-brand-logo{max-width:100%;height:auto}}
