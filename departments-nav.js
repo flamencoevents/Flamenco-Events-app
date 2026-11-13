@@ -6,29 +6,19 @@ if(!nav||!cfg?.url||!cfg?.anonKey||!window.supabase)return;
 const db=window.supabase.createClient(cfg.url,cfg.anonKey);
 const pathname=location.pathname.split('/').pop().toLowerCase();
 const adminPages=['admin.html','marketing.html','staff.html','rrhh.html'];
-const salesPages=['staff.html','rrhh.html'];
+const salesPages=['staff.html','marketing.html','rrhh.html'];
 const subpages={
  'marketing.html':[
   ['marketing.html','Plan de Marketing'],
-  ['desarrollo-comercial.html?tab=venues','Prospección'],
   ['marketing-venues.html','Espacios prioritarios'],
-  ['marketing-planners.html','Wedding planners'],
-  ['directorio-espana.html','Bodas · España'],
-  ['directorio-hosteleria-espana.html','Hoteles · Eventos puntuales']
+  ['marketing-planners.html','Wedding planners']
  ],
- 'staff.html':[
-  ['staff.html','Panel Comercial'],
-  ['desarrollo-comercial.html?tab=pipeline','Oportunidades · Bodas'],
-  ['desarrollo-comercial.html?tab=pipeline_hospitality','Oportunidades · Hoteles'],
-  ['desarrollo-comercial.html?tab=pipeline_brands','Oportunidades · Marcas']
- ],
+ 'staff.html':[['staff.html','Panel Comercial']],
  'rrhh.html':[['rrhh.html','Artistas y RR. HH.']]
 };
 const names={'admin.html':'Administración','marketing.html':'Marketing','staff.html':'Comercial','rrhh.html':'RR. HH.'};
 const mktPages=['marketing.html','marketing-venues.html','marketing-planners.html','marketing-task.html'];
-const section=pathname==='desarrollo-comercial.html'?
- ((new URLSearchParams(location.search).get('tab')||'venues').startsWith('pipeline')?'staff.html':'marketing.html'):
- (mktPages.includes(pathname)?'marketing.html':adminPages.includes(pathname)?pathname:'staff.html');
+const section=mktPages.includes(pathname)?'marketing.html':adminPages.includes(pathname)?pathname:'staff.html';
 let syncEpoch=0;
 function link(href,label,active){
  const a=document.createElement('a');a.href='./'+href;a.textContent=label;
@@ -44,12 +34,11 @@ function build(role){
  const pages=role==='admin'?adminPages:salesPages;
  for(const file of pages)main.append(link(file,names[file],section===file));content.append(main);
  const options=section==='staff.html'?subpages['staff.html']:section==='marketing.html'?subpages['marketing.html']:section==='rrhh.html'?subpages['rrhh.html']:[];
- const filtered=role==='admin'?options:section==='staff.html'?options:section==='rrhh.html'?options:[];
+ const filtered=options;
  if(filtered.length>1){const sub=document.createElement('div');sub.className='fe-nav-sub';sub.setAttribute('aria-label','Secciones de '+names[section]);
  for(const [href,label] of filtered){
   const u=new URL(href,location.href);
-  const active=u.pathname.split('/').pop()===pathname&&
-   (pathname!=='desarrollo-comercial.html'||u.searchParams.get('tab')===(new URLSearchParams(location.search).get('tab')||'venues'));
+  const active=u.pathname.split('/').pop()===pathname;
   sub.append(link(href,label,active));
  }content.append(sub);}
  nav.append(content);
