@@ -1,5 +1,6 @@
 'use strict';
 // Optional CRM forms for the staging branch; database RLS enforces all permissions.
+const crmProvinceOptions=["A Coruña","Álava","Albacete","Alicante","Almería","Asturias","Ávila","Badajoz","Barcelona","Burgos","Cáceres","Cádiz","Cantabria","Castellón","Ceuta","Ciudad Real","Córdoba","Cuenca","Girona","Granada","Guadalajara","Guipúzcoa","Huelva","Huesca","Islas Baleares","Jaén","La Rioja","Las Palmas","León","Lleida","Lugo","Madrid","Málaga","Melilla","Murcia","Navarra","Ourense","Palencia","Pontevedra","Salamanca","Santa Cruz de Tenerife","Segovia","Sevilla","Soria","Tarragona","Teruel","Toledo","Valencia","Valladolid","Vizcaya","Zamora","Zaragoza"];
 const crmFields={
  venues:[['Nombre del establecimiento o agencia','name'],['Provincia','province'],['Categoría: finca / hacienda / hotel / restaurante / wedding_planner / agencia / otro','category'],['Web oficial','website'],['Enlace de la fuente','source_url']],
  hospitality:[['Nombre del establecimiento','name'],['Provincia','province'],['Categoría: hotel_5_estrellas / hotel_boutique / resort / restaurante_gastronomico / beach_club / club_privado / otro','establishment_type'],['Web oficial','website'],['Enlace de la fuente','source_url']],
@@ -7,7 +8,9 @@ const crmFields={
 };
 function crmField(label,name,value,required){
  const wrap=document.createElement('label');wrap.textContent=label;
- const node=document.createElement('input');node.name=name;node.value=value||'';
+ const node=document.createElement(name==='province'?'select':'input');node.name=name;
+ if(name==='province'){const blank=document.createElement('option');blank.value='';blank.textContent='Selecciona una provincia';node.append(blank);for(const province of crmProvinceOptions){const opt=document.createElement('option');opt.value=province;opt.textContent=province;node.append(opt)}node.style.cssText='display:block;width:100%;padding:10px;margin:7px 0 12px;background:#332924;color:white';}
+ node.value=value||'';
  node.required=Boolean(required);node.style.cssText='display:block;margin:7px 0 12px;width:100%';wrap.append(node);return wrap;
 }
 function crmMessage(message){$('status').textContent=message}
