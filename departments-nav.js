@@ -5,7 +5,7 @@ const cfg=window.FE_PORTAL_CONFIG;
 if(!cfg?.url||!cfg?.anonKey||!window.supabase)return;
 const nav=document.getElementById('fe-departments');
 if(!nav)return;
-const items=[['admin.html','Administración'],['marketing.html','Marketing'],['rrhh.html','RR. HH.'],['staff.html','Comercial']];
+const items=[['admin.html','Administración'],['marketing.html','Marketing'],['rrhh.html','RR. HH.'],['staff.html','Comercial'],['desarrollo-comercial.html','Desarrollo Comercial']];
 const page=location.pathname.split('/').pop().toLowerCase();
 const db=window.supabase.createClient(cfg.url,cfg.anonKey);
 let run=0;
@@ -15,7 +15,7 @@ async function sync(){
   const {data,error}=await db.auth.getUser();if(error||!data?.user)return;
   const p=await db.from('profiles').select('role').eq('id',data.user.id).maybeSingle();
   if(epoch!==run||p.error||!['admin','sales'].includes(p.data?.role))return;
-  const allowed=p.data.role==='admin'?items:[['staff.html','Comercial'],['marketing.html','Marketing'],['rrhh.html','RR. HH.']];
+  const allowed=p.data.role==='admin'?items:[['staff.html','Comercial'],['marketing.html','Marketing'],['rrhh.html','RR. HH.'],['desarrollo-comercial.html','Desarrollo Comercial']];
   const label=document.createElement('span');label.className='fe-dept-label';label.textContent='Departamentos';nav.append(label);
   for(const [file,name] of allowed){
    const a=document.createElement('a');a.href='./'+file+(file==='marketing.html'?'?v=20261113-mobile-white':'');a.textContent=name;
