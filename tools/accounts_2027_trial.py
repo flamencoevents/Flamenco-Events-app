@@ -47,6 +47,11 @@ def run_trial(source, request_path, output, database, workbook_key, owner_key,
     require(database.resolve() not in protected and
             Path(str(database.resolve()) + '.trial.lock').resolve() not in protected,
             'JOURNAL_INPUT_COLLISION')
+    # Creating the journal inside a fresh output directory conflicts with the writer.
+    output_path = output.resolve()
+    journal_path = database.resolve()
+    require(journal_path != output_path and output_path not in journal_path.parents,
+            'JOURNAL_OUTPUT_COLLISION')
     book = read_book(source)
     proposal = propose(book, request)
     with exclusive_trial(database):

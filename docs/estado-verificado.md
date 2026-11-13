@@ -1206,3 +1206,12 @@ la copia exacta se recupera el resultado original del diario sin invocar
 el exportador. La prueba pasó con el exportador XLSX local.
 
 Verificado en modo prueba, sin despliegue ni acceso al libro original.
+
+## Separación del diario y la salida local · 13 noviembre 2026
+
+El ensayo rechaza un diario SQLite situado en la ruta de salida o
+dentro de ella antes de crear el diario, su bloqueo o una copia.
+Los dos casos ficticios se comprobaron con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027_trial`.
+Pasaron 11 pruebas locales en modo prueba, sin despliegue ni acceso
+al XLSX original.

@@ -59,6 +59,16 @@ class TrialTests(unittest.TestCase):
 
         self.assertEqual(self.run_trial(check_reservation)['state'], 'copy_verified')
 
+    def test_journal_cannot_be_created_at_or_inside_output(self):
+        for database in (self.output, self.output / 'journal.sqlite'):
+            with self.subTest(database=database):
+                self.database = database
+                with self.assertRaisesRegex(Blocked, 'JOURNAL_OUTPUT_COLLISION'):
+                    self.run_trial()
+                self.assertFalse(self.output.exists())
+                self.assertFalse(Path(str(database) + '.trial.lock').exists())
+                self.assertEqual(self.calls, 0)
+
     def test_copy_audited_and_identical_retry_skips_writer(self):
         result = self.run_trial()
         self.assertEqual(result['state'], 'copy_verified')
