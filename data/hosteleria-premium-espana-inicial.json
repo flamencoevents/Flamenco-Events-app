@@ -7,7 +7,9 @@
     "province_count": 21,
     "public_contacts": false,
     "campaigns_enabled": false,
-    "verified_at": "2026-11-14"
+    "verified_at": "2026-11-14",
+    "target_market": "Eventos puntuales de alto nivel celebrados en hoteles, no programación artística habitual",
+    "selection_logic": "Hotel como sede de eventos; buscar organizador, agencia, wedding planner o comprador del evento"
   },
   "records": [
     {
@@ -22,7 +24,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Casa Alameda 1760 Meliá Collection",
@@ -36,7 +41,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "MiM Sotogrande Meliá Collection",
@@ -50,7 +58,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Palacio de Sancti Petri Gran Meliá",
@@ -64,7 +75,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Hacienda del Mar Meliá Collection",
@@ -78,7 +92,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Five Flowers Hotel Formentera Meliá Collection",
@@ -92,7 +109,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Paradisus by Meliá Fuerteventura",
@@ -106,7 +126,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Paradisus Gran Canaria",
@@ -120,7 +143,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Hotel Granada Palace Affiliated by Meliá",
@@ -134,7 +160,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "ME Ibiza",
@@ -148,7 +177,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Paradisus Salinas Lanzarote",
@@ -162,7 +194,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Casa de las Artes Meliá Collection",
@@ -176,7 +211,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Hotel Fénix Gran Meliá",
@@ -190,7 +228,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Palacio de los Duques Gran Meliá",
@@ -204,7 +245,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Finca Ratxó Meliá Collection",
@@ -218,7 +262,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Hotel de Mar Gran Meliá",
@@ -232,7 +279,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Hotel Don Pepe Gran Meliá",
@@ -246,7 +296,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "ME Marbella",
@@ -260,7 +313,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Villa Le Blanc Gran Meliá",
@@ -274,7 +330,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "ME Málaga",
@@ -288,7 +347,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Summum Boutique Hotel Meliá Collection",
@@ -302,7 +364,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Hotel Colón Gran Meliá",
@@ -316,7 +381,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Gran Meliá Palacio de Isora",
@@ -330,7 +398,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Hacienda del Conde Meliá Collection Golf & Spa",
@@ -344,7 +415,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Meliá Jardines del Teide",
@@ -358,7 +432,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Royal Hideaway Sancti Petri",
@@ -372,7 +449,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Canfranc Estación, a Royal Hideaway Hotel",
@@ -386,7 +466,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Santa Catalina, a Royal Hideaway Hotel",
@@ -400,7 +483,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Royal Hideaway Corales Suites",
@@ -414,7 +500,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Asia Gardens Hotel & Thai Spa, a Royal Hideaway Hotel",
@@ -428,7 +517,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Royal Hideaway Corales Villas",
@@ -442,7 +534,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Novo Resort The Residence Luxury Apartments by Barceló",
@@ -456,7 +551,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Palacio San Juan, a Royal Hideaway Hotel",
@@ -470,7 +568,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Royal Hideaway Corales Beach",
@@ -484,7 +585,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Palacio Gran Vía, a Royal Hideaway Hotel",
@@ -498,7 +602,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Parador Castillo de Monterrei",
@@ -512,7 +619,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Parador Costa da Morte",
@@ -526,7 +636,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Parador de Aiguablava",
@@ -540,7 +653,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Parador de Alarcón",
@@ -554,7 +670,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Parador de Albacete",
@@ -568,7 +687,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "Parador de Alcalá de Henares",
@@ -582,7 +704,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "NH Collection Madrid Palacio de Tepa",
@@ -596,7 +721,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "NH Collection Madrid Eurobuilding",
@@ -610,7 +738,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "NH Collection Madrid Paseo del Prado",
@@ -624,7 +755,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "NH Collection Madrid Gran Vía",
@@ -638,7 +772,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "NH Collection Valencia Colón",
@@ -652,7 +789,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "NH Collection Salamanca Palacio de Castellanos",
@@ -666,7 +806,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "NH Collection Santiago de Compostela",
@@ -680,7 +823,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "NH Collection Sevilla",
@@ -694,7 +840,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "NH Collection Gran Hotel de Zaragoza",
@@ -708,7 +857,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     },
     {
       "name": "NH Collection Vigo",
@@ -722,7 +874,10 @@
       "source_verified": "official_group_directory",
       "contact_verified": false,
       "priority_review": "pendiente",
-      "notes": "Ficha del establecimiento pendiente de revisión individual. La fuente acredita la inclusión en el directorio oficial del grupo, no un acuerdo ni disponibilidad comercial."
+      "notes": "Espacio de interés potencial para eventos exclusivos puntuales. No ofrecer programación musical recurrente. Verificar quién contrata la producción artística y si se admiten proveedores externos.",
+      "event_type_verified": false,
+      "decision_maker_verified": false,
+      "external_supplier_policy": "sin_verificar"
     }
   ]
 }
