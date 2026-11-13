@@ -31,7 +31,7 @@ create index if not exists fe_brand_collab_next_idx on public.fe_brand_collabora
 alter table public.fe_brand_partners enable row level security;
 alter table public.fe_brand_collaborations enable row level security;
 create policy "brand_partners_staff_select" on public.fe_brand_partners for select to authenticated
- using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales')));
+ using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin') or (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='sales') and exists(select 1 from public.fe_brand_collaborations o where o.brand_id=fe_brand_partners.id)));
 create policy "brand_partners_admin_insert" on public.fe_brand_partners for insert to authenticated
  with check (created_by=(select auth.uid()) and exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin'));
 create policy "brand_partners_admin_update" on public.fe_brand_partners for update to authenticated
@@ -40,7 +40,7 @@ create policy "brand_partners_admin_update" on public.fe_brand_partners for upda
 create policy "brand_collabs_staff_select" on public.fe_brand_collaborations for select to authenticated
  using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales')));
 create policy "brand_collabs_staff_insert" on public.fe_brand_collaborations for insert to authenticated
- with check (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales'))
+ with check (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin')
  and exists(select 1 from public.fe_brand_partners b where b.id=brand_id and b.status='cualificada'));
 create policy "brand_collabs_staff_update" on public.fe_brand_collaborations for update to authenticated
  using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales')))
