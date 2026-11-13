@@ -1060,3 +1060,17 @@ bloquearon después del cambio, sin crear copias ni dejar temporales.
 Pasaron 30 pruebas con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_package`.
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
+
+## Celdas ambiguas en la fuente · 13 noviembre 2026
+
+El preparador y el verificador aplican la misma validación del contenido
+de cada celda. Un valor duplicado o una mezcla de valor y texto en línea
+se rechaza al leer el XLSX, antes de proponer una fila. Se mantiene el
+soporte de una fórmula con un único valor en caché.
+
+La regresión de una celda en V con un valor vacío seguido de otro
+valor reprodujo la propuesta indebida anterior. Tras el cambio, ambos
+casos ficticios se rechazaron y los bytes de la fuente se conservaron.
+Pasaron 48 pruebas con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027 test_accounts_2027_verify test_accounts_2027_package`.
+Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.

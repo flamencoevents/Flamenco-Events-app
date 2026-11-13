@@ -65,6 +65,17 @@ def shared_string(strings, value):
     return strings[index]
 
 
+def cell_payload(cell):
+    values = cell.findall('m:v', NS)
+    inline_values = cell.findall('m:is', NS)
+    formulas = cell.findall('m:f', NS)
+    require(len(values) + len(inline_values) <= 1 and len(formulas) <= 1,
+            'AMBIGUOUS_CELL_PAYLOAD')
+    value = values[0] if values else None
+    inline = inline_values[0] if inline_values else None
+    return value, inline, formulas[0] if formulas else None
+
+
 def read_book(path):
     raw = path if isinstance(path, bytes) else Path(path).read_bytes()
     require(len(raw) <= 20_000_000, 'WORKBOOK_TOO_LARGE')
@@ -92,13 +103,12 @@ def read_book(path):
         cells = {}
         formula_ranges = []
         for c in root.findall('m:sheetData/m:row/m:c', NS):
-            v, inline = c.find('m:v', NS), c.find('m:is', NS)
+            v, inline, formula = cell_payload(c)
             value = v.text if v is not None else ''
             if c.get('t') == 's':
                 value = shared_string(strings, value)
             elif inline is not None:
                 value = ''.join(inline.itertext())
-            formula = c.find('m:f', NS)
             if formula is not None and formula.get('ref') is not None:
                 ref = formula.get('ref')
                 require(re.fullmatch(r'[A-Z]{1,3}[1-9][0-9]*(?::[A-Z]{1,3}[1-9][0-9]*)?', ref),

@@ -235,6 +235,23 @@ class PackagingTests(unittest.TestCase):
                 self.assertFalse(list(self.root.glob('.fe-copy-*')))
                 self.assertEqual(self.source.read_bytes(), before)
 
+    def test_ambiguous_source_cell_blocks_planning(self):
+        with zipfile.ZipFile(self.source) as archive:
+            parts = {name: archive.read(name) for name in archive.namelist()}
+        sheet = 'xl/worksheets/sheet1.xml'
+        for body in ('<v/><v>926</v>', '<v/><is><t>Ficticio</t></is>'):
+            with self.subTest(body=body):
+                cell = f'<c r="V11">{body}</c>'.encode()
+                updated = parts[sheet].replace(b'</row><row r="15">', cell + b'</row><row r="15">')
+                with zipfile.ZipFile(self.source, 'w') as archive:
+                    for name, data in parts.items():
+                        archive.writestr(name, updated if name == sheet else data)
+                before = self.source.read_bytes()
+                self.req['workbook_sha256'] = hashlib.sha256(before).hexdigest()
+                with self.assertRaisesRegex(Blocked, 'AMBIGUOUS_CELL_PAYLOAD'):
+                    propose(read_book(self.source), self.req)
+                self.assertEqual(self.source.read_bytes(), before)
+
     def test_stale_source_rejected(self):
         self.req['workbook_sha256'] = 'f' * 64
         with self.assertRaisesRegex(Blocked, 'WORKBOOK_CHANGED'):
