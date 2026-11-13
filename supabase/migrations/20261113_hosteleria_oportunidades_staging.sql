@@ -19,9 +19,9 @@ create index if not exists fe_hosp_opps_next_idx on public.fe_hospitality_opport
 alter table public.fe_hospitality_opportunities enable row level security;
 create policy "hosp_opps_read_staff" on public.fe_hospitality_opportunities for select to authenticated
  using (exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales')));
-create policy "hosp_opps_insert_staff_qualified" on public.fe_hospitality_opportunities for insert to authenticated
+create policy "hosp_opps_insert_admin_qualified" on public.fe_hospitality_opportunities for insert to authenticated
  with check (
- exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role in ('admin','sales'))
+ exists(select 1 from public.profiles p where p.id=(select auth.uid()) and p.role='admin')
  and exists(select 1 from public.fe_hospitality_prospects h where h.id=prospect_id and h.marketing_status='cualificado')
  );
 create policy "hosp_opps_update_staff" on public.fe_hospitality_opportunities for update to authenticated
