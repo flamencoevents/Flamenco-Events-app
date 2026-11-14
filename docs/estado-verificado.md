@@ -1274,3 +1274,16 @@ aunque la cola, el contrato y la ficha coincidieran. Ahora ambos reciben
 INVALID_NUMBER antes de proponer una fila. Pasaron 18 pruebas con
 `python3 -m unittest discover -s tests -p test_accounts_2027_contract.py`.
 La prueba trabaja con datos ficticios y sin acceso a Drive ni al XLSX real.
+
+
+El commit a26156d superó la [comprobación sin escrituras](https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/43553218595).
+
+## Referencia al PDF privado · 14 noviembre 2026
+
+El ensayo local comprueba que el identificador de la referencia de Drive
+contenga solo letras y dígitos ASCII, guion o guion bajo. La referencia
+ficticia con un identificador fuera de ese formato antes pasaba la comprobación.
+Pasaron 19 pruebas con
+`python3 -m unittest discover -s tests -p test_accounts_2027_contract.py`.
+La validación es de formato. El origen y los permisos de Drive siguen pendientes
+de comprobación remota. Modo prueba, sin operaciones en Drive ni en el XLSX real.

@@ -67,7 +67,7 @@ def prepare(book, envelope, pdf):
     require(str(crow[0]) == number and digest(contract['presupuesto']) == digest(q), 'CONTRACT_SNAPSHOT_CHANGED')
     # Presence of a Drive reference is recorded, never treated as a public URL
     # or proof that these locally supplied bytes came from Drive.
-    require(isinstance(crow[6], str) and re.fullmatch(r'https://drive\.google\.com/file/d/[\w-]+/view', crow[6]),
+    require(isinstance(crow[6], str) and re.fullmatch(r'https://drive\.google\.com/file/d/[A-Za-z0-9_-]+/view', crow[6]),
             'MISSING_PRIVATE_PDF_REFERENCE')
     require(isinstance(pdf, bytes) and 5 < len(pdf) <= 10485760 and pdf.startswith(b'%PDF-'), 'INVALID_PDF_BYTES')
     pdf_sha = hashlib.sha256(pdf).hexdigest()

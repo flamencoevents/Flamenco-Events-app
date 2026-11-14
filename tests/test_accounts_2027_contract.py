@@ -81,6 +81,10 @@ class ContractRehearsalTests(unittest.TestCase):
                 self.assertNotEqual(result['proposal']['proposal_id'],
                                     initial['proposal']['proposal_id'])
 
+    def test_drive_reference_rejects_non_ascii_file_id(self):
+        self.data['contract_row'][6] = 'https://drive.google.com/file/d/FICTITIOÚS/view'
+        self.blocked('MISSING_PRIVATE_PDF_REFERENCE')
+
     def test_proposal_binds_private_drive_reference_even_for_identical_pdf_bytes(self):
         with TemporaryDirectory() as temp:
             source, export, candidate = [Path(temp) / name for name in
