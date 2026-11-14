@@ -1509,3 +1509,16 @@ reprodujeron la aceptación de un año con dígitos de ancho completo y
 el error genérico para un febrero sin ese día. Pasaron 20 pruebas con
 `python3 -m unittest discover -s tests -p test_accounts_2027_contract.py`.
 Sin nueva prueba remota, sesiones, asignaciones ni acceso al XLSX real.
+
+
+## Pruebas de lanzamiento en Gestión · 14 noviembre 2026
+
+Pages publicó el commit 3af7d8d (43625823219). La validación 43625823675
+detectó que el destino del menú se creaba después de cargar el panel.
+Administración incorpora un ancla fija y conserva la selección de la
+pestaña al abrir el enlace. La guía cubre 42 combinaciones tarifadas
+y un modelo de revisión manual para Gospel FE y cata de vinos.
+
+Fallo reproducido antes del cambio. Pasaron 15 pruebas afectadas con
+`node --test tests/management-routing.test.cjs tests/workflow-ui.test.cjs`.
+Sin generar nuevos documentos, sesiones o asignaciones ni escribir el XLSX.
