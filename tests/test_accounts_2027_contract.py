@@ -228,6 +228,23 @@ class ContractRehearsalTests(unittest.TestCase):
         self.book['markers'] = [(9, 4)]
         self.blocked('MONTH_MISSING_OR_AMBIGUOUS')
 
+    def test_cli_rejects_oversized_inputs_before_opening_the_workbook(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            envelope, pdf = root / 'envelope.json', root / 'fixture.pdf'
+            cmd = [sys.executable, str(Path(bridge.__file__)), str(root / 'absent.xlsx'),
+                   str(envelope), str(pdf)]
+            envelope.write_bytes(b' ' * 250001)
+            run = subprocess.run(cmd, capture_output=True, text=True)
+            self.assertEqual(run.returncode, 2)
+            self.assertEqual(json.loads(run.stdout)['reason'], 'INVALID_SNAPSHOT')
+            envelope.write_text(json.dumps(fixture()), encoding='utf-8')
+            with pdf.open('wb') as handle:
+                handle.truncate(10485761)
+            run = subprocess.run(cmd, capture_output=True, text=True)
+            self.assertEqual(run.returncode, 2)
+            self.assertEqual(json.loads(run.stdout)['reason'], 'INVALID_PDF_BYTES')
+
     def test_invalid_json_and_cli_fail_closed_without_private_error(self):
         with self.assertRaisesRegex(bridge.Blocked, 'DUPLICATE_JSON_KEY'):
             bridge.parsed('{"test_mode":true,"test_mode":false}')

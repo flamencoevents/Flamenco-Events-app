@@ -18,6 +18,9 @@ import xml.etree.ElementTree as ET
 
 from accounts_2027 import Blocked, clean_text, digest, propose, read_book, require
 
+SNAPSHOT_LIMIT = 250_000
+PDF_LIMIT = 10_485_760
+
 
 def cents(value):
     require(type(value) in (int, float), 'INVALID_SAVED_AMOUNT')
@@ -29,7 +32,7 @@ def cents(value):
 
 
 def parsed(raw):
-    require(isinstance(raw, str) and len(raw.encode()) <= 250000, 'INVALID_SNAPSHOT')
+    require(isinstance(raw, str) and len(raw.encode()) <= SNAPSHOT_LIMIT, 'INVALID_SNAPSHOT')
     def unique(pairs):
         obj = {}
         for key, value in pairs:
@@ -69,7 +72,7 @@ def prepare(book, envelope, pdf):
     # or proof that these locally supplied bytes came from Drive.
     require(isinstance(crow[6], str) and re.fullmatch(r'https://drive\.google\.com/file/d/[A-Za-z0-9_-]+/view', crow[6]),
             'MISSING_PRIVATE_PDF_REFERENCE')
-    require(isinstance(pdf, bytes) and 5 < len(pdf) <= 10485760 and pdf.startswith(b'%PDF-'), 'INVALID_PDF_BYTES')
+    require(isinstance(pdf, bytes) and 5 < len(pdf) <= PDF_LIMIT and pdf.startswith(b'%PDF-'), 'INVALID_PDF_BYTES')
     pdf_sha = hashlib.sha256(pdf).hexdigest()
     require(envelope.get('expected_pdf_sha256') == pdf_sha, 'PDF_DIGEST_MISMATCH')
     c, request, fields = q['calculo'], q['request'], q['fields']
@@ -125,6 +128,13 @@ def prepare(book, envelope, pdf):
     return result
 
 
+def read_bounded(path, limit, error):
+    with Path(path).open('rb') as source:
+        data = source.read(limit + 1)
+    require(len(data) <= limit, error)
+    return data
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('workbook')
@@ -132,7 +142,10 @@ def main():
     p.add_argument('pdf')
     a = p.parse_args()
     try:
-        result = prepare(read_book(a.workbook), parsed(Path(a.envelope).read_text()), Path(a.pdf).read_bytes())
+        envelope = parsed(read_bounded(a.envelope, SNAPSHOT_LIMIT, 'INVALID_SNAPSHOT').decode('utf-8'))
+        require(envelope.get('test_mode') is True, 'FICTIONAL_ONLY')
+        pdf = read_bounded(a.pdf, PDF_LIMIT, 'INVALID_PDF_BYTES')
+        result = prepare(read_book(a.workbook), envelope, pdf)
     except (Blocked, ValueError, TypeError, KeyError, AttributeError, IndexError, OSError,
             InvalidOperation, zipfile.BadZipFile, ET.ParseError) as exc:
         result = {'status': 'blocked', 'production_writable': False,

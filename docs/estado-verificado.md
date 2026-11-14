@@ -1554,3 +1554,16 @@ al solicitar la revisión, mostrarla y autorizarla. La regresión se
 reprodujo con datos ficticios y pasaron nueve pruebas mediante
 `node --test tests/workflow-ui.test.cjs`. Sin crear sesiones remotas ni
 escribir en Drive o en CUENTAS 27.
+
+
+## Lectura acotada de documentos del ensayo · 14 noviembre 2026
+
+El comando de conciliación valida el sobre JSON y el límite de tamaño
+del PDF antes de abrir el XLSX. La lectura de ambos archivos queda
+acotada en memoria. Dos entradas ficticias sobredimensionadas pasan a
+devolver un motivo específico y demuestran que el libro aún no se abrió.
+Pasaron 21 pruebas con
+`python3 -m unittest discover -s tests -p test_accounts_2027_contract.py`.
+
+GitHub confirmó las pruebas y Pages del commit anterior d5885fb
+(43644799542 y 43644799263). Sin nuevas sesiones, envíos o acceso al libro real.
