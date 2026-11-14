@@ -63,3 +63,31 @@ test('Launch workspace includes only explicitly linked fictitious records and th
  const guide=fs.readFileSync('docs/pruebas-lanzamiento-whatsapp.txt','utf8');
  assert.equal((guide.match(/^\/presupuesto$/gm)||[]).length,43);
 });
+
+test('Private PDF actions discard errors after a session change and do not request another link',async()=>{
+ let actor='staff-a',resolveLink,calls=0,opened=0,click;
+ const nodes=new Map();
+ const node=key=>{
+  if(!nodes.has(key))nodes.set(key,{dataset:{},innerHTML:'',textContent:'',querySelector:node,addEventListener(){}});
+  return nodes.get(key);
+ };
+ const host=node('host');
+ const button={dataset:{openPdf:'fictitious.pdf'},addEventListener:(_,fn)=>{click=fn;}};
+ host.querySelectorAll=selector=>selector==='[data-open-pdf]'?[button]:[];
+ const db={auth:{getUser:async()=>({data:{user:{id:actor}}})},from(){
+  const q={select:()=>q,order:()=>q,then:f=>Promise.resolve({data:[]}).then(f)};return q;
+ },storage:{from:()=>({createSignedUrl:()=>{calls++;return calls===1?new Promise(r=>resolveLink=r):Promise.resolve({data:{signedUrl:'https://example.invalid/fictitious'}});}})}};
+ const ctx=vm.createContext({window:{open:()=>opened++},document:{getElementById:()=>host},Intl,crypto:require('node:crypto').webcrypto});
+ vm.runInContext(fs.readFileSync('workflow.js','utf8'),ctx);
+ await ctx.window.FEWorkflow.mount(db,'sales');
+ const pending=click();
+ await new Promise(setImmediate);
+ assert.equal(calls,1);
+ actor='staff-b';
+ resolveLink({error:{message:'Error del documento de la sesión anterior'}});
+ await pending;
+ assert.equal(node('[data-workflow-status]').textContent,'');
+ assert.equal(opened,0);
+ await click();
+ assert.equal(calls,1);
+});

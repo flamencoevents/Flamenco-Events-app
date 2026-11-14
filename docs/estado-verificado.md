@@ -1533,3 +1533,13 @@ asociado al evento pero ajeno al contrato queda fuera de la pestaña.
 La regresión se reprodujo antes de la corrección. Pasaron siete pruebas
 en `node --test tests/workflow-ui.test.cjs`.
 Validación con datos ficticios, sin nuevas sesiones ni escritura XLSX.
+
+
+## Sesión al abrir documentos privados · 14 noviembre 2026
+
+El commit f3a99f9 superó las dos ejecuciones 43634058800 y 43634059314.
+El panel comprueba la sesión antes de pedir el enlace temporal y antes de
+mostrar el resultado o el error. Tras un cambio de cuenta, un botón de la
+vista anterior ya no solicita otro enlace. Fallo reproducido con dobles,
+ocho pruebas superadas con `node --test tests/workflow-ui.test.cjs`.
+Sin usuarios, sesiones reales ni cambios en Drive o en el XLSX.

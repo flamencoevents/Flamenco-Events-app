@@ -103,7 +103,17 @@
   host.querySelector('[data-prepare-event]')?.addEventListener('submit',async ev=>{ev.preventDefault();const f=ev.target,b=f.querySelector('button');b.disabled=true;try{const x=await db.rpc('prepare_event_from_quote',{p_terms_id:f.elements.terms_id.value,p_title:f.elements.title.value.trim()});if(x.error)throw x.error;await mount(db,role,id,lang);host.querySelector('[data-workflow-status]').textContent='Evento preparado. Pendiente de contrato, acceso cliente y reserva formal.';}catch(e){status(e.message,true);b.disabled=false;}});
   host.querySelectorAll('[data-preview-pdf]').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;try{const x=await invoke('import-event-document',{operation:'preview',event_id:button.dataset.event,kind:button.dataset.previewPdf});status('PDF de la versión '+x.version+' comprobado ('+x.size_bytes+' bytes). Todavía no se ha incorporado; requiere administración.');}catch(e){status(e.message,true);}finally{button.disabled=false;}}));
   host.querySelectorAll('[data-import-pdf]').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;try{const x=await invoke('import-event-document',{event_id:button.dataset.event,kind:button.dataset.importPdf});await mount(db,role,id,lang);host.querySelector('[data-workflow-status]').textContent=x.message||'Documento privado comprobado.';}catch(e){status(e.message,true);button.disabled=false;}}));
-  host.querySelectorAll('[data-open-pdf]').forEach(button=>button.addEventListener('click',async()=>{const x=await db.storage.from('event-documents').createSignedUrl(button.dataset.openPdf,60);if(x.error){status(x.error.message,true);return;}if(!await stillCurrent())return;window.open(x.data.signedUrl,'_blank','noopener');}));
+  host.querySelectorAll('[data-open-pdf]').forEach(button=>button.addEventListener('click',async()=>{
+   if(!await stillCurrent())return;
+   try{
+    const x=await db.storage.from('event-documents').createSignedUrl(button.dataset.openPdf,60);
+    if(!await stillCurrent())return;
+    if(x.error){status(x.error.message,true);return;}
+    window.open(x.data.signedUrl,'_blank','noopener');
+   }catch{
+    if(await stillCurrent())status('No se pudo abrir el PDF privado.',true);
+   }
+  }));
   host.querySelectorAll('[data-assign-client]').forEach(f=>f.addEventListener('submit',async ev=>{ev.preventDefault();const b=f.querySelector('button');b.disabled=true;try{const x=await db.from('events').update({client_id:f.elements.client_id.value}).eq('id',f.dataset.assignClient).select('id').single();if(x.error)throw x.error;await mount(db,role,id,lang);}catch(e){status(e.message,true);b.disabled=false;}}));
  }
  window.FEWorkflow={mount,quoteHtml,money,catalogHtml,sourceDetailHtml,launchHtml};
