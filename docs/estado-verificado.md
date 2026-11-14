@@ -1499,3 +1499,13 @@ Pasaron cuatro pruebas locales, dos de ellas nuevas con respuestas
 HTTP simuladas. La lectura autenticada real sigue pendiente de una
 conexión autorizada a la instancia aislada. Sin emisión, cambios en
 Dolibarr ni operaciones con CUENTAS 27.
+
+
+## Fecha de evento en el ensayo contractual · 14 noviembre 2026
+
+La conciliación local exige una fecha con dígitos ASCII en formato
+DD/MM/AAAA y distingue una fecha imposible de un formato ambiguo. Se
+reprodujeron la aceptación de un año con dígitos de ancho completo y
+el error genérico para un febrero sin ese día. Pasaron 20 pruebas con
+`python3 -m unittest discover -s tests -p test_accounts_2027_contract.py`.
+Sin nueva prueba remota, sesiones, asignaciones ni acceso al XLSX real.

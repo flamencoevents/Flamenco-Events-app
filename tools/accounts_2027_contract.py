@@ -82,8 +82,11 @@ def prepare(book, envelope, pdf):
     # No inferred equation between total, tax base or reservation: preserve
     # existing modality/rounding/explicit Bizum arrangements without recalculating.
     date_text = fields['fecha_evento']
-    require(isinstance(date_text, str) and re.fullmatch(r'\d{2}/\d{2}/\d{4}', date_text), 'AMBIGUOUS_EVENT_DATE')
-    date = dt.datetime.strptime(date_text, '%d/%m/%Y').date().isoformat()
+    require(isinstance(date_text, str) and re.fullmatch(r'[0-9]{2}/[0-9]{2}/[0-9]{4}', date_text), 'AMBIGUOUS_EVENT_DATE')
+    try:
+        date = dt.datetime.strptime(date_text, '%d/%m/%Y').date().isoformat()
+    except ValueError:
+        raise Blocked('INVALID_EVENT_DATE') from None
     event = envelope['event']
     require(event.get('is_test') is True, 'FICTIONAL_ONLY')
     require(event['quote_number'] == number and type(event['version']) is int and event['version'] == version and

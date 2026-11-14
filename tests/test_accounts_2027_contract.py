@@ -192,6 +192,14 @@ class ContractRehearsalTests(unittest.TestCase):
         self.change_quote(lambda q: q['fields'].update(lugar_evento='=HYPERLINK("x")'))
         self.blocked('FORMULA_LIKE_TEXT')
 
+    def test_invalid_calendar_date_is_reported_before_reconciliation(self):
+        for date_text, reason in (('29/02/2027', 'INVALID_EVENT_DATE'),
+                                  ('12/03/２０２７', 'AMBIGUOUS_EVENT_DATE')):
+            with self.subTest(date_text=date_text):
+                self.data = fixture()
+                self.change_quote(lambda q: q['fields'].update(fecha_evento=date_text))
+                self.blocked(reason)
+
     def test_amounts_are_exact_and_not_recalculated(self):
         for bad in (True, float('nan'), 1060.001, '1060.01'):
             self.data = fixture()
