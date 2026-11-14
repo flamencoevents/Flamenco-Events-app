@@ -1366,3 +1366,14 @@ reproducida antes del cambio. Pasaron las 16 pruebas con
 `node --test tests/accounts-preflight.test.cjs`. Preparado en GitHub,
 pendiente de despliegue de la función. Sin modificar el contrato archivado,
 usuarios, permisos ni el XLSX.
+
+
+## Prueba de navegación del portal · 14 noviembre 2026
+
+La ejecución 43586922060 detectó que el test esperaba redirección
+automática de Administración. El portal vigente muestra el selector de
+departamentos y permite abrir Administración desde allí. Se corrigió
+solo la expectativa. Fallo reproducido, tres roles comprobados con
+`node --test --test-name-pattern='Portal routes' tests/portal.test.cjs`.
+GitHub Pages publicó el commit anterior 354f79f (ejecución 43586921892).
+El despliegue de la función Supabase sigue pendiente.

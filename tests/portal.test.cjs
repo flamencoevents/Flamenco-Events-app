@@ -9,7 +9,11 @@ for(const role of ['admin','sales','client'])test('Portal routes '+role+' correc
  vm.runInContext(source,context);
  context.mockDb={auth:{getUser:async()=>({data:{user:{id:'test-user',email:'test@example.invalid'}}})},from:table=>{const q={select:()=>q,eq:()=>q,order:()=>q,limit:()=>q,maybeSingle:async()=>({data:{role}}),then:resolve=>Promise.resolve({data:[]}).then(resolve)};return q}};
  vm.runInContext('db=mockDb',context);await vm.runInContext('refresh()',context);
- assert.deepEqual(destinations,role==='admin'?['./admin.html']:role==='sales'?['./staff.html']:[]);
+ assert.deepEqual(destinations,role==='sales'?['./staff.html']:[]);
+ if(role==='admin'){
+  assert.match(node('app').innerHTML,/Departamentos de gestión/);
+  assert.match(node('app').innerHTML,/\.\/admin\.html/);
+ }
  if(role==='client')assert.match(node('app').innerHTML,/Aún no tienes eventos asignados/);
 });
 test('All embedded scripts parse and public assets have no private keys',()=>{
