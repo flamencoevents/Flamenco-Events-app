@@ -9,7 +9,10 @@ const adminPages=['admin.html','marketing.html','staff.html','rrhh.html'];
 const salesPages=['staff.html','marketing.html','rrhh.html'];
 const subpages={
  'marketing.html':[
-  ['marketing.html','Plan de Marketing'],
+  ['marketing.html#prospeccion','Prospección'],
+  ['marketing.html#sectores','Sectores'],
+  ['marketing.html#campanas','Campañas'],
+  ['marketing.html#plan-marketing','Plan y tareas'],
   ['marketing-venues.html','Espacios prioritarios'],
   ['marketing-planners.html','Wedding planners']
  ],
@@ -38,7 +41,7 @@ function build(role){
  if(filtered.length>1){const sub=document.createElement('div');sub.className='fe-nav-sub';sub.setAttribute('aria-label','Secciones de '+names[section]);
  for(const [href,label] of filtered){
   const u=new URL(href,location.href);
-  const active=u.pathname.split('/').pop()===pathname;
+  const active=u.pathname.split('/').pop()===pathname&&(u.hash?u.hash===location.hash:!location.hash);
   sub.append(link(href,label,active));
  }content.append(sub);}
  nav.append(content);
