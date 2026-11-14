@@ -1250,3 +1250,15 @@ hipervínculos y combinaciones. Los dos casos sintéticos fuera de límite,
 XFE3 y A1048577, eran aceptados antes. Pasaron 18 pruebas locales con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027`.
 La prueba utiliza XML ficticio. Sin escritura remota ni acceso al libro real.
+
+
+GitHub Actions confirmó las comprobaciones del commit 9910df7 en la
+[ejecución 43543209372](https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/43543209372).
+
+## Rangos de fórmulas XLSX · 14 noviembre 2026
+
+La lectura rechaza rangos de fórmula que superan los límites de Excel,
+incluidos los anclados fuera de A:Q. Los dos casos sintéticos fallaron
+antes del cambio y pasaron después. Pasaron 19 pruebas locales con
+`python3 -m unittest discover -s tests -p test_accounts_2027.py`.
+Ensayo con XLSX ficticio en modo prueba, sin escritura remota.

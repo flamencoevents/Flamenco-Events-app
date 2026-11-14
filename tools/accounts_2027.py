@@ -143,8 +143,7 @@ def read_book(path):
                 value = ''.join(inline.itertext())
             if formula is not None and formula.get('ref') is not None:
                 formula_ref = formula.get('ref')
-                require(re.fullmatch(r'[A-Z]{1,3}[1-9][0-9]*(?::[A-Z]{1,3}[1-9][0-9]*)?', formula_ref),
-                        'INVALID_FORMULA_RANGE')
+                range_rows(formula_ref, 'INVALID_FORMULA_RANGE')
                 formula_ranges.append(formula_ref)
             cells[ref] = {'value': value, 'formula': formula is not None,
                                  'kind': c.get('t', 'n') if inline is None else 'inlineStr'}
@@ -185,11 +184,15 @@ def inspect(book):
             'hyperlink_count': len(book['links']), 'objects_require_review': book['objects']}
 
 
-def intersects_row(ref, row):
-    require(isinstance(ref, str), 'INVALID_WORKSHEET_RANGE')
+def range_rows(ref, error):
+    require(isinstance(ref, str), error)
     parts = ref.split(':')
-    require(len(parts) <= 2, 'INVALID_WORKSHEET_RANGE')
-    bounds = [int(cell_coordinates(part, 'INVALID_WORKSHEET_RANGE')) for part in parts]
+    require(len(parts) <= 2, error)
+    return [int(cell_coordinates(part, error)) for part in parts]
+
+
+def intersects_row(ref, row):
+    bounds = range_rows(ref, 'INVALID_WORKSHEET_RANGE')
     return min(bounds) <= row <= max(bounds)
 
 

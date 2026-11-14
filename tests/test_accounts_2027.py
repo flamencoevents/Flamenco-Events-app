@@ -153,6 +153,26 @@ class PlannerTests(unittest.TestCase):
 
 
 class ReaderTests(unittest.TestCase):
+    def test_formula_ranges_respect_xlsx_bounds_during_read(self):
+        ns = mod.NS['m']
+        rel_ns = mod.REL[1:].split('}')[0]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'fixture.xlsx'
+            for ref in ('V9:XFE11', 'V9:V1048577'):
+                with self.subTest(ref=ref):
+                    with zipfile.ZipFile(path, 'w') as archive:
+                        archive.writestr('xl/workbook.xml', f'<workbook xmlns="{ns}" xmlns:r="{rel_ns}"><sheets><sheet name="{mod.SHEET}" r:id="rId1"/></sheets></workbook>')
+                        archive.writestr('xl/_rels/workbook.xml.rels', '<Relationships><Relationship Id="rId1" Target="worksheets/sheet1.xml"/></Relationships>')
+                        headers = ''.join(
+                            f'<c r="{chr(65+i)}3" t="inlineStr"><is><t>{escape(header)}</t></is></c>'
+                            for i, header in enumerate(mod.HEADERS))
+                        archive.writestr('xl/worksheets/sheet1.xml',
+                                         f'<worksheet xmlns="{ns}"><sheetData><row r="3">{headers}</row>'
+                                         f'<row r="9"><c r="V9"><f t="array" ref="{ref}">1</f></c></row>'
+                                         '</sheetData></worksheet>')
+                    with self.assertRaisesRegex(mod.Blocked, '^INVALID_FORMULA_RANGE$'):
+                        mod.read_book(path)
+
     def test_cell_coordinates_respect_xlsx_bounds(self):
         for ref, row in (('XFE3', '3'), ('A1048577', '1048577')):
             with self.subTest(ref=ref):
