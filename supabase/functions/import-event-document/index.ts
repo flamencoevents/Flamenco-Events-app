@@ -23,7 +23,8 @@ Deno.serve(route(async request=>{
   const contract=await db.from('event_contracts').select('id,event_id,quotation_number,document_id,state').eq('event_id',ev.data.id).single();
   if(contract.error||!contract.data?.document_id||contract.data.quotation_number!==choice.quote_number)throw new Problem(409,'Falta el vínculo contractual exacto del evento');
   const doc=await db.from('event_documents').select('id,event_id,kind,version,source_reference,sha256,storage_path').eq('id',contract.data.document_id).single();
-  if(doc.error||doc.data?.event_id!==ev.data.id||doc.data.kind!=='contract'||doc.data.version!==choice.version||doc.data.source_reference!==reference||!String(doc.data.sha256||'').match(/^[a-f0-9]{64}$/))throw new Problem(409,'El PDF privado no conserva versión, origen y huella comprobables');
+  if(doc.error||doc.data?.event_id!==ev.data.id||doc.data.kind!=='contract'||doc.data.version!==choice.version||doc.data.source_reference!==reference)throw new Problem(409,'El PDF privado no conserva versión y origen comprobables');
+  if(!/^[a-f0-9]{64}$/.test(doc.data.sha256??''))throw new Problem(409,'El PDF privado carece de una huella SHA-256 válida. Requiere revisión administrativa');
   const storagePrefix=ev.data.id+'/contract-v'+choice.version+'-';
   if(typeof doc.data.storage_path!=='string'||!doc.data.storage_path.startsWith(storagePrefix)||!/^[a-f0-9]{64}\.pdf$/.test(doc.data.storage_path.slice(storagePrefix.length)))throw new Problem(409,'La ruta privada no corresponde al contrato y revisión del evento');
   const current=quotation(await scriptRead('preview',choice),choice);

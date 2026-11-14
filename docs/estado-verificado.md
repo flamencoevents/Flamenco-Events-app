@@ -1355,3 +1355,14 @@ metadata->>'size' con 2206 y bucket no público. El tamaño es un metadato;
 el cotejo de bytes sigue pendiente. El preflight requiere una huella
 almacenada y el ensayo archivado carece de ella. Sin descargas desde el
 bucket, cambios de permisos, sesiones ni escrituras en CUENTAS 27.
+
+
+## Diagnóstico de huella documental · 14 noviembre 2026
+
+La comprobación previa a conciliar informa de revisión administrativa
+cuando falta una huella SHA-256 válida. Conserva la respuesta 409 antes
+de consultar Apps Script o descargar del bucket. Regresión ficticia
+reproducida antes del cambio. Pasaron las 16 pruebas con
+`node --test tests/accounts-preflight.test.cjs`. Preparado en GitHub,
+pendiente de despliegue de la función. Sin modificar el contrato archivado,
+usuarios, permisos ni el XLSX.

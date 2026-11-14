@@ -120,3 +120,14 @@ test('Failure reading the private blob is sanitized and never returns accounting
  assert.ok(!raw.includes('PRIVATE_STORAGE_ERROR'));assert.ok(!raw.includes('secret path'));
  assert.ok(!raw.includes('accounts_source_checked'));unchanged(e);
 });
+
+test('Archived contract without a SHA-256 gives an actionable reconciliation error',async()=>{
+ const e=fixture();
+ e.tables.event_documents[0].sha256=null;
+ const r=await ask(e);
+ assert.equal(r.status,409);
+ assert.match((await r.json()).error,/SHA-256 válida.*revisión administrativa/);
+ assert.equal(e.downloads.length,0);
+ assert.equal(e.network.length,0);
+ unchanged(e);
+});
