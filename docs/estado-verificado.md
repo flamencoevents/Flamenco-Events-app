@@ -1287,3 +1287,17 @@ Pasaron 19 pruebas con
 `python3 -m unittest discover -s tests -p test_accounts_2027_contract.py`.
 La validación es de formato. El origen y los permisos de Drive siguen pendientes
 de comprobación remota. Modo prueba, sin operaciones en Drive ni en el XLSX real.
+
+
+## Permisos del PDF técnico de prueba · 14 noviembre 2026
+
+Lectura autenticada de metadatos de Drive para el PDF técnico ficticio
+documentado en la integración de Apps Script. Drive devolvió
+application/pdf, 2663 bytes, shared=false y un único permiso user/owner.
+Para reproducir, consultar en Drive los metadatos mimeType, size, shared
+y permissions(type,role) del PDF técnico de la revisión de prueba v1.
+La lectura no descargó el PDF ni comparó su huella con la ficha económica.
+No hubo cambios en Drive, cuentas, sesiones ni permisos.
+
+El commit 2c68562 superó la [comprobación sin escrituras](https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/43558138052)
+y el [despliegue de Pages](https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/43558137024).
