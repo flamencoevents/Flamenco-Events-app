@@ -1567,3 +1567,14 @@ Pasaron 21 pruebas con
 
 GitHub confirmó las pruebas y Pages del commit anterior d5885fb
 (43644799542 y 43644799263). Sin nuevas sesiones, envíos o acceso al libro real.
+
+
+## Huella previa a la lectura del XLSX · 15 noviembre 2026
+
+El ensayo por consola coteja el SHA-256 del PDF y valida la revisión y
+la ficha ficticia antes de abrir el libro. Una prueba con bytes de PDF
+distintos y un XLSX ausente devuelve PDF_DIGEST_MISMATCH. Reproducido
+el fallo anterior y superadas 22 pruebas con
+`python3 -m unittest discover -s tests -p test_accounts_2027_contract.py`.
+GitHub confirmó CI y Pages de 6c5f135 (43650003413 y 43650002929).
+Ensayo local sin sesiones, envíos ni lectura o escritura del libro real.

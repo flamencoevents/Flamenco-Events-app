@@ -228,6 +228,18 @@ class ContractRehearsalTests(unittest.TestCase):
         self.book['markers'] = [(9, 4)]
         self.blocked('MONTH_MISSING_OR_AMBIGUOUS')
 
+    def test_cli_rejects_wrong_pdf_before_opening_workbook(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            envelope, pdf = root / 'envelope.json', root / 'fixture.pdf'
+            envelope.write_text(json.dumps(fixture()), encoding='utf-8')
+            pdf.write_bytes(PDF + b'different fixture')
+            run = subprocess.run(
+                [sys.executable, str(Path(bridge.__file__)), str(root / 'absent.xlsx'),
+                 str(envelope), str(pdf)], capture_output=True, text=True)
+            self.assertEqual(run.returncode, 2)
+            self.assertEqual(json.loads(run.stdout)['reason'], 'PDF_DIGEST_MISMATCH')
+
     def test_cli_rejects_oversized_inputs_before_opening_the_workbook(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)
