@@ -1435,3 +1435,27 @@ pruebas de verificación y 19 de empaquetado con
 `python3 -m unittest discover -s tests -p test_accounts_2027_verify.py`
 y `python3 -m unittest discover -s tests -p test_accounts_2027_package.py`.
 Validación local en modo prueba, sin operaciones sobre el XLSX real.
+
+
+## Primer ensayo de facturas Dolibarr · 14 noviembre 2026
+
+El adaptador local `tools/accounts_2027_dolibarr.py` recibe una factura
+estándar ficticia en euros y un ensayo contractual. Exige que `ref_ext`
+coincida con la clave exacta de presupuesto y revisión. Conserva base,
+IVA y total de factura en céntimos y muestra por separado la previsión.
+Los campos `is_test` y `currency` pertenecen a la entrada normalizada
+del ensayo. La versión y configuración de la instancia real están pendientes.
+La ficha resultante queda pendiente de revisión, sin inferir cobro.
+
+Reproducción: `python3 -m unittest discover -s tests -p test_accounts_2027_dolibarr.py -v`.
+Dos pruebas nuevas superadas. Una recorre presupuesto, contrato y PDF
+ficticios, propuesta mensual, empaquetado y auditoría de una copia XLSX,
+y cruce con la factura. La otra comprueba rechazos por revisión, modo,
+moneda, tipo e importe. El ensayo conserva los bytes del origen ficticio
+y limpia los archivos al salir mediante un directorio temporal.
+
+Preparado en GitHub. Sin conexión a Dolibarr, despliegue de la integración,
+emisión de facturas ni movimientos. El siguiente paso es contrastar la
+respuesta de lectura de la instancia autorizada en modo prueba.
+Referencia del formato base:
+https://github.com/Dolibarr/dolibarr/blob/develop/htdocs/compta/facture/class/api_invoices.class.php
