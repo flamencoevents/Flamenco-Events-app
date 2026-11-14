@@ -1424,3 +1424,14 @@ Pasaron 20 pruebas con
 `python3 -m unittest discover -s tests -p test_accounts_2027.py`.
 El commit anterior 65fcbc9 superó CI (43606935365).
 Validación local en modo prueba, sin operaciones sobre el XLSX real.
+
+
+## Texto de extensiones XML del XLSX · 14 noviembre 2026
+
+El verificador detecta cambios en texto significativo después de nodos
+hijos de XML protegido. Antes omitía ese texto. La regresión ficticia
+reprodujo una copia aprobada indebidamente. Tras el cambio pasaron 18
+pruebas de verificación y 19 de empaquetado con
+`python3 -m unittest discover -s tests -p test_accounts_2027_verify.py`
+y `python3 -m unittest discover -s tests -p test_accounts_2027_package.py`.
+Validación local en modo prueba, sin operaciones sobre el XLSX real.

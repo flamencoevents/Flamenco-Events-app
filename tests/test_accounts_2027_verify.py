@@ -67,6 +67,13 @@ class PreservationTests(unittest.TestCase):
         self.candidate['sheets']['Other']['cells']['H3'] = record(right)
         self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
 
+    def test_extension_mixed_content_is_preserved(self):
+        before = audit.ET.fromstring('<ext>Inicio<part/>original</ext>')
+        after = audit.ET.fromstring('<ext>Inicio<part/>modificado</ext>')
+        self.source['protected']['extension'] = audit.xml_signature(before)
+        self.candidate['protected']['extension'] = audit.xml_signature(after)
+        self.assertIn('PROTECTED_PARTS_CHANGED', self.reasons())
+
     def test_row_extension_change_is_visible_in_snapshot(self):
         def write(path, extension):
             ns = audit.NS['m']

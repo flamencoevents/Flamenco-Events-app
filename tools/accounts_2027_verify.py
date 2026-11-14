@@ -21,7 +21,8 @@ def xml_signature(element):
     # Namespace prefixes and indentation are irrelevant; values are not trimmed.
     return (element.tag, tuple(sorted(element.attrib.items())),
             element.text if element.text and element.text.strip() else None,
-            tuple(xml_signature(child) for child in element))
+            tuple((xml_signature(child), child.tail if child.tail and child.tail.strip() else None)
+                  for child in element))
 
 
 def cell_record(cell, strings):
