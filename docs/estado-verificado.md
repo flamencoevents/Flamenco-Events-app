@@ -1342,3 +1342,16 @@ docs/integracion-app.md. Unir event_contracts y event_documents por document_id
 y event_id, filtrar por ambos identificadores y kind='contract', y devolver
 solo count(*) y sha256 IS NULL. Sin cambios en usuarios, almacenamiento,
 permisos ni CUENTAS 27. Sin despliegue funcional.
+
+
+## Almacenamiento web del contrato técnico archivado · 14 noviembre 2026
+
+La consulta de solo lectura confirmó que el documento ficticio enlaza a un
+objeto existente en el bucket privado event-documents, con tamaño registrado
+de 2206 bytes, igual al origen Drive. Para reproducir, partir de la consulta
+del apartado anterior, unir storage.objects por storage_path y bucket_id, y
+storage.buckets por id. Devolver solo existencia, coincidencia de
+metadata->>'size' con 2206 y bucket no público. El tamaño es un metadato;
+el cotejo de bytes sigue pendiente. El preflight requiere una huella
+almacenada y el ensayo archivado carece de ella. Sin descargas desde el
+bucket, cambios de permisos, sesiones ni escrituras en CUENTAS 27.
