@@ -156,6 +156,8 @@ class ReaderTests(unittest.TestCase):
     def test_invalid_or_duplicate_explicit_row_is_rejected(self):
         for rows, reason in (
             ('<row r="1048577"/>', 'INVALID_ROW_REFERENCE'),
+            ('<row hidden="1"><c r="C11"/></row>', 'MISSING_HIDDEN_ROW_REFERENCE'),
+            ('<row hidden="true"/>', 'MISSING_HIDDEN_ROW_REFERENCE'),
             ('<row r="11"><c r="C11"/></row><row r="11"><c r="D11"/></row>',
              'DUPLICATE_WORKSHEET_ROW'),
         ):

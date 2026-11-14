@@ -1412,3 +1412,15 @@ Dos casos ficticios antes aceptados se rechazan. Pasaron 20 pruebas con
 `python3 -m unittest discover -s tests -p test_accounts_2027.py`.
 El commit anterior 1b14b72 superó GitHub Actions (43601568498).
 Ensayo local en modo prueba, sin lectura ni escritura del libro real.
+
+
+## Filas ocultas sin número explícito · 14 noviembre 2026
+
+Una fila oculta sin atributo r bloquea la lectura con
+MISSING_HIDDEN_ROW_REFERENCE. Antes pasaba la validación de filas y
+el lector fallaba después al intentar convertir un número ausente.
+Dos casos ficticios, con y sin celdas, reproducen el problema.
+Pasaron 20 pruebas con
+`python3 -m unittest discover -s tests -p test_accounts_2027.py`.
+El commit anterior 65fcbc9 superó CI (43606935365).
+Validación local en modo prueba, sin operaciones sobre el XLSX real.

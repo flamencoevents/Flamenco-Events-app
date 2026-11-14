@@ -102,6 +102,8 @@ def worksheet_cells(root):
     row_numbers = set()
     for row in root.findall('m:sheetData/m:row', NS):
         row_number = row.get('r')
+        require(row_number is not None or row.get('hidden') not in ('1', 'true'),
+                'MISSING_HIDDEN_ROW_REFERENCE')
         if row_number is not None:
             cell_coordinates('A' + row_number, 'INVALID_ROW_REFERENCE')
             require(row_number not in row_numbers, 'DUPLICATE_WORKSHEET_ROW')
