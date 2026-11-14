@@ -1313,3 +1313,17 @@ autenticado y comparar `hashlib.sha256(bytes_pdf).hexdigest()` con la
 huella documentada. La comprobación se realizó en memoria, sin conservar
 una copia ni publicar un enlace. La coincidencia con la ficha económica
 activa y la escritura remota sobre copia aislada siguen pendientes.
+
+
+## Origen Drive del contrato técnico archivado · 14 noviembre 2026
+
+Verificado por lectura autenticada el PDF contractual ficticio de 2206 bytes
+del ensayo del 5 de noviembre. Es un archivo distinto del PDF de presupuesto
+de 2663 bytes. Drive devolvió application/pdf, shared=false y un único permiso
+user/owner. La descarga en memoria conservó la cabecera %PDF- y coincidió por
+SHA-256 con la huella de la sección «Contrato técnico» de docs/integracion-app.md
+de Apps Script. Reproducción: consultar mimeType,size,shared,permissions(type,role)
+y comparar la descarga de esa referencia técnica con la huella allí registrada.
+La comparación cubre el origen del ensayo archivado y el registro histórico de
+la importación. Sigue pendiente el cotejo con la ficha económica activa.
+Sin cambios de permisos, usuarios ni escritura en CUENTAS 27.
