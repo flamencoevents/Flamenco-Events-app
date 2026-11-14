@@ -88,15 +88,23 @@ def cell_payload(cell):
     return value, inline, formulas[0] if formulas else None
 
 
+def cell_coordinates(ref, error):
+    match = re.fullmatch(r'([A-Z]{1,3})([1-9][0-9]*)', ref)
+    require(match is not None, error)
+    column, digits = match.groups()
+    require((len(column), column) <= (3, 'XFD') and
+            (len(digits), digits) <= (7, '1048576'), error)
+    return digits
+
+
 def worksheet_cells(root):
     seen = set()
     for row in root.findall('m:sheetData/m:row', NS):
         for cell in row.findall('m:c', NS):
             ref = cell.get('r')
             require(bool(ref), 'MISSING_CELL_REFERENCE')
-            match = re.fullmatch(r'[A-Z]{1,3}([1-9][0-9]*)', ref)
-            require(match is not None, 'INVALID_CELL_REFERENCE')
-            require(row.get('r') in (None, match[1]), 'CELL_ROW_MISMATCH')
+            digits = cell_coordinates(ref, 'INVALID_CELL_REFERENCE')
+            require(row.get('r') in (None, digits), 'CELL_ROW_MISMATCH')
             require(ref not in seen, 'DUPLICATE_CELL')
             seen.add(ref)
             yield ref, cell
@@ -178,16 +186,10 @@ def inspect(book):
 
 
 def intersects_row(ref, row):
-    require(isinstance(ref, str) and
-            re.fullmatch(r'[A-Z]{1,3}[1-9][0-9]*(?::[A-Z]{1,3}[1-9][0-9]*)?', ref),
-            'INVALID_WORKSHEET_RANGE')
+    require(isinstance(ref, str), 'INVALID_WORKSHEET_RANGE')
     parts = ref.split(':')
-    bounds = []
-    for part in parts:
-        column, digits = re.fullmatch(r'([A-Z]+)([0-9]+)', part).groups()
-        require((len(column), column) <= (3, 'XFD') and
-                (len(digits), digits) <= (7, '1048576'), 'INVALID_WORKSHEET_RANGE')
-        bounds.append(int(digits))
+    require(len(parts) <= 2, 'INVALID_WORKSHEET_RANGE')
+    bounds = [int(cell_coordinates(part, 'INVALID_WORKSHEET_RANGE')) for part in parts]
     return min(bounds) <= row <= max(bounds)
 
 

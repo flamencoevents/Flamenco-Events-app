@@ -1241,3 +1241,12 @@ El preparador bloquea rangos que superan la columna XFD o la fila
 permitían proponer una fila. Pasaron 17 pruebas con
 `PYTHONPATH=tests python3 -m unittest test_accounts_2027`.
 Verificado localmente en modo prueba, sin despliegue ni acceso al XLSX original.
+
+
+## Coordenadas de celdas XLSX · 14 noviembre 2026
+
+El lector aplica a las celdas el mismo límite XLSX que a los rangos de
+hipervínculos y combinaciones. Los dos casos sintéticos fuera de límite,
+XFE3 y A1048577, eran aceptados antes. Pasaron 18 pruebas locales con
+`PYTHONPATH=tests python3 -m unittest test_accounts_2027`.
+La prueba utiliza XML ficticio. Sin escritura remota ni acceso al libro real.

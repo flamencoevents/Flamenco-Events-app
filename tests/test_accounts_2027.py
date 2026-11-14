@@ -153,6 +153,15 @@ class PlannerTests(unittest.TestCase):
 
 
 class ReaderTests(unittest.TestCase):
+    def test_cell_coordinates_respect_xlsx_bounds(self):
+        for ref, row in (('XFE3', '3'), ('A1048577', '1048577')):
+            with self.subTest(ref=ref):
+                root = mod.ET.fromstring(
+                    f'<worksheet xmlns="{mod.NS["m"]}"><sheetData>'
+                    f'<row r="{row}"><c r="{ref}"/></row></sheetData></worksheet>')
+                with self.assertRaisesRegex(mod.Blocked, '^INVALID_CELL_REFERENCE$'):
+                    list(mod.worksheet_cells(root))
+
     def test_shared_string_index_must_point_to_existing_entry(self):
         ns = mod.NS['m']
         rel_ns = mod.REL[1:].split('}')[0]
