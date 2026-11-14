@@ -91,3 +91,26 @@ test('Private PDF actions discard errors after a session change and do not reque
  await click();
  assert.equal(calls,1);
 });
+
+test('A quotation preview arriving after a session change never renders economic details',async()=>{
+ let actor='staff-a',resolvePreview,submit;
+ const nodes=new Map();
+ const node=key=>{
+  if(!nodes.has(key))nodes.set(key,{dataset:{},innerHTML:'',textContent:'',querySelector:node,
+   querySelectorAll:()=>[],addEventListener:(type,fn)=>{if(key==='[data-bridge-select]'&&type==='submit')submit=fn;}});
+  return nodes.get(key);
+ };
+ const db={auth:{getUser:async()=>({data:{user:{id:actor}}})},from(){
+  const q={select:()=>q,order:()=>q,then:f=>Promise.resolve({data:[]}).then(f)};return q;
+ },functions:{invoke:()=>new Promise(r=>resolvePreview=r)}};
+ const ctx=vm.createContext({window:{},document:{getElementById:()=>node('host')},Intl,
+  FormData:function(){return [['version','2']]},crypto:require('node:crypto').webcrypto});
+ vm.runInContext(fs.readFileSync('workflow.js','utf8'),ctx);
+ await ctx.window.FEWorkflow.mount(db,'sales');
+ const pending=submit({preventDefault(){},target:node('[data-bridge-select]')});
+ await new Promise(setImmediate);
+ actor='staff-b';
+ resolvePreview({data:{payload:{quote_number:'FICTITIOUS-PREVIOUS',version:2,total_payable_eur:10}},error:null});
+ await pending;
+ assert.equal(node('[data-bridge-review]').innerHTML,'');
+});

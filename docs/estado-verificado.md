@@ -1543,3 +1543,14 @@ mostrar el resultado o el error. Tras un cambio de cuenta, un botón de la
 vista anterior ya no solicita otro enlace. Fallo reproducido con dobles,
 ocho pruebas superadas con `node --test tests/workflow-ui.test.cjs`.
 Sin usuarios, sesiones reales ni cambios en Drive o en el XLSX.
+
+
+## Sesión durante la revisión de presupuestos · 14 noviembre 2026
+
+El commit 4461c7d superó las pruebas y Pages (43639575991 y 43639575508).
+Una respuesta de revisión recibida después de cambiar de cuenta podía
+mostrar los datos de la sesión anterior. El panel comprueba la sesión
+al solicitar la revisión, mostrarla y autorizarla. La regresión se
+reprodujo con datos ficticios y pasaron nueve pruebas mediante
+`node --test tests/workflow-ui.test.cjs`. Sin crear sesiones remotas ni
+escribir en Drive o en CUENTAS 27.
