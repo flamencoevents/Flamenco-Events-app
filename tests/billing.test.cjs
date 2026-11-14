@@ -61,3 +61,9 @@ test('Import updates the event panel and clearing discards a pending file read',
  assert.equal(host.hidden,true);
  assert.doesNotMatch(eventPanel.innerHTML,/TEST-42/);
 });
+
+test('Administration puts the menu first and groups calendar and sign-out above the tabs',()=>{
+ const html=fs.readFileSync('admin.html','utf8');
+ assert.match(html,/<body><nav id="fe-departments"/);
+ assert.match(html,/<div class="fe-admin-actions"><button[^>]*data-fe-calendar-button[^>]*>[^<]*<\/button><button type="button" id="logout">Salir<\/button><\/div><nav aria-label="Áreas de gestión"/);
+});
