@@ -29,16 +29,63 @@ button:hover{background:#79542d!important}
 .fe-departments a:not([aria-current]){background:#fff!important;color:#65482c!important}
 .fe-departments a[aria-current]{background:#74532f!important;color:#fff!important}
 #gate{color:#665d53}
-</style><link rel="stylesheet" href="./departments-nav.css?v=20261114-unified"><style id="fe-public-brand-style">.fe-public-brand{display:inline-block;text-decoration:none;color:inherit}.fe-public-brand strong{color:#8a6438}.fe-public-brand:hover strong{text-decoration:underline;text-underline-offset:4px}.fe-public-brand:focus-visible{outline:2px solid #936a3b;outline-offset:4px;border-radius:3px}</style></head>
+</style><link rel="stylesheet" href="./departments-nav.css?v=20261114-sticky-public"><style id="fe-public-brand-style">.fe-public-brand{display:inline-block;text-decoration:none;color:inherit}.fe-public-brand strong{color:#8a6438}.fe-public-brand:hover strong{text-decoration:underline;text-underline-offset:4px}.fe-public-brand:focus-visible{outline:2px solid #936a3b;outline-offset:4px;border-radius:3px}</style><style id="fe-marketing-overview-style">
+.fe-mkt-quicknav{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0 24px}
+.fe-mkt-quicknav a{border:1px solid #e4d8c8;color:#755331;text-decoration:none;background:#fbf8f4;border-radius:9px;padding:10px 14px;font-weight:650}
+.fe-mkt-section{margin:27px 0 34px;scroll-margin-top:135px}
+.fe-mkt-section h2{margin:0 0 13px}
+.fe-mkt-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.fe-mkt-card{min-width:0;display:flex;flex-direction:column;gap:8px}
+.fe-mkt-card strong{font-size:23px;color:#6d4d2d}
+.fe-mkt-card h3{font-size:17px;margin:0}
+.fe-mkt-card p{margin:0 0 7px;line-height:1.5}
+.fe-mkt-card a{margin-top:auto;display:inline-block;padding:8px 0;font-weight:650}
+.fe-mkt-kicker{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#755d42;font-weight:700}
+.fe-mkt-stages{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.fe-mkt-stages span{background:#f3eee7;border:1px solid #e2d9cb;border-radius:20px;padding:8px 11px;font-size:12px}
+@media(max-width:620px){.fe-mkt-cards{grid-template-columns:1fr}.fe-mkt-section{scroll-margin-top:85px}.fe-mkt-quicknav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.fe-mkt-quicknav a{text-align:center}}
+</style></head>
 <body><header><div><a class="fe-public-brand" href="https://www.flamencoevents.net/" target="_blank" rel="noopener noreferrer" aria-label="Abrir la web pública de Flamenco Events" title="Ir a flamencoevents.net"><strong>Flamenco Events</strong></a><div class="muted small">Departamento de Marketing</div></div><nav><a href="./portal.html">Espacio de acceso</a> <button id="logout" class="hidden">Salir</button></nav></header><nav id="fe-departments" class="fe-departments" aria-label="Navegación entre departamentos" hidden></nav>
 <main><div id="gate" role="status">Comprobando acceso de administrador…</div><section id="workspace" class="hidden">
-<h1>Marketing</h1><section class="card" id="prospection-hub" aria-label="Prospección de clientes potenciales"><h2>Prospección y desarrollo de negocio</h2><p>Investigar establecimientos, agencias, hoteles para eventos exclusivos y marcas de prestigio; verificar fuentes y cualificar prospectos antes de traspasarlos a Comercial.</p><p><a href="./desarrollo-comercial.html?tab=venues">Gestionar directorios y candidatos</a> · <a href="./directorio-espana.html">Bodas España</a> · <a href="./directorio-hosteleria-espana.html">Hostelería premium</a></p><p class="muted small">Las llamadas, negociaciones, propuestas y cierres pertenecen al departamento Comercial. No se envían campañas automáticamente.</p></section><h2>Plan de marketing</h2><p class="muted">Plan inicial registrado el 13 de noviembre de 2026. Las ocho tareas están aprobadas como trabajo planificado, pero ninguna consta como ejecutada.</p>
+<h1>Marketing · Panel general</h1>
+<p class="muted">Marketing reúne investigación de mercado, prospección, preparación de campañas y planificación. Las llamadas, propuestas, negociación y acuerdos se gestionan exclusivamente en Comercial.</p>
+<div class="fe-mkt-quicknav" aria-label="Secciones de Marketing">
+ <a href="#prospeccion">Prospección</a><a href="#sectores">Sectores</a><a href="#campanas">Campañas</a><a href="#plan-marketing">Plan y tareas</a>
+</div>
+<section id="prospeccion" class="fe-mkt-section" aria-labelledby="fe-mkt-pros-title">
+ <h2 id="fe-mkt-pros-title">Prospección y desarrollo de negocio</h2>
+ <p class="muted">Directorio de clientes potenciales para eventos exclusivos. Los listados publicados son material de investigación, no contactos cualificados ni campañas autorizadas.</p>
+ <div class="fe-mkt-cards">
+  <article class="card fe-mkt-card"><span class="fe-mkt-kicker">Bodas y eventos</span><strong>1.697 espacios</strong><p>Primera extracción nacional organizada por las 50 provincias y Ceuta y Melilla.</p><a href="./directorio-espana.html">Explorar establecimientos y exportar CSV</a></article>
+  <article class="card fe-mkt-card"><span class="fe-mkt-kicker">Hostelería de alta gama</span><strong>51 sedes potenciales</strong><p>Hoteles donde buscar bodas de destino, eventos corporativos, galas y celebraciones puntuales, no programación musical habitual.</p><a href="./directorio-hosteleria-espana.html">Explorar hoteles por provincia</a></article>
+  <article class="card fe-mkt-card"><span class="fe-mkt-kicker">Selección territorial</span><strong>50 espacios prioritarios</strong><p>Seguimiento del listado de establecimientos para bodas de Andalucía.</p><a href="./marketing-venues.html">Abrir selección de espacios</a></article>
+  <article class="card fe-mkt-card"><span class="fe-mkt-kicker">Organizadores</span><strong>50 organizadores</strong><p>Selección de wedding planners y agencias de eventos de Andalucía.</p><a href="./marketing-planners.html">Abrir organizadores y agencias</a></article>
+ </div>
+</section>
+<section id="sectores" class="fe-mkt-section" aria-labelledby="fe-mkt-sec-title">
+ <h2 id="fe-mkt-sec-title">Sectores y criterio comercial</h2>
+ <div class="fe-mkt-cards">
+  <article class="card fe-mkt-card"><h3>Bodas exclusivas</h3><p>Fincas, venues y wedding planners; Suite Flamenca, Son del Alma y actuaciones a medida.</p></article>
+  <article class="card fe-mkt-card"><h3>Eventos corporativos</h3><p>Agencias MICE, incentivos, congresos y eventos privados. Buscar al organizador y decisor artístico.</p></article>
+  <article class="card fe-mkt-card"><h3>Hostelería premium</h3><p>El hotel es sede del evento: identificar a la empresa o agencia que contrata, no ofrecer actuaciones semanales.</p></article>
+  <article class="card fe-mkt-card"><h3>Moda, joyería y marcas</h3><p>Desfiles, lanzamientos, presentaciones de colección y eventos VIP. Directorio específico en preparación.</p></article>
+ </div>
+</section>
+<section id="campanas" class="fe-mkt-section" aria-labelledby="fe-mkt-camp-title">
+ <h2 id="fe-mkt-camp-title">Campañas y traspaso a Comercial</h2>
+ <div class="fe-mkt-stages" aria-label="Flujo de trabajo">
+  <span>Investigación</span><span>Verificación</span><span>Cualificación</span><span>Validación administrativa</span><span>Traspaso a Comercial</span>
+ </div>
+ <div class="note"><b>En preparación, sin envíos.</b> El registro interno de candidatos, la cualificación y el traspaso automático a la bandeja Comercial siguen en pruebas. Las bases públicas no se han importado a Supabase y no hay campañas activadas.</div>
+</section>
+<section id="plan-marketing" class="fe-mkt-section" aria-labelledby="fe-mkt-plan-title">
+<h2 id="fe-mkt-plan-title">Plan de marketing y tareas</h2><p class="muted">Plan inicial registrado el 13 de noviembre de 2026. Las ocho tareas están aprobadas como trabajo planificado, pero ninguna consta como ejecutada.</p>
 <div class="stats"><div class="card stat"><b>8</b><span>Tareas planificadas</span></div><div class="card stat"><b>5</b><span>Prioridad alta</span></div><div class="card stat"><b>3</b><span>Prioridad media</span></div><div class="card stat"><b id="completed-count">0</b><span>Tareas completadas con evidencia</span></div></div>
 <div class="note"><b>Planificación ≠ ejecución.</b> Las tareas pueden pasar de Pendiente a En curso, Bloqueada o Completada. Para registrar una tarea como Completada se exige una descripción verificable de la evidencia. No se contabilizan automáticamente contactos, publicaciones ni campañas.</div><p id="task-feedback" role="status" class="muted small"></p>
 <div class="toolbar"><label>Categoría <select id="category"><option value="">Todas</option></select></label><label>Prioridad <select id="priority"><option value="">Todas</option><option>Alta</option><option>Media</option></select></label></div>
 <div class="card"><h2>Tareas iniciales</h2><table><thead><tr><th>ID</th><th>Tarea</th><th>Área</th><th>Prioridad</th><th>Planificación</th><th>Ejecución</th><th>Seguimiento</th></tr></thead><tbody id="rows"></tbody></table><p id="count" class="muted small"></p></div>
 <section class="card" style="margin-top:18px"><h2>Criterios de ejecución</h2><p>Una tarea solo podrá marcarse como ejecutada cuando exista un entregable o evidencia comprobable: listado completo, base de datos, dossier, publicación, proceso documentado, auditoría o informe de métricas. La preparación de una tarea no equivale a completarla.</p></section>
-</section></main>
+</section></section></main>
 <div id="task-editor" class="task-editor hidden" role="dialog" aria-modal="true" aria-labelledby="editor-heading">
 <form id="task-form"><h2 id="editor-heading">Actualizar seguimiento</h2><p id="editor-task-title" class="muted"></p>
 <label>Estado<select name="state" required><option>Pendiente</option><option>En curso</option><option>Bloqueada</option><option>Completada</option></select></label>
@@ -98,4 +145,4 @@ gate.classList.add('hidden');$('workspace').classList.remove('hidden');draw();
 const out=$('logout');out.classList.remove('hidden');out.addEventListener('click',async()=>{await db.auth.signOut();location.replace('./portal.html')});
 }catch(error){gate.textContent='No se pudo cargar el panel: '+(error.message||'Error de conexión')}
 })();
-</script><script src="./departments-nav.js?v=20261114-unified"></script></body></html>
+</script><script src="./departments-nav.js?v=20261114-sticky-public"></script></body></html>
