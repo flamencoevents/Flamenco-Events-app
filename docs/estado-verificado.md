@@ -1391,3 +1391,13 @@ compararlos con supabase/functions al SHA cc5cf30. El conector de publicación
 no admite una precondición de versión para rechazar cambios concurrentes.
 No se sustituyó la versión activa. Sigue pendiente verificar los bytes del
 contrato archivado y la escritura en una copia aislada.
+
+
+## Filas explícitas del XLSX · 14 noviembre 2026
+
+El lector rechaza números de fila fuera de los límites de Excel y números
+repetidos, incluso si las celdas repartidas entre las filas son distintas.
+Dos casos de XML ficticio reprodujeron la aceptación indebida. Después
+del cambio pasaron 20 pruebas con
+`python3 -m unittest discover -s tests -p test_accounts_2027.py`.
+Validación local en modo prueba, sin leer ni escribir el XLSX real.

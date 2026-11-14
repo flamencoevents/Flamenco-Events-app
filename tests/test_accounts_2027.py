@@ -153,6 +153,19 @@ class PlannerTests(unittest.TestCase):
 
 
 class ReaderTests(unittest.TestCase):
+    def test_invalid_or_duplicate_explicit_row_is_rejected(self):
+        for rows, reason in (
+            ('<row r="1048577"/>', 'INVALID_ROW_REFERENCE'),
+            ('<row r="11"><c r="C11"/></row><row r="11"><c r="D11"/></row>',
+             'DUPLICATE_WORKSHEET_ROW'),
+        ):
+            with self.subTest(reason=reason):
+                root = mod.ET.fromstring(
+                    f'<worksheet xmlns="{mod.NS["m"]}"><sheetData>'
+                    f'{rows}</sheetData></worksheet>')
+                with self.assertRaisesRegex(mod.Blocked, '^' + reason + '$'):
+                    list(mod.worksheet_cells(root))
+
     def test_formula_ranges_respect_xlsx_bounds_during_read(self):
         ns = mod.NS['m']
         rel_ns = mod.REL[1:].split('}')[0]
@@ -174,7 +187,7 @@ class ReaderTests(unittest.TestCase):
                         mod.read_book(path)
 
     def test_cell_coordinates_respect_xlsx_bounds(self):
-        for ref, row in (('XFE3', '3'), ('A1048577', '1048577')):
+        for ref, row in (('XFE3', '3'), ('A1048577', '3')):
             with self.subTest(ref=ref):
                 root = mod.ET.fromstring(
                     f'<worksheet xmlns="{mod.NS["m"]}"><sheetData>'

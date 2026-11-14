@@ -99,12 +99,18 @@ def cell_coordinates(ref, error):
 
 def worksheet_cells(root):
     seen = set()
+    row_numbers = set()
     for row in root.findall('m:sheetData/m:row', NS):
+        row_number = row.get('r')
+        if row_number is not None:
+            cell_coordinates('A' + row_number, 'INVALID_ROW_REFERENCE')
+            require(row_number not in row_numbers, 'DUPLICATE_WORKSHEET_ROW')
+            row_numbers.add(row_number)
         for cell in row.findall('m:c', NS):
             ref = cell.get('r')
             require(bool(ref), 'MISSING_CELL_REFERENCE')
             digits = cell_coordinates(ref, 'INVALID_CELL_REFERENCE')
-            require(row.get('r') in (None, digits), 'CELL_ROW_MISMATCH')
+            require(row_number in (None, digits), 'CELL_ROW_MISMATCH')
             require(ref not in seen, 'DUPLICATE_CELL')
             seen.add(ref)
             yield ref, cell
