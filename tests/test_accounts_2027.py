@@ -224,6 +224,21 @@ class ReaderTests(unittest.TestCase):
                 z.writestr('xl/workbook.xml', '<workbook xmlns="'+mod.NS['m']+'" xmlns:r="'+mod.REL[1:].split('}')[0]+'"><sheets><sheet name="'+mod.SHEET+'" sheetId="1" r:id="rId1"/></sheets></workbook>')
                 z.writestr('xl/_rels/workbook.xml.rels', '<Relationships><Relationship Id="rId1" Target="worksheets/sheet1.xml"/></Relationships>')
                 z.writestr('xl/worksheets/sheet1.xml', '<worksheet xmlns="'+mod.NS['m']+'"><sheetData><row r="3">'+headers+'</row><row r="9"><c r="A9" t="inlineStr"><is><t>MARZO</t></is></c><c r="V9"><f>PRIVATE_FORMULA</f></c></row><row r="10"><c r="G10" t="inlineStr"><is><t>PRIVATE_CLIENT</t></is></c></row></sheetData><hyperlinks><hyperlink ref="C10" location="PRIVATE_LINK"/></hyperlinks></worksheet>')
+            with zipfile.ZipFile(path) as z:
+                entries = {name: z.read(name) for name in z.namelist()}
+            sheet = 'xl/worksheets/sheet1.xml'
+            for truth in (b'1', b'true'):
+                with self.subTest(zero_height=truth):
+                    with zipfile.ZipFile(path, 'w') as z:
+                        for name, content in entries.items():
+                            if name == sheet:
+                                content = content.replace(b'<sheetData>', b'<sheetFormatPr zeroHeight="' + truth + b'"/><sheetData>')
+                            z.writestr(name, content)
+                    with self.assertRaisesRegex(mod.Blocked, '^DEFAULT_ROWS_HIDDEN$'):
+                        mod.read_book(path)
+            with zipfile.ZipFile(path, 'w') as z:
+                for name, content in entries.items():
+                    z.writestr(name, content)
             original = path.read_bytes()
             read = mod.read_book(path)
             summary = mod.inspect(read)

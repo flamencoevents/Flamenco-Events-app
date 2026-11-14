@@ -1401,3 +1401,14 @@ Dos casos de XML ficticio reprodujeron la aceptación indebida. Después
 del cambio pasaron 20 pruebas con
 `python3 -m unittest discover -s tests -p test_accounts_2027.py`.
 Validación local en modo prueba, sin leer ni escribir el XLSX real.
+
+
+## Filas ocultas por defecto · 14 noviembre 2026
+
+El lector bloquea hojas que declaran zeroHeight en sheetFormatPr antes
+de inferir una fila disponible. El criterio es conservador y requiere
+revisión manual de la hoja completa cuando ese ajuste está activo.
+Dos casos ficticios antes aceptados se rechazan. Pasaron 20 pruebas con
+`python3 -m unittest discover -s tests -p test_accounts_2027.py`.
+El commit anterior 1b14b72 superó GitHub Actions (43601568498).
+Ensayo local en modo prueba, sin lectura ni escritura del libro real.

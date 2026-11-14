@@ -137,6 +137,9 @@ def read_book(path):
         require(len(sheets) == 1, 'SHEET_MISSING_OR_AMBIGUOUS')
         sheet_path = worksheet_part(rels, sheets[0], names)
         root = xml(sheet_path)
+        sheet_format = root.find('m:sheetFormatPr', NS)
+        require(sheet_format is None or sheet_format.get('zeroHeight') not in ('1', 'true'),
+                'DEFAULT_ROWS_HIDDEN')
         strings = [''.join(x.itertext()) for x in xml('xl/sharedStrings.xml').findall('m:si', NS)] if 'xl/sharedStrings.xml' in names else []
         cells = {}
         formula_ranges = []
