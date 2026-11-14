@@ -22,7 +22,7 @@ const subpages={
 const names={'admin.html':'Administración','marketing.html':'Marketing','staff.html':'Comercial','rrhh.html':'RR. HH.'};
 const mktPages=['marketing.html','marketing-venues.html','marketing-planners.html','marketing-task.html'];
 const section=mktPages.includes(pathname)?'marketing.html':adminPages.includes(pathname)?pathname:'staff.html';
-let syncEpoch=0;
+let syncEpoch=0;window.addEventListener("hashchange",()=>{if(pathname==="admin.html")sync();});
 function link(href,label,active){
  const a=document.createElement('a');a.href='./'+href;a.textContent=label;
  if(active)a.setAttribute('aria-current','page');return a;
@@ -35,7 +35,7 @@ function build(role){
  const content=document.createElement('div');content.id='fe-nav-content';content.className='fe-nav-content';
  const main=document.createElement('div');main.className='fe-nav-main';main.setAttribute('aria-label','Departamentos');
  const pages=role==='admin'?adminPages:salesPages;
- for(const file of pages)main.append(link(file,names[file],section===file));content.append(main);
+ for(const file of pages)main.append(link(file,names[file],section===file&&!(file==='admin.html'&&location.hash==='#facturacion')));if(role==='admin')main.append(link('admin.html#facturacion','Facturación',pathname==='admin.html'&&location.hash==='#facturacion'));content.append(main);
  const options=section==='staff.html'?subpages['staff.html']:section==='marketing.html'?subpages['marketing.html']:section==='rrhh.html'?subpages['rrhh.html']:[];
  const filtered=options;
  if(filtered.length>1){const sub=document.createElement('div');sub.className='fe-nav-sub';sub.setAttribute('aria-label','Secciones de '+names[section]);

@@ -1459,3 +1459,21 @@ emisión de facturas ni movimientos. El siguiente paso es contrastar la
 respuesta de lectura de la instancia autorizada en modo prueba.
 Referencia del formato base:
 https://github.com/Dolibarr/dolibarr/blob/develop/htdocs/compta/facture/class/api_invoices.class.php
+
+
+## Facturación en Gestión · 14 noviembre 2026
+
+El menú compartido queda arriba en Administración y Comercial. Facturación
+se abre desde Administración y revisa un archivo JSON ficticio de Dolibarr
+en la sesión del navegador. La referencia externa debe coincidir con la
+revisión exacta de un presupuesto vinculado a un único evento ficticio.
+La ficha administrativa muestra base, IVA y total importado en Factura.
+Las fichas de Comercial y del histórico muestran el apartado Factura con
+la vinculación pendiente de revisión administrativa. El estado de cobro
+sigue sin verificar. Sin escritura en base de datos ni en CUENTAS 27.
+
+Reproducir con `node --test tests/billing.test.cjs tests/accounts-events.test.cjs`.
+Once pruebas afectadas superadas localmente, incluida limpieza al cancelar
+una lectura en curso. La carga admite el formato normalizado ficticio de
+factura estándar EUR. Queda pendiente la lectura directa autenticada de
+Dolibarr. Sin emisión de facturas ni envíos.
