@@ -1301,3 +1301,15 @@ No hubo cambios en Drive, cuentas, sesiones ni permisos.
 
 El commit 2c68562 superó la [comprobación sin escrituras](https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/43558138052)
 y el [despliegue de Pages](https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/43558137024).
+
+
+## Huella del PDF técnico de prueba · 14 noviembre 2026
+
+La descarga autenticada del PDF ficticio de la revisión v1 devolvió
+2663 bytes y cabecera %PDF-. El SHA-256 calculado sobre esos bytes
+coincide con la huella registrada en docs/integracion-app.md de Apps Script.
+Para reproducir, descargar únicamente esa referencia técnica por Drive
+autenticado y comparar `hashlib.sha256(bytes_pdf).hexdigest()` con la
+huella documentada. La comprobación se realizó en memoria, sin conservar
+una copia ni publicar un enlace. La coincidencia con la ficha económica
+activa y la escritura remota sobre copia aislada siguen pendientes.
