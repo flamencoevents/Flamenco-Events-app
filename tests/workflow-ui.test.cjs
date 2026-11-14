@@ -53,10 +53,11 @@ test('Launch workspace includes only explicitly linked fictitious records and th
   [testQuote,{...testQuote,id:'r',enquiry_id:'r',quote_number:'REAL-QUOTE'}],
   [{id:'t',is_test:true,enquiry_id:'t',quote_terms_id:'q',title:'<FICTICIO>'},
    {id:'r',is_test:false,enquiry_id:'t',quote_terms_id:'q',title:'REAL-EVENT'}],
-  [{event_id:'t',version:2,kind:'contract',storage_path:'EXACT-PDF'},
-   {event_id:'t',version:1,kind:'contract',storage_path:'OLD-PDF'}],[]);
+  [{id:'linked',event_id:'t',version:2,kind:'contract',storage_path:'EXACT-PDF'},
+   {id:'unlinked',event_id:'t',version:2,kind:'contract',storage_path:'UNLINKED-PDF'},
+   {event_id:'t',version:1,kind:'contract',storage_path:'OLD-PDF'}],[{event_id:'t',state:'draft',document_id:'linked'}]);
  assert.match(html,/TEST-QUOTE/);assert.match(html,/&lt;FICTICIO&gt;/);assert.match(html,/EXACT-PDF/);
- assert.doesNotMatch(html,/REAL-QUOTE|REAL-EVENT|OLD-PDF/);
+ assert.doesNotMatch(html,/REAL-QUOTE|REAL-EVENT|OLD-PDF|UNLINKED-PDF/);
  const admin=fs.readFileSync('admin.html','utf8');
  assert.match(admin,/<a href="#pruebas-de-lanzamiento" data-launch-management-link>Pruebas de lanzamiento/);
  const guide=fs.readFileSync('docs/pruebas-lanzamiento-whatsapp.txt','utf8');

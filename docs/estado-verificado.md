@@ -1522,3 +1522,14 @@ y un modelo de revisión manual para Gospel FE y cata de vinos.
 Fallo reproducido antes del cambio. Pasaron 15 pruebas afectadas con
 `node --test tests/management-routing.test.cjs tests/workflow-ui.test.cjs`.
 Sin generar nuevos documentos, sesiones o asignaciones ni escribir el XLSX.
+
+
+## PDF vinculado en Pruebas de lanzamiento · 14 noviembre 2026
+
+El commit b4ce053 superó GitHub Actions (43628604585) y Pages (43628604431).
+La pestaña ahora ofrece el PDF contractual si coincide con el documento
+vinculado al contrato y la revisión exacta. Un PDF de la misma revisión
+asociado al evento pero ajeno al contrato queda fuera de la pestaña.
+La regresión se reprodujo antes de la corrección. Pasaron siete pruebas
+en `node --test tests/workflow-ui.test.cjs`.
+Validación con datos ficticios, sin nuevas sesiones ni escritura XLSX.

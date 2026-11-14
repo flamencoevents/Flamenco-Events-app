@@ -27,15 +27,14 @@
   const en=lang==='en';
   const testEnquiries=new Set(leads.filter(x=>x.is_test===true).map(x=>x.id));
   const testQuotes=quotes.filter(q=>testEnquiries.has(q.enquiry_id));
-  const testTerms=new Set(testQuotes.map(q=>q.id));
-  const testEvents=events.filter(e=>e.is_test===true&&testEnquiries.has(e.enquiry_id)&&testTerms.has(e.quote_terms_id)&&testQuotes.some(q=>q.id===e.quote_terms_id&&q.enquiry_id===e.enquiry_id));
+  const testEvents=events.filter(e=>e.is_test===true&&testEnquiries.has(e.enquiry_id)&&testQuotes.some(q=>q.id===e.quote_terms_id&&q.enquiry_id===e.enquiry_id));
   return '<h3>'+ (en?'Test quotations':'Presupuestos ficticios')+'</h3>'+
    (testQuotes.map(q=>quoteHtml(q,lang)).join('')||'<p>'+ (en?'No test quotations imported yet.':'Todavía no hay presupuestos ficticios incorporados.')+'</p>')+
    '<h3>'+ (en?'Test contracts and documents':'Contratos y documentos de prueba')+'</h3>'+
    (testEvents.map(e=>{
     const q=testQuotes.find(item=>item.id===e.quote_terms_id);
     const contract=contracts.find(c=>c.event_id===e.id);
-    const eventDocs=docs.filter(d=>d.event_id===e.id&&d.version===q.version&&['quotation','contract'].includes(d.kind));
+    const eventDocs=docs.filter(d=>d.event_id===e.id&&d.version===q.version&&(d.kind==='quotation'||(d.kind==='contract'&&d.id&&d.id===contract?.document_id)));
     return '<article class="panel card"><strong>'+escape(e.title)+'</strong><p>'+escape(q.quote_number)+' · v'+escape(q.version)+'</p>'+
      '<p>'+ (en?'Contract: ':'Contrato: ')+escape(contract?(window.FEState?.label(contract.state,lang)||contract.state):(en?'Pending':'Pendiente'))+'</p>'+
      eventDocs.map(d=>'<button type="button" data-open-pdf="'+escape(d.storage_path)+'">'+
