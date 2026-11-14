@@ -132,6 +132,17 @@ class ContractRehearsalTests(unittest.TestCase):
     def test_equivalent_json_number_notation_is_accepted(self):
         self.assertEqual(bridge.parsed('{"total":1.060010e3}')['total'], 1060.01)
 
+    def test_contract_number_requires_ascii_digits(self):
+        for number in ('１２３４５', 'X26-P90009９'):
+            with self.subTest(number=number):
+                self.data = fixture()
+                key = number + '-v2'
+                self.change_quote(lambda quote: quote.update(id=number, key=key))
+                self.data['quote_row'][:2] = [key, number]
+                self.data['contract_row'][0] = number
+                self.data['event'].update(quote_number=number, source_key=key)
+                self.blocked('INVALID_NUMBER')
+
     def test_generated_contract_is_not_signed_paid_or_closed(self):
         out = bridge.prepare(self.book, self.data, PDF)
         self.assertEqual(out['status'], 'pending_review')

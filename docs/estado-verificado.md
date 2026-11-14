@@ -1262,3 +1262,15 @@ incluidos los anclados fuera de A:Q. Los dos casos sintéticos fallaron
 antes del cambio y pasaron después. Pasaron 19 pruebas locales con
 `python3 -m unittest discover -s tests -p test_accounts_2027.py`.
 Ensayo con XLSX ficticio en modo prueba, sin escritura remota.
+
+
+El commit d692ec4 superó la [comprobación sin escrituras](https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/43548408448).
+
+## Identificadores de contrato WhatsApp · 14 noviembre 2026
+
+El ensayo local solo acepta dígitos ASCII en el número de presupuesto.
+Dos identificadores ficticios con dígitos de ancho completo eran aceptados
+aunque la cola, el contrato y la ficha coincidieran. Ahora ambos reciben
+INVALID_NUMBER antes de proponer una fila. Pasaron 18 pruebas con
+`python3 -m unittest discover -s tests -p test_accounts_2027_contract.py`.
+La prueba trabaja con datos ficticios y sin acceso a Drive ni al XLSX real.

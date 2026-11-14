@@ -59,7 +59,7 @@ def prepare(book, envelope, pdf):
     q, contract = parsed(qrow[4]), parsed(crow[2])
     require(q.get('modelo') == 'FE3' and q.get('modoPrueba') is True, 'FICTIONAL_ONLY')
     number, version = q['id'], q['revision']
-    require(isinstance(number, str) and re.fullmatch(r'(?:\d{5,7}|X\d{2}-P\d{6})', number), 'INVALID_NUMBER')
+    require(isinstance(number, str) and re.fullmatch(r'(?:[0-9]{5,7}|X[0-9]{2}-P[0-9]{6})', number), 'INVALID_NUMBER')
     require(type(version) is int and 1 <= version <= 99, 'INVALID_REVISION')
     require(q['key'] == number + '-v' + str(version), 'INVALID_SOURCE_KEY')
     require(qrow[0] == q['key'] and str(qrow[1]) == number and type(qrow[2]) is int and qrow[2] == version,
