@@ -126,7 +126,8 @@ class PlannerTests(unittest.TestCase):
 
     def test_malformed_link_and_merge_ranges_block_proposal(self):
         for field, ref in (('links', 'missing11'), ('merges', 'A9:B10:C12'),
-                           ('links', None)):
+                           ('links', None), ('merges', 'A1:XFE10'),
+                           ('links', 'A1048577')):
             with self.subTest(field=field, ref=ref):
                 self.book = book()
                 self.book[field] = [ref]
