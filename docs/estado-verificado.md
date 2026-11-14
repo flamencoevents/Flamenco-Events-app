@@ -1377,3 +1377,17 @@ solo la expectativa. Fallo reproducido, tres roles comprobados con
 `node --test --test-name-pattern='Portal routes' tests/portal.test.cjs`.
 GitHub Pages publicó el commit anterior 354f79f (ejecución 43586921892).
 El despliegue de la función Supabase sigue pendiente.
+
+
+## Confirmación de CI y comparación de la función publicada · 14 noviembre 2026
+
+El commit cc5cf30 superó las pruebas web en la ejecución 43592183794
+y Pages confirmó 43592183157. La función import-event-document en Supabase
+sigue activa en v8. Comparación autenticada de sus dos archivos con GitHub:
+bridge.ts coincide; index.ts aún no incluye el diagnóstico separado de
+huella ni el tratamiento específico del fallo al leer el blob.
+Para reproducir, consultar la versión y los archivos de la función y
+compararlos con supabase/functions al SHA cc5cf30. El conector de publicación
+no admite una precondición de versión para rechazar cambios concurrentes.
+No se sustituyó la versión activa. Sigue pendiente verificar los bytes del
+contrato archivado y la escritura en una copia aislada.
