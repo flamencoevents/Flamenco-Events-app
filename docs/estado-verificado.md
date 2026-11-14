@@ -1327,3 +1327,18 @@ y comparar la descarga de esa referencia técnica con la huella allí registrada
 La comparación cubre el origen del ensayo archivado y el registro histórico de
 la importación. Sigue pendiente el cotejo con la ficha económica activa.
 Sin cambios de permisos, usuarios ni escritura en CUENTAS 27.
+
+
+## Vínculo del contrato técnico archivado · 14 noviembre 2026
+
+Consulta autenticada de solo lectura en Supabase, limitada al evento y al
+documento ficticios del ensayo del 5 de noviembre. Existe exactamente un
+vínculo del contrato al PDF del mismo evento. El campo event_documents.sha256
+está vacío, por lo que el cotejo con los bytes ya verificados en Drive queda
+pendiente. No se detectó una huella distinta almacenada.
+
+Para reproducir, usar los identificadores del ensayo «Contrato técnico» de
+docs/integracion-app.md. Unir event_contracts y event_documents por document_id
+y event_id, filtrar por ambos identificadores y kind='contract', y devolver
+solo count(*) y sha256 IS NULL. Sin cambios en usuarios, almacenamiento,
+permisos ni CUENTAS 27. Sin despliegue funcional.
