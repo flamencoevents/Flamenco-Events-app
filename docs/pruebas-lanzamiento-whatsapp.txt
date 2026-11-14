@@ -1,0 +1,804 @@
+PRUEBAS DE LANZAMIENTO · WHATSAPP
+
+Guía para copiar manualmente, un caso cada vez. Comprueba en /estado que
+el grupo indique Modo: PRUEBA. Completa lugar y logística ficticios y
+asegúrate de que no quede otro presupuesto pendiente antes de /confirmar.
+Los marcadores entre corchetes se sustituyen antes de copiar.
+
+Tras generar el presupuesto:
+  /contrato [NÚMERO FICTICIO] v[REVISIÓN EXACTA]
+  Nombre: [nombre ficticio]
+  Documento: [identificador ficticio]
+  Dirección: [dirección ficticia]
+En particular con precio base añade Teléfono Bizum y Reserva, con valores
+de prueba y según las condiciones aprobadas. No reutilices teléfonos reales.
+Revisa el resumen antes de /contratoconfirmar. Generar el PDF no registra
+firma, reserva ni cobro. No utilices /contratoconfirmar con efectivo100:
+la cláusula contractual está pendiente de aprobación.
+
+Los 42 casos siguientes cubren los 14 códigos tarifados en los tres tipos.
+Para el dúo instrumental repite con segunda guitarra, percusión, flauta y
+armónica; para Son del Alma Trío repite con flauta, violín y armónica.
+Gospel FE y cata de vinos con guitarra: revisión manual en las tres
+modalidades, sin asignarles código o precio del calculador. Prueba además
+servicios combinados, comisión wedding y logística con coste antes del cierre.
+
+
+=== Empresa · contrato base_iva_irpf ===
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 1.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.1 Guitarra flamenca solista / Artistas exactos: guitarra / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 1.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.2 Dúo instrumental flamenco / Artistas exactos: guitarra y violín / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 1.3
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.3 Trío instrumental flamenco / Artistas exactos: guitarra, flauta y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 1.4
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.4 Cuarteto instrumental flamenco / Artistas exactos: guitarra, flauta, violín y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 2.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.1 Dúo Son del Alma / Artistas exactos: guitarra y voz / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 2.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.2 Trío Son del Alma / Artistas exactos: guitarra, voz y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 2.3
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.3 Grupo Son del Alma / Artistas exactos: guitarra, dos voces y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 2.4
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.4 Banda Son del Alma / Artistas exactos: guitarra, dos voces, percusión y teclado / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 3.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.1 Suite Flamenca I / Artistas exactos: guitarra, voz y una bailaora / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 3.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.2 Suite Flamenca II / Artistas exactos: guitarra, voz y dos bailaoras / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 3.3
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.3 Suite Flamenca III / Artistas exactos: guitarra, voz, una bailaora y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 3.4
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.4 Suite Flamenca IV / Artistas exactos: guitarra, voz, dos bailaoras y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 4.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 4.1 DJ para barra libre / Artistas exactos: un DJ / Duración y pases: 4 horas
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Empresa 4.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 4.2 Sonorización / Artistas exactos: un técnico, sin músicos, una ubicación / Duración y pases: 4 horas de cobertura
+Tipo de cliente: Empresa
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+=== Particular · contrato reserva_y_saldo_efectivo ===
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 1.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.1 Guitarra flamenca solista / Artistas exactos: guitarra / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 1.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.2 Dúo instrumental flamenco / Artistas exactos: guitarra y violín / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 1.3
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.3 Trío instrumental flamenco / Artistas exactos: guitarra, flauta y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 1.4
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.4 Cuarteto instrumental flamenco / Artistas exactos: guitarra, flauta, violín y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 2.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.1 Dúo Son del Alma / Artistas exactos: guitarra y voz / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 2.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.2 Trío Son del Alma / Artistas exactos: guitarra, voz y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 2.3
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.3 Grupo Son del Alma / Artistas exactos: guitarra, dos voces y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 2.4
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.4 Banda Son del Alma / Artistas exactos: guitarra, dos voces, percusión y teclado / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 3.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.1 Suite Flamenca I / Artistas exactos: guitarra, voz y una bailaora / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 3.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.2 Suite Flamenca II / Artistas exactos: guitarra, voz y dos bailaoras / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 3.3
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.3 Suite Flamenca III / Artistas exactos: guitarra, voz, una bailaora y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 3.4
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.4 Suite Flamenca IV / Artistas exactos: guitarra, voz, dos bailaoras y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 4.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 4.1 DJ para barra libre / Artistas exactos: un DJ / Duración y pases: 4 horas
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular 4.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 4.2 Sonorización / Artistas exactos: un técnico, sin músicos, una ubicación / Duración y pases: 4 horas de cobertura
+Tipo de cliente: Particular
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+=== Particular · precio base · contrato presupuesto_base ===
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 1.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.1 Guitarra flamenca solista / Artistas exactos: guitarra / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 1.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.2 Dúo instrumental flamenco / Artistas exactos: guitarra y violín / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 1.3
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.3 Trío instrumental flamenco / Artistas exactos: guitarra, flauta y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 1.4
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 1.4 Cuarteto instrumental flamenco / Artistas exactos: guitarra, flauta, violín y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 2.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.1 Dúo Son del Alma / Artistas exactos: guitarra y voz / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 2.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.2 Trío Son del Alma / Artistas exactos: guitarra, voz y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 2.3
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.3 Grupo Son del Alma / Artistas exactos: guitarra, dos voces y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 2.4
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 2.4 Banda Son del Alma / Artistas exactos: guitarra, dos voces, percusión y teclado / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 3.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.1 Suite Flamenca I / Artistas exactos: guitarra, voz y una bailaora / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 3.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.2 Suite Flamenca II / Artistas exactos: guitarra, voz y dos bailaoras / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 3.3
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.3 Suite Flamenca III / Artistas exactos: guitarra, voz, una bailaora y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 3.4
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 3.4 Suite Flamenca IV / Artistas exactos: guitarra, voz, dos bailaoras y percusión / Duración y pases: 45 minutos, 1 pase
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 4.1
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 4.1 DJ para barra libre / Artistas exactos: un DJ / Duración y pases: 4 horas
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA Particular · precio base 4.2
+Lugar: [recinto y dirección del escenario ficticio, localidad y provincia]
+Fecha: 12/03/2027
+Servicio 1: 4.2 Sonorización / Artistas exactos: un técnico, sin músicos, una ubicación / Duración y pases: 4 horas de cobertura
+Tipo de cliente: Particular sin IVA
+Forma de cobro: habitual
+Comisión wedding: sin
+[Lista completa de componentes y viajes, coche/origen o artista local]
+Lista de componentes y viajes completa: sí
+[Gasolina por litro si hay coche; costes y distancias si hay transporte público]
+Hotel: volvemos a casa
+[Si procede, días de viaje para artistas a más de 400 km de ida]
+Peajes y aparcamientos: 0 €
+Otros gastos: 0 €
+Extra Deluxe: sin extra
+
+=== Gospel FE y cata de vinos con guitarra · revisión manual ===
+
+Modelo de solicitud para preparar la revisión interna. La automatización
+no tiene un código tarifado confirmado para estas propuestas.
+No confirmar en WhatsApp hasta validar la formación y la tarifa.
+
+/presupuesto
+Número de servicios: 1
+Cliente: PRUEBA [Gospel o Cata] [tipo de cliente]
+Lugar: [recinto y dirección ficticios]
+Fecha: 12/03/2027
+Servicio 1: [Gospel FE o cata de vinos con guitarra] / Artistas exactos: [formación] / Duración y pases: [duración y pases]
+Tipo de cliente: [Empresa / Particular / Particular sin IVA]
+Forma de cobro: habitual
+Comisión wedding: [con o sin]
+[Componentes, viajes, hotel y gastos del caso ficticio]

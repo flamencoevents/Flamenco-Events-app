@@ -45,3 +45,20 @@ test('Pending detail is discarded when another catalog page replaces it',async()
  const db={auth:{getUser:async()=>({data:{user:{id:'staff-a'}}})},from(){const q={select:()=>q,order:()=>q,then:f=>Promise.resolve({data:[]}).then(f)};return q},functions:{invoke:(name,args)=>args.body.operation==='source_catalog'?Promise.resolve({data:page,error:null}):new Promise(r=>resolveDetail=r)}};
  const ctx=vm.createContext({window:{},document:{getElementById:()=>host},Intl,crypto:require('node:crypto').webcrypto});vm.runInContext(fs.readFileSync('workflow.js','utf8'),ctx);await ctx.window.FEWorkflow.mount(db,'sales');await handlers.get('[data-source-catalog-form]:submit')({preventDefault(){}});const task=handlers.get('detail-button:click')();out.dataset.catalogTicket='replacement-page';resolveDetail({data:p,error:null});await task;assert.equal(node('[data-source-detail-output="0"]').innerHTML,'');assert.equal(button.disabled,false);
 });
+
+test('Launch workspace includes only explicitly linked fictitious records and the exact PDF revision',()=>{
+ const ctx=vm.createContext({window:{},Intl});vm.runInContext(fs.readFileSync('workflow.js','utf8'),ctx);
+ const testQuote={id:'q',enquiry_id:'t',quote_number:'TEST-QUOTE',version:2,total_payable_eur:10};
+ const html=ctx.window.FEWorkflow.launchHtml([{id:'t',is_test:true},{id:'r',is_test:false}],
+  [testQuote,{...testQuote,id:'r',enquiry_id:'r',quote_number:'REAL-QUOTE'}],
+  [{id:'t',is_test:true,enquiry_id:'t',quote_terms_id:'q',title:'<FICTICIO>'},
+   {id:'r',is_test:false,enquiry_id:'t',quote_terms_id:'q',title:'REAL-EVENT'}],
+  [{event_id:'t',version:2,kind:'contract',storage_path:'EXACT-PDF'},
+   {event_id:'t',version:1,kind:'contract',storage_path:'OLD-PDF'}],[]);
+ assert.match(html,/TEST-QUOTE/);assert.match(html,/&lt;FICTICIO&gt;/);assert.match(html,/EXACT-PDF/);
+ assert.doesNotMatch(html,/REAL-QUOTE|REAL-EVENT|OLD-PDF/);
+ const admin=fs.readFileSync('admin.html','utf8');
+ assert.match(admin,/<a href="#pruebas-de-lanzamiento" data-launch-management-link>Pruebas de lanzamiento/);
+ const guide=fs.readFileSync('docs/pruebas-lanzamiento-whatsapp.txt','utf8');
+ assert.equal((guide.match(/^\/presupuesto$/gm)||[]).length,43);
+});

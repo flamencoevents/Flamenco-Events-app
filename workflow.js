@@ -23,6 +23,26 @@
    return '<article class="panel card"><strong>'+escape(x.quote_number)+' · v'+escape(x.version)+'</strong>'+(x.is_test?' · '+label('PRUEBA','TEST'):'')+'<p>'+escape(x.client_label)+' · '+escape(x.event_date)+' · '+escape(x.venue)+'</p><p>'+escape(money(x.total_payable_eur,lang))+' · '+escape(states[x.quote_state]||label('Revisar estado de origen','Review source status'))+'</p><p>'+label('Contrato: ','Contract: ')+escape(states[x.contract_state]||label('Pendiente de revisión','Awaiting review'))+'</p><p>'+label('PDF presupuesto: ','Quotation PDF: ')+label(x.quotation_pdf_ready?'referencia guardada':'pendiente',x.quotation_pdf_ready?'reference recorded':'pending')+' · '+label('PDF contrato: ','Contract PDF: ')+label(x.contract_pdf_ready?'referencia guardada':'pendiente',x.contract_pdf_ready?'reference recorded':'pending')+'</p><p>'+label(linked?'Versión ya incorporada a la web.':'Versión todavía no incorporada a la web.',linked?'Version already linked to the website.':'Version not yet linked to the website.')+'</p>'+(x.quote_state==='GENERADO'?'<button type="button" data-source-pick="'+i+'">'+label('Usar referencia para revisión','Use reference for review')+'</button> <button type="button" data-source-detail="'+i+'">'+label('Consultar detalle guardado','Read saved detail')+'</button><div data-source-detail-output="'+i+'"></div>':'')+'</article>';
   }).join('')+(page.items.length?'':'<p>'+label('Esta página no contiene registros compatibles con el modo actual.','This page contains no records compatible with the current mode.')+'</p>')+(page.next_offset!==null?'<button type="button" data-source-next>'+label('Siguiente página de origen','Next source page')+'</button>':'');
  }
+ function launchHtml(leads,quotes,events,docs,contracts,lang='es'){
+  const en=lang==='en';
+  const testEnquiries=new Set(leads.filter(x=>x.is_test===true).map(x=>x.id));
+  const testQuotes=quotes.filter(q=>testEnquiries.has(q.enquiry_id));
+  const testTerms=new Set(testQuotes.map(q=>q.id));
+  const testEvents=events.filter(e=>e.is_test===true&&testEnquiries.has(e.enquiry_id)&&testTerms.has(e.quote_terms_id)&&testQuotes.some(q=>q.id===e.quote_terms_id&&q.enquiry_id===e.enquiry_id));
+  return '<h3>'+ (en?'Test quotations':'Presupuestos ficticios')+'</h3>'+
+   (testQuotes.map(q=>quoteHtml(q,lang)).join('')||'<p>'+ (en?'No test quotations imported yet.':'Todavía no hay presupuestos ficticios incorporados.')+'</p>')+
+   '<h3>'+ (en?'Test contracts and documents':'Contratos y documentos de prueba')+'</h3>'+
+   (testEvents.map(e=>{
+    const q=testQuotes.find(item=>item.id===e.quote_terms_id);
+    const contract=contracts.find(c=>c.event_id===e.id);
+    const eventDocs=docs.filter(d=>d.event_id===e.id&&d.version===q.version&&['quotation','contract'].includes(d.kind));
+    return '<article class="panel card"><strong>'+escape(e.title)+'</strong><p>'+escape(q.quote_number)+' · v'+escape(q.version)+'</p>'+
+     '<p>'+ (en?'Contract: ':'Contrato: ')+escape(contract?(window.FEState?.label(contract.state,lang)||contract.state):(en?'Pending':'Pendiente'))+'</p>'+
+     eventDocs.map(d=>'<button type="button" data-open-pdf="'+escape(d.storage_path)+'">'+
+      (d.kind==='contract'?(en?'Contract PDF':'PDF del contrato'):(en?'Quotation PDF':'PDF del presupuesto'))+
+      ' · v'+escape(d.version)+'</button>').join('')+'</article>';
+   }).join('')||'<p>'+ (en?'No linked test events yet.':'Todavía no hay eventos ficticios vinculados.')+'</p>');
+ }
  async function mount(db,role,id='commercial-workflow',lang='es'){
   const host=document.getElementById(id);if(!host||!['admin','sales'].includes(role))return;
   const ticket=crypto.randomUUID();host.dataset.workflowTicket=ticket;const session=await db.auth.getUser();const actorId=session.data?.user?.id;if(!actorId){host.innerHTML='';return;}
@@ -40,7 +60,28 @@
   if(error){host.textContent='No se pudo cargar el seguimiento: '+error.message;return;}
   const option=(v,label)=>'<option value="'+escape(v)+'">'+escape(label)+'</option>';
   host.innerHTML='<h2>Presupuestos y eventos</h2><p>Selecciona la versión aceptada. Revisa sus importes antes de autorizar la importación.</p><p role="status" data-workflow-status></p><details data-source-catalog><summary>Origen WhatsApp · Presupuestos y contratos / WhatsApp source</summary><p>Consulta de origen sin importación automática / Read-only source inventory.</p><form data-source-catalog-form><label>Origen / Source<select name="source_sheet"><option value="FE_Cola">Presupuestos WhatsApp / WhatsApp quotations</option><option value="FE_App_Pruebas">Pruebas técnicas / Technical tests</option></select></label><button>Consultar origen / Read source</button></form><div data-source-results></div></details><form data-bridge-select><label>Solicitud aceptada<select name="enquiry_id" required><option value="">Selecciona una solicitud</option>'+leads.data.filter(x=>x.stage==='accepted').map(x=>option(x.id,x.contact_name+(x.is_test?' · PRUEBA':''))).join('')+'</select></label><label>Número exacto<input name="quote_number" required pattern="(?:[0-9]{5,7}|X[0-9]{2}-P[0-9]{6})" placeholder="X26-P000004"></label><label>Revisión<input name="version" type="number" min="1" max="99" value="1" required></label><label>Clave exacta<input name="source_key" required placeholder="X26-P000004-v1"></label><label>Origen<select name="source_sheet"><option value="FE_Cola">Presupuestos generados</option><option value="FE_App_Pruebas">Pruebas técnicas aisladas</option></select></label><button>Leer y revisar esta versión</button></form><div data-bridge-review></div><h3>Condiciones aceptadas incorporadas</h3>'+quotes.data.map(q=>quoteHtml(q)).join('')+(quotes.data.length?'':'<p>Sin presupuestos incorporados.</p>')+(role==='admin'?'<h3>Preparar evento</h3><form data-prepare-event><label>Versión aceptada<select name="terms_id" required><option value="">Selecciona presupuesto</option>'+quotes.data.map(x=>option(x.id,x.quote_number+' v'+x.version)).join('')+'</select></label><label>Nombre del evento<input name="title" required minlength="3" maxlength="150" placeholder="PRUEBA · Evento de ejemplo"></label><button>Preparar evento pendiente de contrato</button></form>':'')+'<h3>Eventos vinculados</h3>'+events.data.map(e=>'<article class="panel card"><strong>'+escape(e.title)+'</strong><p>'+escape(window.FEState.label(e.status))+(e.is_test?' · PRUEBA':'')+' · '+(e.client_id?'Acceso cliente asignado':'Pendiente de asignar acceso cliente')+'</p>'+quoteHtml(quotes.data.find(q=>q.id===e.quote_terms_id)||{quote_number:'Pendiente',version:'—',total_payable_eur:0,billing_mode:'',deposit_payable_eur:null})+'<p><strong>Siguiente acción:</strong> '+escape(window.FEState.nextAction(quotes.data.find(q=>q.id===e.quote_terms_id)?.billing_mode,contracts.data.find(c=>c.event_id===e.id),docs.data.some(d=>d.event_id===e.id&&d.kind==='contract')))+'</p>'+'<div>'+docs.data.filter(d=>d.event_id===e.id).map(d=>'<button type="button" data-open-pdf="'+escape(d.storage_path)+'">'+escape(window.FEState.label(d.kind))+' v'+escape(d.version)+'</button>').join('')+'</div>'+'<p><button data-preview-pdf="quotation" data-event="'+escape(e.id)+'">Comprobar PDF del presupuesto en origen</button></p>'+(role==='admin'?'<p><button data-import-pdf="quotation" data-event="'+escape(e.id)+'">Incorporar PDF del presupuesto</button> <button data-import-pdf="contract" data-event="'+escape(e.id)+'">Incorporar PDF del contrato generado</button></p><form data-assign-client="'+escape(e.id)+'"><label>Cliente verificado<select name="client_id" required><option value="">Selecciona identidad cliente</option>'+profiles.data.map(p=>option(p.id,p.display_name||p.id)).join('')+'</select></label><button>Asignar acceso al evento</button></form>':'')+'</article>').join('');
-  const status=(message,bad=false)=>{const n=host.querySelector('[data-workflow-status]');n.textContent=message;n.className=bad?'error':'success';};
+  host.innerHTML='<div><button type="button" data-workflow-general aria-pressed="true">'+(lang==='en'?'Quotations and contracts':'Presupuestos y contratos')+'</button> '+
+   '<button type="button" data-workflow-launch aria-pressed="false">'+(lang==='en'?'Launch tests':'Pruebas de lanzamiento')+'</button></div>'+
+   '<div data-general-panel>'+host.innerHTML+'</div><div data-launch-panel hidden id="pruebas-de-lanzamiento"><h2>'+
+   (lang==='en'?'Launch tests':'Pruebas de lanzamiento')+'</h2><p><a href="./docs/pruebas-lanzamiento-whatsapp.txt" download>'+
+   (lang==='en'?'Download WhatsApp commands':'Descargar comandos de WhatsApp')+'</a></p><p role="status" data-launch-status></p>'+
+   launchHtml(leads.data,quotes.data,events.data,docs.data,contracts.data,lang)+'</div>';
+  host.launchController?.abort();
+  const launchController=typeof AbortController==='function'?new AbortController():null;
+  host.launchController=launchController;
+  const general=host.querySelector('[data-general-panel]'),launch=host.querySelector('[data-launch-panel]');
+  const generalButton=host.querySelector('[data-workflow-general]'),launchButton=host.querySelector('[data-workflow-launch]');
+  function selectLaunch(show){
+   general.hidden=show;
+   launch.hidden=!show;
+   generalButton.setAttribute('aria-pressed',String(!show));
+   launchButton.setAttribute('aria-pressed',String(show));
+  }
+  generalButton.addEventListener('click',()=>selectLaunch(false));
+  launchButton.addEventListener('click',()=>selectLaunch(true));
+  document.querySelector?.('[data-launch-management-link]')?.addEventListener('click',()=>selectLaunch(true),{signal:launchController?.signal});
+  if(window.location?.hash==='#pruebas-de-lanzamiento')selectLaunch(true);
+  const status=(message,bad=false)=>{const n=host.querySelector(launch.hidden?'[data-workflow-status]':'[data-launch-status]');n.textContent=message;n.className=bad?'error':'success';};
   async function invoke(name,data){const result=await db.functions.invoke(name,{body:data});if(result.error){let message=result.error.message;try{message=(await result.error.context.json()).error||message;}catch{}throw Error(message);}return result.data;}
   const catalogForm=host.querySelector('[data-source-catalog-form]'),catalogOut=host.querySelector('[data-source-results]');
   const stillCurrent=async()=>{const current=await db.auth.getUser();return host.dataset.workflowTicket===ticket&&!current.error&&current.data?.user?.id===actorId;};
@@ -63,10 +104,10 @@
   host.querySelector('[data-prepare-event]')?.addEventListener('submit',async ev=>{ev.preventDefault();const f=ev.target,b=f.querySelector('button');b.disabled=true;try{const x=await db.rpc('prepare_event_from_quote',{p_terms_id:f.elements.terms_id.value,p_title:f.elements.title.value.trim()});if(x.error)throw x.error;await mount(db,role,id,lang);host.querySelector('[data-workflow-status]').textContent='Evento preparado. Pendiente de contrato, acceso cliente y reserva formal.';}catch(e){status(e.message,true);b.disabled=false;}});
   host.querySelectorAll('[data-preview-pdf]').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;try{const x=await invoke('import-event-document',{operation:'preview',event_id:button.dataset.event,kind:button.dataset.previewPdf});status('PDF de la versión '+x.version+' comprobado ('+x.size_bytes+' bytes). Todavía no se ha incorporado; requiere administración.');}catch(e){status(e.message,true);}finally{button.disabled=false;}}));
   host.querySelectorAll('[data-import-pdf]').forEach(button=>button.addEventListener('click',async()=>{button.disabled=true;try{const x=await invoke('import-event-document',{event_id:button.dataset.event,kind:button.dataset.importPdf});await mount(db,role,id,lang);host.querySelector('[data-workflow-status]').textContent=x.message||'Documento privado comprobado.';}catch(e){status(e.message,true);button.disabled=false;}}));
-  host.querySelectorAll('[data-open-pdf]').forEach(button=>button.addEventListener('click',async()=>{const x=await db.storage.from('event-documents').createSignedUrl(button.dataset.openPdf,60);if(x.error){status(x.error.message,true);return;}window.open(x.data.signedUrl,'_blank','noopener');}));
+  host.querySelectorAll('[data-open-pdf]').forEach(button=>button.addEventListener('click',async()=>{const x=await db.storage.from('event-documents').createSignedUrl(button.dataset.openPdf,60);if(x.error){status(x.error.message,true);return;}if(!await stillCurrent())return;window.open(x.data.signedUrl,'_blank','noopener');}));
   host.querySelectorAll('[data-assign-client]').forEach(f=>f.addEventListener('submit',async ev=>{ev.preventDefault();const b=f.querySelector('button');b.disabled=true;try{const x=await db.from('events').update({client_id:f.elements.client_id.value}).eq('id',f.dataset.assignClient).select('id').single();if(x.error)throw x.error;await mount(db,role,id,lang);}catch(e){status(e.message,true);b.disabled=false;}}));
  }
- window.FEWorkflow={mount,quoteHtml,money,catalogHtml,sourceDetailHtml};
+ window.FEWorkflow={mount,quoteHtml,money,catalogHtml,sourceDetailHtml,launchHtml};
 })();
 
 
