@@ -1477,3 +1477,25 @@ Once pruebas afectadas superadas localmente, incluida limpieza al cancelar
 una lectura en curso. La carga admite el formato normalizado ficticio de
 factura estándar EUR. Queda pendiente la lectura directa autenticada de
 Dolibarr. Sin emisión de facturas ni envíos.
+
+
+## Lectura Dolibarr desde la API de pruebas
+
+El menú de Facturación superó GitHub Actions (43618572412) y se publicó
+en GitHub Pages (43618572263). El lector local solicita una sola factura
+con GET en una instancia aislada en euros, sin seguir redirecciones.
+Comprueba ID y revisión esperada y devuelve solo los campos que usa el
+importador web. La clave se obtiene del entorno local.
+
+Con DOLIBARR_TEST_URL y DOLIBARR_TEST_API_KEY configurados localmente en
+una instancia de pruebas y usando los valores ficticios exactos:
+
+```sh
+python3 tools/accounts_2027_dolibarr.py --test-mode 42 X26-P900099-v2 > factura-prueba.json
+python3 -m unittest discover -s tests -p test_accounts_2027_dolibarr.py -v
+```
+
+Pasaron cuatro pruebas locales, dos de ellas nuevas con respuestas
+HTTP simuladas. La lectura autenticada real sigue pendiente de una
+conexión autorizada a la instancia aislada. Sin emisión, cambios en
+Dolibarr ni operaciones con CUENTAS 27.

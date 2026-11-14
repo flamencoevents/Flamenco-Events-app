@@ -2,9 +2,12 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from io import BytesIO
+from unittest.mock import patch
+from urllib.error import HTTPError
 
 from test_accounts_2027_contract import PDF, bridge, fixture, package, workbook_fixture
-from accounts_2027_dolibarr import prepare_invoice
+from accounts_2027_dolibarr import fetch_trial_invoice, prepare_invoice
 from test_accounts_2027 import book
 
 
@@ -50,3 +53,31 @@ class InvoiceTests(unittest.TestCase):
                 prepare_invoice(rehearsal, dict(invoice(), **patch), test_mode=True)
         with self.assertRaisesRegex(bridge.Blocked, 'FICTIONAL_ONLY'):
             prepare_invoice(rehearsal, invoice(), test_mode=False)
+
+
+    @patch('accounts_2027_dolibarr.build_opener')
+    def test_reads_one_fixture_and_minimizes_export(self, opener):
+        opener.return_value.open.return_value = BytesIO(
+            b'{"id":42,"ref":"TEST-INV-42","type":0,"ref_ext":"X26-P900099-v2",'
+            b'"total_ht":900.10,"total_tva":"189.02","total_ttc":1089.12,'
+            b'"note_private":"FICTITIOUS_PRIVATE_NOTE","paye":1}')
+        url = 'https://sandbox.example.invalid/dolibarr'
+        out = fetch_trial_invoice(url, 'fixture-key', '42', 'X26-P900099-v2', test_mode=True)
+        req = opener.return_value.open.call_args.args[0]
+        self.assertEqual(req.get_method(), 'GET')
+        self.assertEqual(req.full_url, url + '/api/index.php/invoices/42?contact_list=-1')
+        self.assertEqual(req.get_header('Dolapikey'), 'fixture-key')
+        self.assertEqual(out, {k: v for k, v in invoice().items() if k not in ('paye', 'note_private')}
+                         | {'total_ht': '900.10'})
+
+    @patch('accounts_2027_dolibarr.build_opener')
+    def test_blocks_real_mode_and_sanitizes_provider_errors(self, opener):
+        args = ('https://sandbox.example.invalid', 'fixture-key', '42', 'X26-P900099-v2')
+        with self.assertRaisesRegex(bridge.Blocked, 'FICTIONAL_ONLY'):
+            fetch_trial_invoice(*args, test_mode=False)
+        opener.assert_not_called()
+        opener.return_value.open.side_effect = HTTPError(args[0], 302, 'PRIVATE', {}, None)
+        with self.assertRaisesRegex(bridge.Blocked, '^DOLIBARR_TEST_READ_FAILED$'):
+            fetch_trial_invoice(*args, test_mode=True)
+        handler = opener.call_args.args[0]
+        self.assertIsNone(handler.redirect_request(None, None, 302, '', {}, 'https://other.invalid'))
