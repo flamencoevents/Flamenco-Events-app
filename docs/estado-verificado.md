@@ -1633,3 +1633,30 @@ La prueba previa de conciliación de PDF pasó en GitHub Actions
 El cambio de lectura se aplica a las utilidades locales. La conexión de
 extremo a extremo con Drive y la web y la escritura operativa siguen
 pendientes. El libro real quedó fuera del ensayo.
+
+## Límite de lectura en el exportador XLSX · 15 noviembre 2026
+
+El exportador experimental relee como máximo 20 000 001 bytes después
+del planificador y antes de importar o crear el directorio de salida.
+Si el archivo supera el límite, devuelve `WORKBOOK_TOO_LARGE`. Para
+archivos dentro del límite sigue cotejando la huella de los bytes que
+entrega al importador con la huella de la propuesta.
+
+El ensayo amplía un duplicado ficticio a 20 000 001 bytes justo después
+de que el planificador lo haya validado. Antes devolvía
+`WORKBOOK_CHANGED` después de leer el archivo sin límite. Ahora se
+verifica el rechazo por tamaño y la ausencia del directorio de salida.
+En el mismo ensayo pasó la exportación normal de la copia ficticia y su
+auditoría independiente. El directorio temporal se elimina al salir,
+también ante errores.
+
+Reproducción local con el runtime existente:
+
+```sh
+node --check tools/accounts_2027_roundtrip.mjs
+python3 tests/run_accounts_2027_artifact_trial.py
+```
+
+Modo prueba. El libro real quedó fuera del ensayo. Siguen pendientes la
+validación de extremo a extremo con Drive y la ficha web y la escritura
+operativa.

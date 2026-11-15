@@ -1,10 +1,26 @@
 // Experimental local COPY writer. Never uploads or replaces a business workbook.
 // Preservation must be audited independently before any copy could be accepted.
+import { createReadStream } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { SpreadsheetFile } from '@oai/artifact-tool';
+
+// Match the planner's MAX_XLSX_BYTES. The final byte detects oversize
+// even when the file grows after the planner returns.
+const MAX_XLSX_BYTES = 20_000_000;
+
+async function readWorkbook(inputPath) {
+  const chunks = [];
+  let size = 0;
+  for await (const chunk of createReadStream(inputPath, { start: 0, end: MAX_XLSX_BYTES })) {
+    size += chunk.length;
+    if (size > MAX_XLSX_BYTES) throw new Error('WORKBOOK_TOO_LARGE');
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks, size);
+}
 
 async function main() {
 const [inputPath, requestPath, outputDir] = process.argv.slice(2);
@@ -20,7 +36,7 @@ const expectedProposal = process.env.FE_ACCOUNTS_EXPECTED_PROPOSAL_ID;
 if (expectedProposal !== undefined && proposal.proposal_id !== expectedProposal) {
   throw new Error('PROPOSAL_CHANGED');
 }
-const raw = await fs.readFile(inputPath);
+const raw = await readWorkbook(inputPath);
 const sourceSha256 = crypto.createHash('sha256').update(raw).digest('hex');
 if (sourceSha256 !== proposal.workbook_sha256) throw new Error('WORKBOOK_CHANGED');
 // A new directory is mandatory; no overwrite, same-path save or symlink reuse.

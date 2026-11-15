@@ -10,7 +10,7 @@ from zipfile import ZipFile
 import xml.etree.ElementTree as ET
 
 from test_accounts_2027_contract import PDF, bridge, fixture
-from accounts_2027 import Blocked, HEADERS, NS, REL, SHEET
+from accounts_2027 import Blocked, HEADERS, MAX_XLSX_BYTES, NS, REL, SHEET
 from accounts_2027_trial import run_trial
 
 BUILDER = "import fs from 'node:fs/promises';\nimport { Workbook, SpreadsheetFile } from '@oai/artifact-tool';\n\nconst [layoutPath, output] = process.argv.slice(2);\nconst {sheetName, headers} = JSON.parse(await fs.readFile(layoutPath, 'utf8'));\nconst wb = Workbook.create();\nconst notes = wb.worksheets.add('Notas ficticias');\nnotes.getRange('A1').values = [['Hoja ajena intacta']];\nconst sheet = wb.worksheets.add(sheetName);\nsheet.getRange('A3:Q3').values = [headers];\nsheet.getRange('A9').values = [['MARZO']];\nsheet.getRange('A15').values = [['ABRIL']];\nsheet.getRange('A12').values = [['Enlace ficticio']];\nsheet.getRange('C11:H11').format.fill = '#eeeeee';\nsheet.getRange('D11').format.numberFormat = 'dd/mm/yyyy';\nsheet.getRange('H11').format.numberFormat = '0.00';\nsheet.getRange('V12').formulas = [['=1+2']];\nconst file = await SpreadsheetFile.exportXlsx(wb);\nawait file.save(output);\n"
@@ -79,6 +79,30 @@ def main():
         if (blocked.returncode != 2 or json.loads(blocked.stderr.splitlines()[-1])['reason'] != 'PROPOSAL_CHANGED'
                 or (root / 'blocked').exists()):
             raise RuntimeError('A different proposal reached the exporter')
+        # Enlarge a disposable duplicate only after the real planner validates it.
+        oversized_source = root / 'oversized.xlsx'
+        oversized_source.write_bytes(before)
+        resizing_planner = root / 'resizing_planner.py'
+        resizing_planner.write_text(
+            'import subprocess, sys\n'
+            f'proposal = subprocess.check_output([sys.executable, {str(planner)!r}, *sys.argv[1:]])\n'
+            'with open(sys.argv[1], "r+b") as source:\n'
+            f'    source.truncate({MAX_XLSX_BYTES + 1})\n'
+            'sys.stdout.buffer.write(proposal)\n',
+            encoding='utf-8',
+        )
+        oversized = subprocess.run(
+            [node, 'roundtrip.mjs', 'oversized.xlsx', 'request.json', 'oversized-result'],
+            cwd=root, capture_output=True, text=True, timeout=180,
+            env=dict(writer_env, FE_ACCOUNTS_PLANNER=str(resizing_planner),
+                     FE_ACCOUNTS_EXPECTED_PROPOSAL_ID=prepared['proposal']['proposal_id']),
+        )
+        oversized_reason = json.loads(oversized.stderr.splitlines()[-1])['reason']
+        if (oversized.returncode != 2 or oversized_reason != 'WORKBOOK_TOO_LARGE'
+                or (root / 'oversized-result').exists()
+                or oversized_source.stat().st_size != MAX_XLSX_BYTES + 1):
+            raise RuntimeError(f'Unexpected response to an enlarged XLSX: {oversized_reason}')
+
         args = (source, root / 'request.json', root / 'result',
                 root / 'journal.sqlite', 'a' * 64, 'b' * 64)
         result = run_trial(*args, [node, str(root / 'roundtrip.mjs')])
