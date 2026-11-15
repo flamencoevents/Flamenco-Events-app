@@ -10,15 +10,14 @@ import datetime as dt
 from decimal import Decimal, InvalidOperation
 import hashlib
 import json
-import math
 from pathlib import Path
 import re
 import zipfile
 import xml.etree.ElementTree as ET
 
-from accounts_2027 import Blocked, clean_text, digest, propose, read_book, require
+from accounts_2027 import (Blocked, clean_text, digest, parse_account_json as parsed,
+                           propose, read_account_json, read_book, read_bounded, require)
 
-SNAPSHOT_LIMIT = 250_000
 PDF_LIMIT = 10_485_760
 
 
@@ -29,26 +28,6 @@ def cents(value):
     number *= 100
     require(number == number.to_integral_value(), 'SUBCENT_AMOUNT_REQUIRES_REVIEW')
     return int(number)
-
-
-def parsed(raw):
-    require(isinstance(raw, str) and len(raw.encode()) <= SNAPSHOT_LIMIT, 'INVALID_SNAPSHOT')
-    def unique(pairs):
-        obj = {}
-        for key, value in pairs:
-            require(key not in obj, 'DUPLICATE_JSON_KEY')
-            obj[key] = value
-        return obj
-    def finite_float(token):
-        value = float(token)
-        require(math.isfinite(value) and Decimal(str(value)) == Decimal(token),
-                'INVALID_JSON_NUMBER')
-        return value
-
-    value = json.loads(raw, object_pairs_hook=unique, parse_float=finite_float,
-                       parse_constant=lambda _: require(False, 'INVALID_JSON_NUMBER'))
-    require(isinstance(value, dict), 'INVALID_SNAPSHOT')
-    return value
 
 
 def match_web_preflight(evidence, event_id, number, revision, pdf_sha, size):
@@ -159,13 +138,6 @@ def prepare(book, envelope, pdf, *, web_pdf=None, web_preflight=None):
     return result
 
 
-def read_bounded(path, limit, error):
-    with Path(path).open('rb') as source:
-        data = source.read(limit + 1)
-    require(len(data) <= limit, error)
-    return data
-
-
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('workbook')
@@ -175,13 +147,13 @@ def main():
     p.add_argument('--web-preflight', help='Local copy of the read-only web accounts preflight for the fictitious event')
     a = p.parse_args()
     try:
-        envelope = parsed(read_bounded(a.envelope, SNAPSHOT_LIMIT, 'INVALID_SNAPSHOT').decode('utf-8'))
+        envelope = read_account_json(a.envelope)
         require(envelope.get('test_mode') is True, 'FICTIONAL_ONLY')
         pdf = read_bounded(a.pdf, PDF_LIMIT, 'INVALID_PDF_BYTES')
         web_pdf = read_bounded(a.web_pdf, PDF_LIMIT, 'INVALID_WEB_PDF_BYTES') if a.web_pdf else None
         web_preflight = None
         if a.web_preflight:
-            web_preflight = parsed(read_bounded(a.web_preflight, SNAPSHOT_LIMIT, 'INVALID_SNAPSHOT').decode('utf-8'))
+            web_preflight = read_account_json(a.web_preflight)
         result = prepare(Path(a.workbook), envelope, pdf, web_pdf=web_pdf, web_preflight=web_preflight)
     except (Blocked, ValueError, TypeError, KeyError, AttributeError, IndexError, OSError,
             InvalidOperation, zipfile.BadZipFile, ET.ParseError) as exc:

@@ -14,7 +14,9 @@ from pathlib import Path
 import zipfile
 import xml.etree.ElementTree as ET
 
-from accounts_2027 import NS, SHEET, Blocked, cell_payload, propose, read_book, read_workbook_bytes, require, shared_string, workbook_relationships, worksheet_cells, worksheet_part
+from accounts_2027 import (NS, SHEET, Blocked, cell_payload, propose, read_account_json,
+                           read_book, read_workbook_bytes, require, shared_string,
+                           workbook_relationships, worksheet_cells, worksheet_part)
 
 
 def xml_signature(element):
@@ -157,7 +159,7 @@ def main():
     p.add_argument('request')
     args = p.parse_args()
     try:
-        result = verify(args.source, args.candidate, json.loads(Path(args.request).read_text()))
+        result = verify(args.source, args.candidate, read_account_json(args.request))
     except (Blocked, KeyError, TypeError, ValueError, ArithmeticError, IndexError, OSError, zipfile.BadZipFile, ET.ParseError) as exc:
         result = {'status': 'blocked', 'production_writable': False,
                   'reason': str(exc) if isinstance(exc, Blocked) else 'INVALID_INPUT'}

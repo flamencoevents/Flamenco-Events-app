@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 import subprocess
 
-from accounts_2027 import Blocked, propose, read_book, require
+from accounts_2027 import Blocked, propose, read_account_json, read_book, require
 from accounts_2027_ledger import Ledger
 
 
@@ -41,7 +41,7 @@ def run_trial(source, request_path, output, database, workbook_key, owner_key,
     """
     source, request_path, output, database = map(Path, (source, request_path, output, database))
     require(bool(node_command), 'ARTIFACT_RUNTIME_REQUIRED')
-    request = json.loads(request_path.read_text())
+    request = read_account_json(request_path)
     # Keep database/lock away from the input and request even on a wrong CLI.
     protected = {source.resolve(), request_path.resolve()}
     require(database.resolve() not in protected and

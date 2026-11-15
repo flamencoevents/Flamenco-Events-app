@@ -1846,3 +1846,26 @@ La respuesta empleada en las pruebas es ficticia. El cotejo de un
 archivo local no autentica su procedencia y mantiene
 `remote_origin_verified=false`. No se consultó el servidor, no se
 crearon sesiones y el libro real quedó fuera del ensayo.
+
+## Solicitudes JSON inequívocas para CUENTAS 27 · 15 noviembre 2026
+
+Los comandos de planificación, empaquetado, auditoría y ensayo con
+diario usan el mismo lector JSON estricto que la conciliación de
+contratos. El límite es 250 000 bytes. Se rechazan claves repetidas
+y números que perderían precisión al interpretarse.
+
+La regresión por consola reprodujo la aceptación de una solicitud
+con dos importes para la misma clave y de una solicitud por encima
+del límite. Los cuatro comandos devuelven ahora un motivo específico,
+sin crear una copia de salida ni un diario. Se comprobó que el
+archivo original ficticio conserva sus bytes. Pasaron 78 pruebas
+locales de las suites afectadas.
+
+Reproducción de la regresión:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_accounts_2027_trial.py' -k ambiguous
+```
+
+Solo se probaron archivos ficticios y locales. La integración
+autenticada y la escritura operativa siguen pendientes.

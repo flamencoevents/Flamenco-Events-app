@@ -9,6 +9,7 @@ from decimal import Decimal, InvalidOperation
 import hashlib
 import io
 import json
+import math
 from pathlib import Path
 import posixpath
 import re
@@ -16,6 +17,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 
 MAX_XLSX_BYTES = 20_000_000
+JSON_LIMIT = 250_000
 NS = {'m': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 REL = '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id'
 SHEET = 'Fechas cerradas 2027 por fecha '
@@ -119,11 +121,39 @@ def worksheet_cells(root):
             yield ref, cell
 
 
+def read_bounded(path, limit, error):
+    with Path(path).open('rb') as source:
+        data = source.read(limit + 1)
+    require(len(data) <= limit, error)
+    return data
+
+
+def parse_account_json(raw):
+    require(isinstance(raw, str) and len(raw.encode()) <= JSON_LIMIT, 'INVALID_SNAPSHOT')
+    def unique(pairs):
+        obj = {}
+        for key, value in pairs:
+            require(key not in obj, 'DUPLICATE_JSON_KEY')
+            obj[key] = value
+        return obj
+    def finite_float(token):
+        value = float(token)
+        require(math.isfinite(value) and Decimal(str(value)) == Decimal(token),
+                'INVALID_JSON_NUMBER')
+        return value
+
+    value = json.loads(raw, object_pairs_hook=unique, parse_float=finite_float,
+                       parse_constant=lambda _: require(False, 'INVALID_JSON_NUMBER'))
+    require(isinstance(value, dict), 'INVALID_SNAPSHOT')
+    return value
+
+
+def read_account_json(path):
+    return parse_account_json(read_bounded(path, JSON_LIMIT, 'INVALID_SNAPSHOT').decode('utf-8'))
+
+
 def read_workbook_bytes(path):
-    with Path(path).open('rb') as stream:
-        raw = stream.read(MAX_XLSX_BYTES + 1)
-    require(len(raw) <= MAX_XLSX_BYTES, 'WORKBOOK_TOO_LARGE')
-    return raw
+    return read_bounded(path, MAX_XLSX_BYTES, 'WORKBOOK_TOO_LARGE')
 
 
 def read_book(path):
@@ -308,8 +338,9 @@ def main():
     parser.add_argument('--request', help='Private JSON with fictitious data only; never commit it.')
     args = parser.parse_args()
     try:
+        request = read_account_json(args.request) if args.request else None
         book = read_book(args.workbook)
-        result = propose(book, json.loads(Path(args.request).read_text())) if args.request else inspect(book)
+        result = propose(book, request) if request is not None else inspect(book)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     except (Blocked, KeyError, ValueError, TypeError, AttributeError, OSError, zipfile.BadZipFile, ET.ParseError, IndexError) as exc:
         code = str(exc) if isinstance(exc, Blocked) else 'INVALID_INPUT'

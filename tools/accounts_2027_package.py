@@ -16,7 +16,8 @@ import zipfile
 import xml.etree.ElementTree as ET
 from xml.parsers import expat
 
-from accounts_2027 import NS, SHEET, Blocked, propose, read_book, read_workbook_bytes, require, workbook_relationships, worksheet_part
+from accounts_2027 import (NS, SHEET, Blocked, propose, read_account_json, read_book,
+                           read_workbook_bytes, require, workbook_relationships, worksheet_part)
 from accounts_2027_verify import verify
 
 
@@ -142,7 +143,7 @@ def main():
     p.add_argument('--expected-proposal-id')
     a = p.parse_args()
     try:
-        result = package(a.source, a.artifact, json.loads(Path(a.request).read_text()), a.output,
+        result = package(a.source, a.artifact, read_account_json(a.request), a.output,
                          expected_proposal_id=a.expected_proposal_id)
     except (Blocked, ValueError, TypeError, KeyError, IndexError, OSError, zipfile.BadZipFile,
             ET.ParseError, expat.ExpatError) as exc:

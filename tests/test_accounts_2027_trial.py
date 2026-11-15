@@ -31,6 +31,35 @@ class TrialTests(unittest.TestCase):
         self.req_path.write_text(json.dumps(self.req))
         self.calls = 0
 
+    def test_all_cli_entry_points_reject_ambiguous_or_oversized_requests(self):
+        artifact = self.root / 'artifact.xlsx'
+        candidate = self.root / 'candidate.xlsx'
+        fixture(artifact, propose(read_book(self.source), self.req))
+        package(self.source, artifact, self.req, candidate)
+        tools = Path(__file__).resolve().parents[1] / 'tools'
+        commands = {
+            'accounts_2027.py': [self.source, '--request', self.req_path],
+            'accounts_2027_verify.py': [self.source, candidate, self.req_path],
+            'accounts_2027_package.py': [self.source, artifact, self.req_path, self.output],
+            'accounts_2027_trial.py': [self.source, self.req_path, self.output, self.database,
+                                       'a' * 64, 'b' * 64, '--node', 'unused', '--writer', 'unused'],
+        }
+        normal = json.dumps(self.req)
+        for raw, reason in (
+            (normal.replace('"total_cents":', '"total_cents": 7, "total_cents":', 1), 'DUPLICATE_JSON_KEY'),
+            (normal + ' ' * 250_001, 'INVALID_SNAPSHOT'),
+        ):
+            self.req_path.write_text(raw, encoding='utf-8')
+            for script, args in commands.items():
+                with self.subTest(script=script, reason=reason):
+                    result = subprocess.run([sys.executable, str(tools / script), *map(str, args)],
+                                            capture_output=True, text=True, timeout=20)
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertEqual(json.loads(result.stdout)['reason'], reason)
+                    self.assertEqual(self.source.read_bytes(), self.original)
+                    self.assertFalse(self.output.exists())
+                    self.assertFalse(self.database.exists())
+
     def writer(self, command, **kwargs):
         self.calls += 1
         source, request_path, output = map(Path, command[-3:])
