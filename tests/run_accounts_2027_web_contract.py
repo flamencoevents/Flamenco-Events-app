@@ -1,4 +1,5 @@
 """Exercise the offline accounts CLI using a response from the web test harness."""
+import argparse
 import base64
 import hashlib
 import json
@@ -13,7 +14,7 @@ import accounts_2027_contract as bridge
 from accounts_2027_package import package
 
 
-def run(inputs):
+def run(inputs, *, artifact=False):
     evidence = inputs['evidence']
     pdf = base64.b64decode(inputs['pdf_base64'], validate=True)
     envelope = fixture()
@@ -31,6 +32,11 @@ def run(inputs):
     envelope['source_sheet'] = 'FE_Cola'
     envelope['expected_pdf_sha256'] = hashlib.sha256(pdf).hexdigest()
     envelope['event'].update(id=inputs['event_id'], quote_number='9999926', source_key=key, version=1)
+
+    if artifact:
+        from run_accounts_2027_artifact_trial import run_artifact_rehearsal
+        run_artifact_rehearsal(envelope, pdf, evidence, '100')
+        return
 
     with TemporaryDirectory(prefix='fe-web-contract-') as directory:
         root = Path(directory)
@@ -66,4 +72,9 @@ def run(inputs):
 
 
 if __name__ == '__main__':
-    print(json.dumps(run(json.load(sys.stdin))))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--artifact', action='store_true', help='Use the existing local XLSX exporter')
+    args = parser.parse_args()
+    result = run(json.load(sys.stdin), artifact=args.artifact)
+    if not args.artifact:
+        print(json.dumps(result))

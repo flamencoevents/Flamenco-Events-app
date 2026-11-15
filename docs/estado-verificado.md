@@ -1963,3 +1963,26 @@ node --test --test-name-pattern='flows into' tests/accounts-preflight.test.cjs
 El ensayo enlaza el código web y local con datos ficticios y limpia los
 archivos temporales. No verifica procedencia remota ni usa sesiones,
 Drive o el libro real. La publicación de la función sigue pendiente.
+
+## Respuesta web con exportador XLSX local · 15 noviembre 2026
+
+El ensayo optativo pasa al comando Python la respuesta JSON que
+produce la función web del repositorio con servicios simulados.
+Reutiliza el exportador XLSX local y el diario de pruebas. Confirmó
+la fecha y la huella económica, 100,00 EUR en H11, el hipervínculo
+existente, las partes ajenas intactas y una auditoría sin diferencias.
+El diario rechazó cambios en la candidata tras verificarla. El
+origen ficticio conservó todos sus bytes.
+
+Reproducción con el runtime local existente:
+
+```sh
+FE_ACCOUNTS_WEB_ARTIFACT=1 node --test --test-name-pattern='local Artifact XLSX export' tests/accounts-preflight.test.cjs
+```
+
+También pasaron el ensayo del exportador independiente y la prueba web
+con exportación simulada. La prueba optativa usa el exportador real
+solo sobre un libro generado desde cero. CI mantiene la prueba
+simulada y no requiere ese runtime. Los temporales se eliminan al
+salir. Sin sesiones, escrituras remotas ni acceso al libro real.
+La publicación de la función y el ensayo autenticado siguen pendientes.

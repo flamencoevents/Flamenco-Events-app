@@ -39,6 +39,17 @@ test('Web accounts evidence flows into the XLSX CLI and rejects one changed cent
   amount_cents:10000,origin_unchanged:true,blocked_exit:2,blocked_reason:'WEB_PREFLIGHT_MISMATCH'});
  unchanged(e);
 });
+test('Web accounts evidence survives the local Artifact XLSX export',{
+ skip:process.env.FE_ACCOUNTS_WEB_ARTIFACT!=='1'
+},async()=>{
+ const e=fixture(),response=await ask(e);
+ assert.equal(response.status,200);
+ const input=JSON.stringify({evidence:await response.json(),event_id:e.eventId,pdf_base64:pdf.toString('base64')});
+ execFileSync('python3',['tests/run_accounts_2027_web_contract.py','--artifact'],{
+  input,encoding:'utf8',timeout:180000
+ });
+ unchanged(e);
+});
 test('Accounts preflight rejects a missing or invalid persisted event date before reading PDFs',async()=>{
  for(const date of [null,'2027-02-29','2027-03-12T00:00:00Z']){
   const e=fixture();e.tables.events[0].event_date=date;

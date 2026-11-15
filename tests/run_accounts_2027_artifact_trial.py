@@ -16,7 +16,7 @@ from accounts_2027_trial import run_trial
 BUILDER = "import fs from 'node:fs/promises';\nimport { Workbook, SpreadsheetFile } from '@oai/artifact-tool';\n\nconst [layoutPath, output] = process.argv.slice(2);\nconst {sheetName, headers} = JSON.parse(await fs.readFile(layoutPath, 'utf8'));\nconst wb = Workbook.create();\nconst notes = wb.worksheets.add('Notas ficticias');\nnotes.getRange('A1').values = [['Hoja ajena intacta']];\nconst sheet = wb.worksheets.add(sheetName);\nsheet.getRange('A3:Q3').values = [headers];\nsheet.getRange('A9').values = [['MARZO']];\nsheet.getRange('A15').values = [['ABRIL']];\nsheet.getRange('A12').values = [['Enlace ficticio']];\nsheet.getRange('C11:H11').format.fill = '#eeeeee';\nsheet.getRange('D11').format.numberFormat = 'dd/mm/yyyy';\nsheet.getRange('H11').format.numberFormat = '0.00';\nsheet.getRange('V12').formulas = [['=1+2']];\nconst file = await SpreadsheetFile.exportXlsx(wb);\nawait file.save(output);\n"
 
 
-def main():
+def run_artifact_rehearsal(contract, pdf, preflight, expected_amount):
     repo = Path(__file__).resolve().parents[1]
     node = os.environ['CODEX_PRIMARY_RUNTIME_NODE']
     modules = Path(os.environ['CODEX_PRIMARY_RUNTIME_NODE_MODULES'])
@@ -73,16 +73,18 @@ def main():
         source_pdf = root / 'origin.pdf'
         web_pdf = root / 'web.pdf'
         web_preflight = root / 'web-preflight.json'
-        envelope.write_text(json.dumps(fixture()), encoding='utf-8')
-        source_pdf.write_bytes(PDF)
-        web_pdf.write_bytes(PDF)
-        web_preflight.write_text(json.dumps(web_preflight_fixture()), encoding='utf-8')
+        envelope.write_text(json.dumps(contract), encoding='utf-8')
+        source_pdf.write_bytes(pdf)
+        web_pdf.write_bytes(pdf)
+        web_preflight.write_text(json.dumps(preflight), encoding='utf-8')
         command = [sys.executable, str(repo / 'tools/accounts_2027_contract.py'),
                    str(source), str(envelope), str(source_pdf), '--web-pdf', str(web_pdf),
                    '--web-preflight', str(web_preflight)]
         prepared = json.loads(subprocess.check_output(command, text=True, timeout=30))
         if (prepared['status'] != 'pending_review' or prepared['local_pdf_copies_match'] is not True
                 or prepared['local_web_preflight_matches'] is not True
+                or prepared['local_web_event_date_matches'] is not True
+                or prepared['local_web_financial_matches'] is not True
                 or prepared['remote_origin_verified'] is not False or prepared['production_writable'] is not False):
             raise RuntimeError('The CLI did not reconcile the two fictitious PDF copies')
         (root / 'request.json').write_text(json.dumps(prepared['planner_request']))
@@ -157,9 +159,9 @@ def main():
         if (audit['status'] != 'copy_preservation_checks_passed' or audit['differences']
                 or audit['production_writable'] is not False or source.read_bytes() != before
                 or audit['proposal_id'] != prepared['proposal']['proposal_id']
-                or bridge.read_book(root / 'result/preserved.candidate.xlsx')['cells']['H11']['value'] != '1060.01'):
+                or bridge.read_book(root / 'result/preserved.candidate.xlsx')['cells']['H11']['value'] != expected_amount):
             raise RuntimeError('Synthetic contract copy did not preserve the expected values')
 
 
 if __name__ == '__main__':
-    main()
+    run_artifact_rehearsal(fixture(), PDF, web_preflight_fixture(), '1060.01')
