@@ -14,20 +14,21 @@ function panel(responses){
     });
     return nodes.get(key);
   };
-  const db={from(){
+  let actor='admin-fixture';
+  const db={auth:{getUser:async()=>({data:{user:actor?{id:actor}:null}})},from(){
     const query={select:()=>query,eq:()=>query,order:()=>responses.shift()()};
     return query;
   }};
   const ctx=vm.createContext({window:{},document:{getElementById:node},Intl});
   vm.runInContext(fs.readFileSync('contract-intake.js','utf8'),ctx);
-  return {api:ctx.window.FEContractIntake,db,node,handlers};
+  return {api:ctx.window.FEContractIntake,db,node,handlers,setActor:id=>{actor=id;}};
 }
 
 const row=payload=>({event_date:'2027-03-12',quote_number:'X27-P900001',revision:1,payload});
 
 test('Missing forecasts remain pending while a recorded zero is rendered as zero',async()=>{
   const p=panel([async()=>({data:[row({total_eur:null,deposit_eur:0})]})]);
-  await p.api.mount(p.db,'admin');
+  await p.api.mount(p.db,'admin','admin-fixture');
   const html=p.node('[data-ci-list]').innerHTML;
   assert.match(html,/Previsión: Pendiente · Reserva prevista: 0,00/);
   assert.match(html,/Saldo previsto: Pendiente/);
@@ -37,7 +38,7 @@ test('Missing forecasts remain pending while a recorded zero is rendered as zero
 test('Rejected refresh clears stale records and a subsequent refresh can recover',async()=>{
   const first=async()=>({data:[row({total_eur:100,deposit_eur:0,balance_eur:100})]});
   const p=panel([first,async()=>{throw Error('private transport detail');},first]);
-  await p.api.mount(p.db,'admin');
+  await p.api.mount(p.db,'admin','admin-fixture');
   const list=p.node('[data-ci-list]'),status=p.node('[data-ci-status]');
   const refresh=p.handlers.get('[data-ci-refresh]:click');
   assert.match(list.innerHTML,/X27-P900001/);
@@ -65,7 +66,7 @@ test('Accounts links must match the event year approved by the receiver',async()
       }),event_date:year+'-03-12'};
       const p=panel([async()=>({data:[fixture]})]);
       p.node('[data-ci-year]').value=year;
-      await p.api.mount(p.db,'admin');
+      await p.api.mount(p.db,'admin','admin-fixture');
       const html=p.node('[data-ci-list]').innerHTML;
       assert.ok(html.includes('Abrir contrato privado'));
       assert.equal(html.includes('Abrir previsión de prueba en cuentas'),bookYear===year,
@@ -73,4 +74,39 @@ test('Accounts links must match the event year approved by the receiver',async()
       assert.equal(html.includes('Previsión en cuentas sin enlazar'),bookYear!==year);
     }
   }
+});
+
+test('A delayed response cannot render private rows after an account change',async()=>{
+  for(const nextActor of [null,'other-fixture']){
+    let resolve;
+    const p=panel([()=>new Promise(done=>{resolve=done;})]);
+    const loading=p.api.mount(p.db,'admin','admin-fixture');
+    p.setActor(nextActor);
+    resolve({data:[row({total_eur:100})]});
+    await loading;
+    assert.equal(p.node('[data-ci-list]').innerHTML,'');
+  }
+});
+
+test('Admin logout invalidates and clears the private panels before remote signout completes',async()=>{
+  const page=fs.readFileSync('admin.html','utf8');
+  const start=page.indexOf("el('logout').addEventListener(");
+  const end=page.indexOf(';if(db)db.auth.onAuthStateChange',start);
+  assert.ok(start>=0&&end>start);
+  let handler,finish;
+  const calls=[];
+  const ctx=vm.createContext({
+    loadEpoch:1,
+    el:()=>({addEventListener:(_,fn)=>{handler=fn;}}),
+    window:{FEAccounts:{clear:()=>calls.push('accounts')},FEContractIntake:{clear:()=>calls.push('contracts')}},
+    db:{auth:{signOut:()=>new Promise(resolve=>{finish=resolve;})}},
+    load:()=>calls.push('load'),
+  });
+  vm.runInContext(page.slice(start,end),ctx);
+  const loggingOut=handler();
+  assert.equal(ctx.loadEpoch,2);
+  assert.deepEqual(calls,['accounts','contracts']);
+  finish();
+  await loggingOut;
+  assert.deepEqual(calls,['accounts','contracts','load']);
 });

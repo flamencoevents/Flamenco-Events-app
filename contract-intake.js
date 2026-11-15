@@ -1,6 +1,6 @@
 (function(root){'use strict';let epoch=0;const escape=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function clear(){epoch++;const h=document.getElementById('generated-contract-intake');if(h)h.replaceChildren();}
-async function mount(db,role){clear();const host=document.getElementById('generated-contract-intake');if(!host||role!=='admin')return;
+async function mount(db,role,actorId){clear();const host=document.getElementById('generated-contract-intake');if(!host||role!=='admin'||!actorId)return;
  host.innerHTML='<h2>Contratos generados · integración de prueba</h2><p>Consulta de documentos y previsiones. Pendiente de revisión comercial; no acredita firma, cobro ni reserva.</p><label>Año del evento<select data-ci-year></select></label><button type="button" data-ci-refresh>Actualizar contratos</button><p role="status" data-ci-status></p><div data-ci-list></div>';
  let rows=[];const status=host.querySelector('[data-ci-status]'),list=host.querySelector('[data-ci-list]'),year=host.querySelector('[data-ci-year]');
  const accountBooks={'2026':'1dsgfqv6YG49-_QaAx-0dUyvLImBTdkkDEvgXBu1QZuY','2027':'1ZE66Ko8bnh3qp9Z2Mfp8VOG2pmH_a-EyUJZRvQVnHtE'};
@@ -42,6 +42,19 @@ async function mount(db,role){clear();const host=document.getElementById('genera
    response=null;
   }
   if(request!==epoch)return;
+  let activeActor;
+  try{
+   const auth=await db.auth.getUser();
+   activeActor=auth.error?null:auth.data?.user?.id;
+  }catch{
+   activeActor=null;
+  }
+  if(request!==epoch)return;
+  if(activeActor!==actorId){
+   rows=null;
+   clear();
+   return;
+  }
   if(!response||response.error){
    rows=null;
    status.textContent='No se pudo consultar la integración de contratos.';

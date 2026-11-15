@@ -1802,3 +1802,24 @@ python3 -m unittest discover -s tests -p 'test_accounts_2027_catalog.py' -v
 
 La prueba valida la referencia dentro del XLSX. Los enlaces no se
 abrieron y el catálogo remoto y el libro real quedaron fuera.
+
+## Panel privado al salir o cambiar de cuenta · 15 noviembre 2026
+
+El panel de contratos conserva la identidad que inició la consulta y
+comprueba que sigue activa antes de mostrar la respuesta. Una consulta
+demorada se descarta si la sesión termina o cambia de cuenta. El botón
+Salir invalida la carga anterior y limpia los paneles de contratos y
+cuentas antes de esperar la respuesta del cierre de sesión.
+
+Las dos regresiones reprodujeron los fallos con sesiones simuladas.
+Pasaron las cinco pruebas del panel y la comprobación sintáctica.
+Reproducción:
+
+```sh
+node --check contract-intake.js
+node --test tests/contract-intake-panel.test.cjs
+```
+
+Verificado con dobles y datos ficticios, sin crear sesiones ni
+asignaciones. El cambio es de interfaz y no altera los permisos del
+servidor. Drive y el XLSX real quedaron fuera del ensayo.
