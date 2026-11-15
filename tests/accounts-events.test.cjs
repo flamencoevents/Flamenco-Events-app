@@ -18,10 +18,22 @@ test('Missing links stay pending and complete accounts do not invent missing amo
  const a=api();assert.match(a.table([r]),/Presupuesto sin enlazar/);assert.match(a.table([r]),/Contrato sin enlazar/);
  const html=a.detail(r,{year:2027,source_url:'https://docs.google.com/spreadsheets/d/test/edit'});assert.match(html,/COBRADO RESERVA/);assert.match(html,/COBRO TOTAL/);assert.match(html,/Abrir cuentas totales de 2027/);assert.match(html,/<dd>—<\/dd>/);assert.match(html,/<dd>0,00/);
 });
+test('The economic sheet preserves subcent values and does not turn blanks into zero',()=>{
+ const r=row(),a=api();
+ r.account_values.PRESUPUESTO='1210.99000000000000000000000000001';
+ r.account_values['COBRADO RESERVA']='   ';
+ r.account_values['Cobro pendiente']='1.2300';
+ r.account_values['COBRO TOTAL']='1000000000000000128';
+ const html=a.detail(r,{year:2027});
+ assert.ok(html.includes('<dt>COBRO TOTAL</dt><dd>1000000000000000128</dd>'));
+ assert.ok(html.includes('<dt>PRESUPUESTO</dt><dd>'+r.account_values.PRESUPUESTO+'</dd>'));
+ assert.match(html,/<dt>COBRADO RESERVA<\/dt><dd>—<\/dd>/);
+ assert.match(html,/<dt>Cobro pendiente<\/dt><dd>1,23/);
+});
 function mock(){const nodes=new Map(),handlers=new Map(),queries=[];let user='staff-a',pending;
  const node=k=>{if(!nodes.has(k))nodes.set(k,{innerHTML:'',textContent:'',value:k==='[data-accounts-year]'?'2027':'',hidden:false,dataset:{},focus(){},querySelector:node,addEventListener:(event,fn)=>handlers.set(k+':'+event,fn)});return nodes.get(k)};
- const host=node('host'),db={auth:{getUser:async()=>({data:{user:{id:user}}})},from(t){queries.push(t);const q={select:()=>q,order:()=>q,eq:()=>q,then:resolve=>{if(t==='accounts_year_catalog')return Promise.resolve({data:[{year:2027,source_url:'https://docs.google.com/spreadsheets/d/test/edit',imported_at:'2026-11-06T00:00:00Z'}]}).then(resolve);return new Promise(r=>pending=r).then(resolve)}};return q;}};
- const a=api({document:{getElementById:()=>host}});return {a,db,host,queries,handlers,node,setUser:v=>user=v,resolve:x=>pending({data:x}),get pending(){return pending}};
+ const host=node('host'),db={auth:{getUser:async()=>({data:{user:{id:user}}})},from(t){queries.push(t);const q={select:()=>q,order:()=>q,eq:()=>q,then:resolve=>{if(t==='accounts_year_catalog')return Promise.resolve({data:[{year:2027,source_url:'https://docs.google.com/spreadsheets/d/test/edit',imported_at:'2026-11-06T00:00:00Z'},{year:2026,source_url:'https://docs.google.com/spreadsheets/d/test-2026/edit',imported_at:'2026-11-06T00:00:00Z'}]}).then(resolve);return new Promise(r=>pending=r).then(resolve)}};return q;}};
+ const a=api({document:{getElementById:()=>host}});return {a,db,host,queries,handlers,node,setUser:v=>user=v,resolve:x=>pending({data:x}),resolveError:()=>pending({error:true}),get pending(){return pending}};
 }
 test('Clients cannot mount the staff accounts catalog',async()=>{const c=mock();await c.a.mount(c.db,'client');assert.deepEqual(c.queries,[]);assert.equal(c.host.innerHTML,'');});
 test('Account change and signout clear invalidate pending catalog responses',async()=>{
@@ -30,4 +42,18 @@ test('Account change and signout clear invalidate pending catalog responses',asy
 test('Search filters source rows without conflating identical quotation numbers',async()=>{
  const c=mock();const p=c.a.mount(c.db,'admin');while(!c.pending)await new Promise(r=>setImmediate(r));c.resolve([row(),{...row(),source_row:20,client_label:'OTRO',venue:'Otro lugar'}]);await p;
  c.node('[data-accounts-search]').value='otro';c.handlers.get('[data-accounts-search]:input')();const html=c.node('[data-accounts-table]').innerHTML;assert.match(html,/OTRO/);assert.ok(!html.includes('PRUEBA'));
+});
+test('Changing year removes the previous workbook link even when the new request fails',async()=>{
+ const c=mock(),mount=c.a.mount(c.db,'admin');
+ while(!c.pending)await new Promise(r=>setImmediate(r));
+ c.resolve([row()]);await mount;
+ const source=c.node('[data-accounts-source]'),pending=c.pending;
+ assert.match(source.innerHTML,/Cuentas totales de 2027/);
+ c.node('[data-accounts-year]').value='2026';
+ const changing=c.handlers.get('[data-accounts-year]:change')();
+ assert.equal(source.innerHTML,'');
+ while(c.pending===pending)await new Promise(r=>setImmediate(r));
+ c.resolveError();await changing;
+ assert.equal(source.innerHTML,'');
+ assert.match(c.node('[data-accounts-status]').textContent,/No se pudo leer/);
 });

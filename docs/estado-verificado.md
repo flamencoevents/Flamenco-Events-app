@@ -1893,3 +1893,25 @@ python3 -m unittest discover -s tests -p 'test_accounts_2027_contract.py'
 
 Pendiente el despliegue de la función y el ensayo autenticado. Sin
 sesiones reales, envíos ni operaciones sobre el XLSX original.
+
+## Importes y enlace del año en la ficha económica · 15 noviembre 2026
+
+La ficha de cuentas deja en blanco los importes sin valor. Aplica el
+formato de euros solo si el navegador puede mostrar el importe sin
+redondearlo. Una fracción de céntimo o una cifra fuera de la precisión
+numérica segura se conserva como texto del libro. Un cero presente
+sigue mostrándose como cero.
+
+Al cambiar de año se oculta de inmediato el enlace al libro anterior.
+Si la lectura del año nuevo falla, el enlace anterior permanece oculto.
+Las dos regresiones reprodujeron ambos fallos con datos ficticios.
+Pasaron las nueve pruebas del panel tras el cambio y la comprobación
+adicional de una cifra fuera de la precisión segura.
+
+```sh
+node --check accounts-events.js
+node --test tests/accounts-events.test.cjs
+```
+
+Verificado con dobles de consulta y DOM. Sin abrir el libro real,
+crear sesiones o modificar el catálogo remoto.
