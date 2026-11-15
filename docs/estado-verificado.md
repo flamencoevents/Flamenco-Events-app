@@ -1592,3 +1592,17 @@ Para reproducir el cotejo por consola, usar el comando habitual con
 `--web-pdf copia-ficticia.pdf`. Sin sesiones ni acceso al XLSX real.
 
 GitHub confirmó pruebas y Pages de 06f21e9 (43654981197 y 43654981332).
+
+
+## Ensayo por consola de PDF y copia XLSX · 15 noviembre 2026
+
+La prueba integrada usa los argumentos reales del comando y dos PDF
+ficticios. Primero rechaza la segunda copia distinta y comprueba que no
+hay salida. Con las dos copias iguales, prepara la propuesta de la
+revisión, exige su huella al empaquetar y confirma una auditoría sin
+diferencias, el importe previsto y los bytes intactos del origen ficticio.
+El exportador se simula. El ensayo no acredita procedencia remota.
+
+Reproducir con `python3 -m unittest discover -s tests -p test_accounts_2027_contract.py -k audited_in_a_synthetic_copy -v`.
+Pasó localmente. CI y Pages del commit anterior 7ba337c completados
+(43659818494 y 43659817999). Sin sesiones ni acceso al XLSX real.

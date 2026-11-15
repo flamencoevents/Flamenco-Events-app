@@ -112,9 +112,27 @@ class ContractRehearsalTests(unittest.TestCase):
                                          ('source.xlsx', 'export.xlsx', 'copy.xlsx')]
             workbook_fixture(source)
             original = source.read_bytes()
-            prepared = bridge.prepare(bridge.read_book(source), self.data, PDF)
+            root = Path(temp)
+            envelope, origin, web = (root / name for name in ('input.json', 'origin.pdf', 'web.pdf'))
+            envelope.write_text(json.dumps(self.data), encoding='utf-8')
+            origin.write_bytes(PDF)
+            web.write_bytes(PDF + b'other version')
+            cmd = [sys.executable, str(Path(bridge.__file__)), str(source),
+                   str(envelope), str(origin), '--web-pdf', str(web)]
+            rejected = subprocess.run(cmd, capture_output=True, text=True)
+            self.assertEqual(rejected.returncode, 2, rejected.stderr)
+            self.assertEqual(json.loads(rejected.stdout)['reason'], 'WEB_PDF_DIGEST_MISMATCH')
+            self.assertFalse(candidate.exists())
+
+            web.write_bytes(PDF)
+            accepted = subprocess.run(cmd, capture_output=True, text=True)
+            self.assertEqual(accepted.returncode, 0, accepted.stderr)
+            prepared = json.loads(accepted.stdout)
+            self.assertTrue(prepared['local_pdf_copies_match'])
+            self.assertFalse(prepared['remote_origin_verified'])
             workbook_fixture(export, prepared['proposal'])
-            result = package(source, export, prepared['planner_request'], candidate)
+            result = package(source, export, prepared['planner_request'], candidate,
+                             expected_proposal_id=prepared['proposal']['proposal_id'])
             self.assertEqual(result['audit']['differences'], [])
             self.assertFalse(result['production_writable'])
             self.assertEqual(bridge.read_book(candidate)['cells']['H11']['value'], '1060.01')
