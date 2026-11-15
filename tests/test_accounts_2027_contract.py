@@ -34,6 +34,17 @@ def fixture():
                       'quote_number': quote['id'], 'source_key': quote['key'], 'version': 2}}
 
 
+def web_preflight_fixture():
+    return {'state': 'accounts_source_checked', 'event_id': 'TEST-EVENT',
+            'quote_number': 'X26-P900099', 'version': 2,
+            'pdf_sha256': hashlib.sha256(PDF).hexdigest(), 'size_bytes': len(PDF),
+            'is_forecast': True, 'stored': False, 'production_writable': False,
+            'remote_committed': False,
+            'checks': {key: True for key in ('source_response_hmac', 'source_pdf_checksum',
+                                             'stored_document_metadata', 'accepted_financial_values',
+                                             'stored_pdf_bytes')}}
+
+
 class ContractRehearsalTests(unittest.TestCase):
     def setUp(self):
         self.data, self.book = fixture(), book()
@@ -125,10 +136,13 @@ class ContractRehearsalTests(unittest.TestCase):
             self.assertFalse(candidate.exists())
 
             web.write_bytes(PDF)
-            accepted = subprocess.run(cmd, capture_output=True, text=True)
+            preflight = root / 'web-preflight.json'
+            preflight.write_text(json.dumps(web_preflight_fixture()), encoding='utf-8')
+            accepted = subprocess.run([*cmd, '--web-preflight', str(preflight)], capture_output=True, text=True)
             self.assertEqual(accepted.returncode, 0, accepted.stderr)
             prepared = json.loads(accepted.stdout)
             self.assertTrue(prepared['local_pdf_copies_match'])
+            self.assertTrue(prepared['local_web_preflight_matches'])
             self.assertFalse(prepared['remote_origin_verified'])
             workbook_fixture(export, prepared['proposal'])
             result = package(source, export, prepared['planner_request'], candidate,
@@ -137,6 +151,21 @@ class ContractRehearsalTests(unittest.TestCase):
             self.assertFalse(result['production_writable'])
             self.assertEqual(bridge.read_book(candidate)['cells']['H11']['value'], '1060.01')
             self.assertEqual(source.read_bytes(), original)
+
+    def test_web_preflight_forecast_matches_the_same_event_revision_and_pdf(self):
+        evidence = web_preflight_fixture()
+        normal = bridge.prepare(self.book, self.data, PDF)
+        result = bridge.prepare(self.book, self.data, PDF, web_preflight=evidence)
+        self.assertEqual(result['proposal'], normal['proposal'])
+        self.assertTrue(result['local_web_preflight_matches'])
+        self.assertFalse(result['remote_origin_verified'])
+        for key, changed in (('event_id', 'OTHER-EVENT'), ('quote_number', 'X26-P900100'),
+                             ('version', 1), ('pdf_sha256', '0' * 64), ('size_bytes', len(PDF)+1),
+                             ('is_forecast', False), ('remote_committed', True),
+                             ('checks', dict(evidence['checks'], stored_pdf_bytes=False))):
+            with self.subTest(field=key), self.assertRaisesRegex(bridge.Blocked, '^WEB_PREFLIGHT_MISMATCH$'):
+                bridge.prepare(Path('absent.xlsx'), self.data, PDF,
+                               web_preflight=dict(evidence, **{key: changed}))
 
     def test_numeric_overflow_in_saved_snapshot_is_rejected(self):
         with self.assertRaisesRegex(bridge.Blocked, '^INVALID_JSON_NUMBER$'):

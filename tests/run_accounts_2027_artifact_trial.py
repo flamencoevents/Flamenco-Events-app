@@ -9,7 +9,7 @@ from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 import xml.etree.ElementTree as ET
 
-from test_accounts_2027_contract import PDF, bridge, fixture
+from test_accounts_2027_contract import PDF, bridge, fixture, web_preflight_fixture
 from accounts_2027 import Blocked, HEADERS, MAX_XLSX_BYTES, NS, REL, SHEET
 from accounts_2027_trial import run_trial
 
@@ -72,13 +72,17 @@ def main():
         envelope = root / 'contract.json'
         source_pdf = root / 'origin.pdf'
         web_pdf = root / 'web.pdf'
+        web_preflight = root / 'web-preflight.json'
         envelope.write_text(json.dumps(fixture()), encoding='utf-8')
         source_pdf.write_bytes(PDF)
         web_pdf.write_bytes(PDF)
+        web_preflight.write_text(json.dumps(web_preflight_fixture()), encoding='utf-8')
         command = [sys.executable, str(repo / 'tools/accounts_2027_contract.py'),
-                   str(source), str(envelope), str(source_pdf), '--web-pdf', str(web_pdf)]
+                   str(source), str(envelope), str(source_pdf), '--web-pdf', str(web_pdf),
+                   '--web-preflight', str(web_preflight)]
         prepared = json.loads(subprocess.check_output(command, text=True, timeout=30))
         if (prepared['status'] != 'pending_review' or prepared['local_pdf_copies_match'] is not True
+                or prepared['local_web_preflight_matches'] is not True
                 or prepared['remote_origin_verified'] is not False or prepared['production_writable'] is not False):
             raise RuntimeError('The CLI did not reconcile the two fictitious PDF copies')
         (root / 'request.json').write_text(json.dumps(prepared['planner_request']))

@@ -1823,3 +1823,26 @@ node --test tests/contract-intake-panel.test.cjs
 Verificado con dobles y datos ficticios, sin crear sesiones ni
 asignaciones. El cambio es de interfaz y no altera los permisos del
 servidor. Drive y el XLSX real quedaron fuera del ensayo.
+
+## Cotejo de la comprobación web con la propuesta XLSX · 15 noviembre 2026
+
+El ensayo de contratos admite una copia local de la respuesta de
+comprobación web mediante `--web-preflight`. Si se facilita, debe
+coincidir con el evento, número, revisión, tamaño y SHA-256 del PDF.
+Además debe representar una comprobación de previsión de solo lectura.
+Si discrepa, devuelve `WEB_PREFLIGHT_MISMATCH` antes de abrir el XLSX.
+
+La versión positiva mantiene la misma propuesta. Dos pruebas cubren
+las discrepancias y el uso de la opción por consola. Pasaron las 24
+pruebas del ensayo de contratos y el ensayo integrado con el
+exportador, que verificó la copia XLSX ficticia y el importe previsto.
+
+```sh
+python3 -m unittest discover -s tests -p 'test_accounts_2027_contract.py'
+python3 tests/run_accounts_2027_artifact_trial.py
+```
+
+La respuesta empleada en las pruebas es ficticia. El cotejo de un
+archivo local no autentica su procedencia y mantiene
+`remote_origin_verified=false`. No se consultó el servidor, no se
+crearon sesiones y el libro real quedó fuera del ensayo.

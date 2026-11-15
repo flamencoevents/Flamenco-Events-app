@@ -51,7 +51,25 @@ def parsed(raw):
     return value
 
 
-def prepare(book, envelope, pdf, *, web_pdf=None):
+def match_web_preflight(evidence, event_id, number, revision, pdf_sha, size):
+    # Compare an offline copy of the web response. Its presence does not
+    # authenticate the caller or prove that any remote operation occurred.
+    expected = {'state': 'accounts_source_checked', 'event_id': event_id,
+                'quote_number': number, 'version': revision,
+                'pdf_sha256': pdf_sha, 'size_bytes': size}
+    required_checks = ('source_response_hmac', 'source_pdf_checksum', 'stored_document_metadata',
+                       'accepted_financial_values', 'stored_pdf_bytes')
+    require(isinstance(evidence, dict), 'WEB_PREFLIGHT_MISMATCH')
+    checks = evidence.get('checks')
+    require(all(evidence.get(k) == v for k, v in expected.items())
+            and type(evidence.get('version')) is int and type(evidence.get('size_bytes')) is int
+            and evidence.get('is_forecast') is True
+            and all(evidence.get(k) is False for k in ('stored', 'production_writable', 'remote_committed'))
+            and isinstance(checks, dict) and all(checks.get(k) is True for k in required_checks),
+            'WEB_PREFLIGHT_MISMATCH')
+
+
+def prepare(book, envelope, pdf, *, web_pdf=None, web_preflight=None):
     """Prepare from a parsed workbook or open a path after validating the contract inputs."""
     require(envelope.get('test_mode') is True, 'FICTIONAL_ONLY')
     require(envelope.get('source_system') == 'whatsapp', 'WRONG_SOURCE')
@@ -99,6 +117,8 @@ def prepare(book, envelope, pdf, *, web_pdf=None):
     require(event.get('is_test') is True, 'FICTIONAL_ONLY')
     require(event['quote_number'] == number and type(event['version']) is int and event['version'] == version and
             event['source_key'] == q['key'] and event['date'] == date, 'EVENT_SOURCE_MISMATCH')
+    if web_preflight is not None:
+        match_web_preflight(web_preflight, event['id'], number, version, pdf_sha, len(pdf))
     # The contract has no mandatory schedule field. Use only an explicit event
     # schedule; never infer one from duration/passes or invent a missing time.
     schedule = clean_text(event['schedule'])
@@ -133,6 +153,8 @@ def prepare(book, envelope, pdf, *, web_pdf=None):
                           'xlsx_copy_preservation', 'native_excel_review', 'operation_ledger', 'server_integration']}
     if web_pdf is not None:
         result['local_pdf_copies_match'] = True
+    if web_preflight is not None:
+        result['local_web_preflight_matches'] = True
     result['rehearsal_id'] = digest(result)
     return result
 
@@ -150,13 +172,17 @@ def main():
     p.add_argument('envelope')
     p.add_argument('pdf')
     p.add_argument('--web-pdf', help='Local copy of the fictitious PDF from the web')
+    p.add_argument('--web-preflight', help='Local copy of the read-only web accounts preflight for the fictitious event')
     a = p.parse_args()
     try:
         envelope = parsed(read_bounded(a.envelope, SNAPSHOT_LIMIT, 'INVALID_SNAPSHOT').decode('utf-8'))
         require(envelope.get('test_mode') is True, 'FICTIONAL_ONLY')
         pdf = read_bounded(a.pdf, PDF_LIMIT, 'INVALID_PDF_BYTES')
         web_pdf = read_bounded(a.web_pdf, PDF_LIMIT, 'INVALID_WEB_PDF_BYTES') if a.web_pdf else None
-        result = prepare(Path(a.workbook), envelope, pdf, web_pdf=web_pdf)
+        web_preflight = None
+        if a.web_preflight:
+            web_preflight = parsed(read_bounded(a.web_preflight, SNAPSHOT_LIMIT, 'INVALID_SNAPSHOT').decode('utf-8'))
+        result = prepare(Path(a.workbook), envelope, pdf, web_pdf=web_pdf, web_preflight=web_preflight)
     except (Blocked, ValueError, TypeError, KeyError, AttributeError, IndexError, OSError,
             InvalidOperation, zipfile.BadZipFile, ET.ParseError) as exc:
         result = {'status': 'blocked', 'production_writable': False,
