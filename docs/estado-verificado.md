@@ -1780,3 +1780,25 @@ python3 -m unittest discover -s tests -p 'test_accounts_2027_catalog.py' -v
 
 Solo cambia el extractor local. No se publicó un catálogo nuevo ni
 se consultó o modificó el XLSX real.
+
+## Enlaces inequívocos en el catálogo 2027 · 15 noviembre 2026
+
+El extractor solo proyecta el enlace de un presupuesto si la celda de
+la columna C tiene un único hipervínculo y este identifica una única
+relación externa de tipo hipervínculo. Si falta esa correspondencia,
+conserva la fila y deja el enlace pendiente. Antes, un destino
+posterior podía desplazar al primero cuando había dos referencias
+para la misma celda.
+
+La regresión con XLSX ficticios comprueba un enlace válido, una celda
+con dos enlaces, un identificador de relación repetido y relaciones
+internas o de otro tipo. También comprueba que el número de
+presupuesto y los bytes del archivo permanecen intactos. Pasaron las
+tres pruebas locales del catálogo. Reproducción:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_accounts_2027_catalog.py' -v
+```
+
+La prueba valida la referencia dentro del XLSX. Los enlaces no se
+abrieron y el catálogo remoto y el libro real quedaron fuera.

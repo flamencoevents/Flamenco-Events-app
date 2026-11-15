@@ -55,3 +55,30 @@ class CatalogTests(unittest.TestCase):
                 entry = projection.catalog(self.path)['rows'][0]
                 self.assertEqual(entry['budget_eur'], expected)
                 self.assertEqual(entry['budget_text'], amount)
+
+    def test_only_an_unambiguous_external_hyperlink_is_projected(self):
+        rel_ns = projection.REL[1:].split('}')[0]
+        target = 'https://example.invalid/quotation'
+        rel_part = 'xl/worksheets/_rels/sheet1.xml.rels'
+        for tags, mode, relation_type, second_id, expected in (
+            ('<hyperlink ref="C11" r:id="rId1"/>', 'External', 'hyperlink', 'rId2', target),
+            ('<hyperlink ref="C11" r:id="rId1"/><hyperlink ref="C11" r:id="rId2"/>',
+             'External', 'hyperlink', 'rId2', None),
+            ('<hyperlink ref="C11" r:id="rId1"/>', 'Internal', 'hyperlink', 'rId2', None),
+            ('<hyperlink ref="C11" r:id="rId1"/>', 'External', 'drawing', 'rId2', None),
+            ('<hyperlink ref="C11" r:id="rId1"/>', 'External', 'hyperlink', 'rId1', None),
+        ):
+            with self.subTest(tags=tags, mode=mode, relation_type=relation_type, second_id=second_id):
+                fixture(self.path, propose(book(), request()))
+                self.replace_cell(b'</worksheet>',
+                    f'<hyperlinks xmlns:r="{rel_ns}">{tags}</hyperlinks></worksheet>'.encode())
+                with zipfile.ZipFile(self.path, 'a') as output:
+                    output.writestr(rel_part, '<Relationships>'
+                        f'<Relationship Id="rId1" Target="{target}" TargetMode="{mode}" Type="{rel_ns}/{relation_type}"/>'
+                        f'<Relationship Id="{second_id}" Target="{target}-other" TargetMode="External" Type="{rel_ns}/hyperlink"/>'
+                        '</Relationships>')
+                before = self.path.read_bytes()
+                row = projection.catalog(self.path)['rows'][0]
+                self.assertEqual(row['source_link'], expected)
+                self.assertEqual(row['quote_number'], '00926')
+                self.assertEqual(self.path.read_bytes(), before)

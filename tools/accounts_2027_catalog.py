@@ -1,4 +1,5 @@
 """Read-only private catalog from the 2027 XLSX. Never commit emitted records."""
+from collections import defaultdict
 import datetime as dt
 from decimal import Decimal, InvalidOperation
 import io
@@ -27,6 +28,35 @@ def exact_budget(value):
     return str(amount)
 
 
+def quotation_links(archive, worksheet, part):
+    folder, filename = part.rsplit('/', 1)
+    rel_part = f'{folder}/_rels/{filename}.rels'
+    if rel_part not in archive.namelist():
+        return {}
+
+    relationships = defaultdict(list)
+    for relationship in ET.fromstring(archive.read(rel_part)):
+        relationships[relationship.get('Id')].append(relationship)
+
+    anchors = defaultdict(list)
+    for link in worksheet.findall('m:hyperlinks/m:hyperlink', NS):
+        ref = link.get('ref') or ''
+        if re.fullmatch(r'C[1-9][0-9]*', ref):
+            anchors[ref].append(link.get(REL))
+
+    targets = {}
+    expected_type = REL[1:].split('}', 1)[0] + '/hyperlink'
+    for ref, ids in anchors.items():
+        if len(ids) != 1 or not ids[0]:
+            continue
+        matches = relationships.get(ids[0], ())
+        if len(matches) == 1:
+            relationship = matches[0]
+            if relationship.get('Type') == expected_type and relationship.get('TargetMode') == 'External':
+                targets[ref] = relationship.get('Target') or None
+    return targets
+
+
 def catalog(path):
     raw = read_workbook_bytes(path)
     book = read_book(raw)
@@ -36,9 +66,7 @@ def catalog(path):
         sheet = next(s for s in wb.find('m:sheets', NS) if s.get('name') == SHEET)
         part = worksheet_part(rels, sheet, z.namelist())
         root = ET.fromstring(z.read(part))
-        rel_part = part.rsplit('/', 1)[0] + '/_rels/' + part.rsplit('/', 1)[1] + '.rels'
-        links = {r.get('Id'): r.get('Target') for r in ET.fromstring(z.read(rel_part))} if rel_part in z.namelist() else {}
-        hyperlink = {h.get('ref'): links.get(h.get(REL)) for h in root.findall('m:hyperlinks/m:hyperlink', NS)}
+        hyperlink = quotation_links(z, root, part)
         sheet_id = sheet.get('sheetId')
     rows, skipped = [], 0
     for row in sorted({int(ref[1:]) for ref in book['cells'] if re.fullmatch(r'D\d+', ref)}):
