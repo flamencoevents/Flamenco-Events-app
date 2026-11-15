@@ -16,7 +16,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 from xml.parsers import expat
 
-from accounts_2027 import NS, SHEET, Blocked, propose, read_book, require, workbook_relationships, worksheet_part
+from accounts_2027 import NS, SHEET, Blocked, propose, read_book, read_workbook_bytes, require, workbook_relationships, worksheet_part
 from accounts_2027_verify import verify
 
 
@@ -109,9 +109,8 @@ def package(source, artifact, request, output, *, expected_proposal_id=None):
     # Bound and validate both packages before parsing them; read once, then
     # compare source bytes to the exact proposal digest to prevent stale input.
     artifact_sha256 = read_book(artifact)['sha256']
-    source_raw, artifact_raw = source.read_bytes(), artifact.read_bytes()
+    source_raw, artifact_raw = read_workbook_bytes(source), read_workbook_bytes(artifact)
     require(hashlib.sha256(source_raw).hexdigest() == proposal['workbook_sha256'], 'WORKBOOK_CHANGED')
-    require(len(artifact_raw) <= 20_000_000, 'WORKBOOK_TOO_LARGE')
     require(hashlib.sha256(artifact_raw).hexdigest() == artifact_sha256, 'ARTIFACT_CHANGED')
     candidate = preserved_bytes(source_raw, artifact_raw, proposal)
     temporary = None
@@ -125,7 +124,7 @@ def package(source, artifact, request, output, *, expected_proposal_id=None):
         require(audit['status'] == 'copy_preservation_checks_passed', 'PRESERVATION_AUDIT_REJECTED')
         require(audit['proposal_id'] == proposal['proposal_id'], 'PROPOSAL_CHANGED')
         require(audit['candidate_sha256'] == hashlib.sha256(candidate).hexdigest(), 'CANDIDATE_CHANGED')
-        require(hashlib.sha256(source.read_bytes()).hexdigest() == proposal['workbook_sha256'], 'WORKBOOK_CHANGED')
+        require(hashlib.sha256(read_workbook_bytes(source)).hexdigest() == proposal['workbook_sha256'], 'WORKBOOK_CHANGED')
         # Atomic exclusive publication of a NEW local copy, never an overwrite.
         os.link(temporary, output)
         return {'status': 'isolated_copy_preserved', 'production_writable': False,

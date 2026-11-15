@@ -15,6 +15,7 @@ import re
 import zipfile
 import xml.etree.ElementTree as ET
 
+MAX_XLSX_BYTES = 20_000_000
 NS = {'m': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 REL = '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id'
 SHEET = 'Fechas cerradas 2027 por fecha '
@@ -118,9 +119,16 @@ def worksheet_cells(root):
             yield ref, cell
 
 
+def read_workbook_bytes(path):
+    with Path(path).open('rb') as stream:
+        raw = stream.read(MAX_XLSX_BYTES + 1)
+    require(len(raw) <= MAX_XLSX_BYTES, 'WORKBOOK_TOO_LARGE')
+    return raw
+
+
 def read_book(path):
-    raw = path if isinstance(path, bytes) else Path(path).read_bytes()
-    require(len(raw) <= 20_000_000, 'WORKBOOK_TOO_LARGE')
+    raw = path if isinstance(path, bytes) else read_workbook_bytes(path)
+    require(len(raw) <= MAX_XLSX_BYTES, 'WORKBOOK_TOO_LARGE')
     with zipfile.ZipFile(io.BytesIO(raw)) as z:
         names = z.namelist()
         require(len(names) == len(set(names)), 'DUPLICATE_ZIP_ENTRY')

@@ -11,6 +11,7 @@ import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 import accounts_2027_package as pack
+import accounts_2027_verify as audit_module
 from accounts_2027 import HEADERS, NS, REL, SHEET, Blocked, propose, read_book
 from accounts_2027_verify import verify
 from test_accounts_2027 import request
@@ -79,7 +80,7 @@ class PackagingTests(unittest.TestCase):
     def test_audit_digest_identifies_the_single_candidate_read(self):
         pack.package(self.source, self.artifact, self.req, self.output)
         exact = self.output.read_bytes()
-        original_read = Path.read_bytes
+        original_read = audit_module.read_workbook_bytes
         reads = []
 
         def read(path):
@@ -88,11 +89,37 @@ class PackagingTests(unittest.TestCase):
                 return exact if len(reads) == 1 else b'changed after inspection'
             return original_read(path)
 
-        with patch.object(Path, 'read_bytes', read):
+        with patch.object(audit_module, 'read_workbook_bytes', read):
             audit = verify(self.source, self.output, self.req)
         self.assertEqual(audit['candidate_sha256'], hashlib.sha256(exact).hexdigest())
         self.assertEqual(audit['status'], 'copy_preservation_checks_passed')
         self.assertEqual(reads, [self.output])
+
+    def test_oversized_candidate_read_is_bounded_before_parsing(self):
+        max_bytes = 20_000_000
+        with self.output.open('wb') as stream:
+            stream.truncate(max_bytes + 4096)
+        original_open = Path.open
+        reads = []
+
+        def observed_open(path, *args, **kwargs):
+            stream = original_open(path, *args, **kwargs)
+            if path == self.output:
+                read = stream.read
+
+                def observe(size=-1):
+                    reads.append(size)
+                    return read(size)
+
+                stream.read = observe
+            return stream
+
+        with patch.object(Path, 'open', observed_open):
+            with self.assertRaisesRegex(Blocked, 'WORKBOOK_TOO_LARGE'):
+                verify(self.source, self.output, self.req)
+        self.assertEqual(reads, [max_bytes + 1])
+        self.assertEqual(self.source.read_bytes(), self.before)
+        self.assertEqual(self.output.stat().st_size, max_bytes + 4096)
 
     def test_six_cells_pass_existing_independent_audit(self):
         out = pack.package(self.source, self.artifact, self.req, self.output)

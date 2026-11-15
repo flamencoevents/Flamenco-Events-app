@@ -14,7 +14,7 @@ from pathlib import Path
 import zipfile
 import xml.etree.ElementTree as ET
 
-from accounts_2027 import NS, SHEET, Blocked, cell_payload, propose, read_book, require, shared_string, workbook_relationships, worksheet_cells, worksheet_part
+from accounts_2027 import NS, SHEET, Blocked, cell_payload, propose, read_book, read_workbook_bytes, require, shared_string, workbook_relationships, worksheet_cells, worksheet_part
 
 
 def xml_signature(element):
@@ -57,7 +57,7 @@ def cell_record(cell, strings):
 
 def snapshot(path):
     # Reuse bounded ZIP/XML validation and exact header/name checks.
-    raw = path if isinstance(path, bytes) else Path(path).read_bytes()
+    raw = path if isinstance(path, bytes) else read_workbook_bytes(path)
     read_book(raw)
     with zipfile.ZipFile(io.BytesIO(raw)) as z:
         parts = {name: z.read(name) for name in z.namelist()}
@@ -136,8 +136,8 @@ def compare(source, candidate, proposal):
 
 def verify(source, candidate, request):
     require(Path(source).resolve() != Path(candidate).resolve(), 'SAME_FILE_REJECTED')
-    source_raw = Path(source).read_bytes()
-    candidate_raw = Path(candidate).read_bytes()
+    source_raw = read_workbook_bytes(source)
+    candidate_raw = read_workbook_bytes(candidate)
     proposal = propose(read_book(source_raw), request)
     result = compare(snapshot(source_raw), snapshot(candidate_raw), proposal)
     result['proposal_id'] = proposal['proposal_id']

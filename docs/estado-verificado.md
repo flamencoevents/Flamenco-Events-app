@@ -1606,3 +1606,30 @@ El exportador se simula. El ensayo no acredita procedencia remota.
 Reproducir con `python3 -m unittest discover -s tests -p test_accounts_2027_contract.py -k audited_in_a_synthetic_copy -v`.
 Pasó localmente. CI y Pages del commit anterior 7ba337c completados
 (43659818494 y 43659817999). Sin sesiones ni acceso al XLSX real.
+
+## Límite de lectura del XLSX · 15 noviembre 2026
+
+El preparador, el verificador y el empaquetador local aplican el límite de
+20 000 000 bytes antes de cargar un archivo completo. La regresión con una
+candidata ficticia sobredimensionada registró antes del cambio una lectura
+sin límite. Ahora comprueba una única lectura de hasta 20 000 001 bytes, el
+rechazo `WORKBOOK_TOO_LARGE` y que ambos archivos conservan su estado.
+
+Verificado localmente en modo prueba. Pasaron las 58 pruebas del
+preparador, verificador y empaquetador y el ensayo integrado con el
+exportador y el diario existentes. El ensayo creó su XLSX desde cero y
+comprobó 1060,01 en H11, el hipervínculo, las partes ajenas y la huella de
+la copia. Reproducción:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_accounts_2027.py'
+python3 -m unittest discover -s tests -p 'test_accounts_2027_verify.py'
+python3 -m unittest discover -s tests -p 'test_accounts_2027_package.py'
+python3 tests/run_accounts_2027_artifact_trial.py
+```
+
+La prueba previa de conciliación de PDF pasó en GitHub Actions
+[43664879356](https://github.com/flamencoevents/Flamenco-Events-app/actions/runs/43664879356).
+El cambio de lectura se aplica a las utilidades locales. La conexión de
+extremo a extremo con Drive y la web y la escritura operativa siguen
+pendientes. El libro real quedó fuera del ensayo.
