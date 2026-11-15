@@ -1986,3 +1986,26 @@ solo sobre un libro generado desde cero. CI mantiene la prueba
 simulada y no requiere ese runtime. Los temporales se eliminan al
 salir. Sin sesiones, escrituras remotas ni acceso al libro real.
 La publicación de la función y el ensayo autenticado siguen pendientes.
+
+## Disponibilidad del ensayo autenticado 2027 · 15 noviembre 2026
+
+La conexión autorizada a Supabase sigue operativa. La consulta de
+solo lectura devolvió `test_mode=true` y cero eventos ficticios de
+2027 en la tabla que consulta la función. Por ello no hay allí un
+caso que permita verificar la fecha, los importes y los bytes de los
+dos PDF con una sesión autorizada. La consulta por etapas queda
+guardada en [accounts-preflight-readiness.sql](../supabase/tests/accounts-preflight-readiness.sql).
+Devuelve únicamente recuentos y no descarga documentos.
+
+La lectura de la función publicada confirmó la versión 8. Su módulo
+compartido coincide con GitHub. El código pendiente añade controles
+de fecha e importes a la conciliación de solo lectura y mensajes de
+error del PDF. No se publicó una nueva versión en este ensayo.
+La herramienta de publicación permite reemplazar la función, pero
+no ofrece una condición de versión para rechazar una actualización
+concurrente.
+
+No se crearon eventos ni sesiones. Para validar el circuito falta
+un caso ficticio de 2027 con secuencia comercial completa y PDF
+privado enlazado, con huella guardada. El libro real permanece fuera
+del alcance de las pruebas.
