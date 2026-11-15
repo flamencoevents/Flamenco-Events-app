@@ -1712,3 +1712,26 @@ python3 -m unittest discover -s tests -p 'test_accounts_2027_package.py'
 Verificado con archivos sintéticos en MODO PRUEBA. La validación se
 aplica a las cabeceras y conserva las comprobaciones para fórmulas
 del resto de la hoja. El XLSX real quedó fuera del ensayo.
+
+## Previsiones ausentes y errores en el panel de contratos · 15 noviembre 2026
+
+El panel de contratos generados muestra «Pendiente» si falta un
+importe de previsión, reserva o saldo. Un cero presente se conserva
+y los importes previstos siguen sin equivaler a cobros. Los enlaces
+solo aparecen cuando existe una referencia admitida.
+
+Si falla una actualización, el panel retira los contratos de la
+consulta anterior e indica el error. Cambiar el año no restaura esos
+datos. Una nueva consulta satisfactoria vuelve a mostrar el panel.
+Dos regresiones con filas ficticias reprodujeron el cero falso y el
+fallo de actualización y se añadieron a GitHub Actions.
+
+Reproducción sin red:
+
+```sh
+node --check contract-intake.js
+node --test tests/contract-intake-panel.test.cjs
+```
+
+Verificado con dobles de DOM y consulta. El ensayo no abrió documentos,
+ni creó sesiones, ni leyó o modificó el libro real.

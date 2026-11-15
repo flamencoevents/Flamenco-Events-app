@@ -6,6 +6,8 @@ on:
       - 'tools/accounts_history.py'
       - 'tests/test_accounts_history.py'
       - 'tests/test_accounts_2027*'
+      - 'contract-intake.js'
+      - 'tests/contract-intake-panel.test.cjs'
       - '.github/workflows/accounts-2027.yml'
   pull_request:
     paths:
@@ -13,6 +15,8 @@ on:
       - 'tools/accounts_history.py'
       - 'tests/test_accounts_history.py'
       - 'tests/test_accounts_2027*'
+      - 'contract-intake.js'
+      - 'tests/contract-intake-panel.test.cjs'
       - '.github/workflows/accounts-2027.yml'
 permissions:
   contents: read
@@ -28,3 +32,5 @@ jobs:
         run: python3 -m unittest discover -s tests -p 'test_accounts_history.py' -v
       - name: Sintaxis del ensayo local sin importar dependencias ni abrir archivos
         run: node --check tools/accounts_2027_roundtrip.mjs
+      - name: Panel de contratos con datos ficticios
+        run: node --test tests/contract-intake-panel.test.cjs
