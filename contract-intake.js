@@ -3,7 +3,18 @@ function clear(){epoch++;const h=document.getElementById('generated-contract-int
 async function mount(db,role){clear();const host=document.getElementById('generated-contract-intake');if(!host||role!=='admin')return;
  host.innerHTML='<h2>Contratos generados · integración de prueba</h2><p>Consulta de documentos y previsiones. Pendiente de revisión comercial; no acredita firma, cobro ni reserva.</p><label>Año del evento<select data-ci-year></select></label><button type="button" data-ci-refresh>Actualizar contratos</button><p role="status" data-ci-status></p><div data-ci-list></div>';
  let rows=[];const status=host.querySelector('[data-ci-status]'),list=host.querySelector('[data-ci-list]'),year=host.querySelector('[data-ci-year]');
- function link(url,label,type){const allowed=type==='pdf'?/^https:\/\/drive\.google\.com\/file\/d\/[\w-]+\/view(?:\?[^#]*)?$/:/^https:\/\/docs\.google\.com\/spreadsheets\/d\/(?:1dsgfqv6YG49-_QaAx-0dUyvLImBTdkkDEvgXBu1QZuY|1ZE66Ko8bnh3qp9Z2Mfp8VOG2pmH_a-EyUJZRvQVnHtE)\/edit#gid=\d+&range=A\d+:N\d+$/;return typeof url==='string'&&allowed.test(url)?'<a target="_blank" rel="noopener noreferrer" href="'+escape(url)+'">'+label+'</a>':'';}
+ const accountBooks={'2026':'1dsgfqv6YG49-_QaAx-0dUyvLImBTdkkDEvgXBu1QZuY','2027':'1ZE66Ko8bnh3qp9Z2Mfp8VOG2pmH_a-EyUJZRvQVnHtE'};
+ function anchor(url,label){
+  return '<a target="_blank" rel="noopener noreferrer" href="'+escape(url)+'">'+label+'</a>';
+ }
+ function contractLink(url){
+  return typeof url==='string'&&/^https:\/\/drive\.google\.com\/file\/d\/[\w-]+\/view(?:\?[^#]*)?$/.test(url)
+   ?anchor(url,'Abrir contrato privado'):'';
+ }
+ function accountsLink(url,eventYear){
+  const match=typeof url==='string'&&url.match(/^https:\/\/docs\.google\.com\/spreadsheets\/d\/([\w-]+)\/edit#gid=\d+&range=A\d+:N\d+$/);
+  return match&&match[1]===accountBooks[eventYear]?anchor(url,'Abrir previsión de prueba en cuentas'):'Previsión en cuentas sin enlazar';
+ }
  const eur=new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'});
  const forecast=value=>Number.isFinite(value)&&value>=0?escape(eur.format(value)):'Pendiente';
  function draw(){
@@ -11,12 +22,12 @@ async function mount(db,role){clear();const host=document.getElementById('genera
   const selected=rows.filter(r=>r.event_date.slice(0,4)===year.value);
   list.innerHTML=selected.map(r=>{
    const p=r.payload||{};
-   const links=[link(p.contract_url,'Abrir contrato privado','pdf'),link(p.accounts_url,'Abrir previsión de prueba en cuentas','sheet')].filter(Boolean);
+   const links=[contractLink(p.contract_url),accountsLink(p.accounts_url,r.event_date.slice(0,4))].filter(Boolean);
    const event=[r.event_date,p.venue,p.client_label].filter(Boolean).map(escape).join(' · ');
    return '<article style="padding:14px 0;border-top:1px solid #705748"><h3>'+escape(r.quote_number)+' · v'+escape(r.revision)+'</h3><p>'+event+'</p>'+
     (p.service?'<p>'+escape(p.service)+'</p>':'')+
     '<p>Previsión: '+forecast(p.total_eur)+' · Reserva prevista: '+forecast(p.deposit_eur)+' · Saldo previsto: '+forecast(p.balance_eur)+'</p>'+
-    (links.length?'<p>'+links.join(' · ')+'</p>':'')+
+    '<p>'+links.join(' · ')+'</p>'+
     '<small>PRUEBA · Pendiente de revisión comercial. Sin movimientos en balances reales.</small></article>';
   }).join('');
   status.textContent=selected.length+' contrato(s) de prueba recibido(s).';

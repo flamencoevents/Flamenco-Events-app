@@ -1735,3 +1735,24 @@ node --test tests/contract-intake-panel.test.cjs
 
 Verificado con dobles de DOM y consulta. El ensayo no abrió documentos,
 ni creó sesiones, ni leyó o modificó el libro real.
+
+## Año del enlace de previsión en contratos · 15 noviembre 2026
+
+El panel de contratos de prueba solo muestra el enlace de previsión si
+corresponde al año del evento y al libro admitido por el receptor.
+Un enlace cruzado entre 2026 y 2027 se muestra como «Previsión en cuentas
+sin enlazar». La referencia del PDF se valida por separado.
+
+La regresión con filas ficticias reprodujo que el panel mostraba el
+enlace a un libro de otro año. Tras el cambio verifica los enlaces
+correctos y cruzados en ambos sentidos. Pasaron tres pruebas del panel
+y la comprobación sintáctica. Reproducción:
+
+```sh
+node --check contract-intake.js
+node --test tests/contract-intake-panel.test.cjs
+```
+
+El ensayo usa dobles y no abre enlaces, hojas ni PDF. Solo comprueba
+cómo el panel presenta las referencias existentes. Sigue pendiente
+la validación conectada con Drive y el XLSX.

@@ -50,3 +50,27 @@ test('Rejected refresh clears stale records and a subsequent refresh can recover
   await refresh();
   assert.match(list.innerHTML,/X27-P900001/);
 });
+
+test('Accounts links must match the event year approved by the receiver',async()=>{
+  const receiver=fs.readFileSync('supabase/functions/ingest-generated-contract/index.ts','utf8');
+  const books=Object.fromEntries([...receiver.matchAll(/'(202[67])':'([\w-]+)'/g)]
+    .map(([,year,id])=>[year,id]));
+  assert.equal(Object.keys(books).length,2);
+  for(const year of ['2026','2027']){
+    const otherYear=year==='2026'?'2027':'2026';
+    for(const bookYear of [year,otherYear]){
+      const fixture={...row({
+        contract_url:'https://drive.google.com/file/d/fixture-only/view',
+        accounts_url:'https://docs.google.com/spreadsheets/d/'+books[bookYear]+'/edit#gid=1&range=A11:N11'
+      }),event_date:year+'-03-12'};
+      const p=panel([async()=>({data:[fixture]})]);
+      p.node('[data-ci-year]').value=year;
+      await p.api.mount(p.db,'admin');
+      const html=p.node('[data-ci-list]').innerHTML;
+      assert.ok(html.includes('Abrir contrato privado'));
+      assert.equal(html.includes('Abrir previsión de prueba en cuentas'),bookYear===year,
+        'event year '+year+', workbook year '+bookYear);
+      assert.equal(html.includes('Previsión en cuentas sin enlazar'),bookYear!==year);
+    }
+  }
+});
