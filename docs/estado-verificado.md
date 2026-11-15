@@ -1756,3 +1756,27 @@ node --test tests/contract-intake-panel.test.cjs
 El ensayo usa dobles y no abre enlaces, hojas ni PDF. Solo comprueba
 cómo el panel presenta las referencias existentes. Sigue pendiente
 la validación conectada con Drive y el XLSX.
+
+## Proyección coherente del catálogo 2027 · 15 noviembre 2026
+
+El extractor del catálogo usa una única lectura acotada del XLSX para
+obtener valores, tipos, hipervínculos y huella. Antes, una sustitución
+entre lecturas permitía mezclar el tipo de celda de una versión con
+los valores y la huella de otra. La regresión cambia el tipo del
+número de presupuesto tras la primera lectura y confirma que la
+proyección conserva el cero inicial del original ficticio.
+
+La misma proyección distingue importes exactos a céntimos de cifras
+con decimales adicionales. La comprobación usa los dígitos guardados
+y evita la pérdida de precisión del contexto decimal. Un valor no
+finito queda sin importe proyectado y se conserva como texto de
+origen, igual que un valor con fracciones de céntimo.
+
+Pasaron dos pruebas locales con XLSX ficticios. Reproducción sin red:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_accounts_2027_catalog.py' -v
+```
+
+Solo cambia el extractor local. No se publicó un catálogo nuevo ni
+se consultó o modificó el XLSX real.

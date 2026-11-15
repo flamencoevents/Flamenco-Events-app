@@ -1,6 +1,7 @@
 """Read-only private catalog from the 2027 XLSX. Never commit emitted records."""
 import datetime as dt
 from decimal import Decimal, InvalidOperation
+import io
 import json
 from pathlib import Path
 import re
@@ -8,19 +9,33 @@ import sys
 import zipfile
 import xml.etree.ElementTree as ET
 
-from accounts_2027 import read_book, NS, REL, SHEET, HEADERS, require
+from accounts_2027 import (HEADERS, NS, REL, SHEET, read_book, read_workbook_bytes,
+                           workbook_relationships, worksheet_part)
+
+
+def exact_budget(value):
+    try:
+        amount = Decimal(value)
+    except (InvalidOperation, TypeError):
+        return None
+    if not amount.is_finite():
+        return None
+    _, digits, exponent = amount.as_tuple()
+    # Inspect the saved digits directly to avoid decimal-context rounding.
+    if exponent < -2 and any(digits[exponent + 2:]):
+        return None
+    return str(amount)
 
 
 def catalog(path):
-    book = read_book(path)
-    with zipfile.ZipFile(path) as z:
+    raw = read_workbook_bytes(path)
+    book = read_book(raw)
+    with zipfile.ZipFile(io.BytesIO(raw)) as z:
         wb = ET.fromstring(z.read('xl/workbook.xml'))
-        rels = {r.get('Id'): r.get('Target') for r in ET.fromstring(z.read('xl/_rels/workbook.xml.rels'))}
+        rels = workbook_relationships(ET.fromstring(z.read('xl/_rels/workbook.xml.rels')))
         sheet = next(s for s in wb.find('m:sheets', NS) if s.get('name') == SHEET)
-        target = rels[sheet.get(REL)]
-        part = target.lstrip('/') if target.startswith('/') else 'xl/' + target
+        part = worksheet_part(rels, sheet, z.namelist())
         root = ET.fromstring(z.read(part))
-        cell_types = {c.get('r'): c.get('t', 'n') for c in root.findall('m:sheetData/m:row/m:c', NS)}
         rel_part = part.rsplit('/', 1)[0] + '/_rels/' + part.rsplit('/', 1)[1] + '.rels'
         links = {r.get('Id'): r.get('Target') for r in ET.fromstring(z.read(rel_part))} if rel_part in z.namelist() else {}
         hyperlink = {h.get('ref'): links.get(h.get(REL)) for h in root.findall('m:hyperlinks/m:hyperlink', NS)}
@@ -46,16 +61,11 @@ def catalog(path):
             continue
         values = {label: value(chr(65+i)) for i, label in enumerate(HEADERS)}
         number = str(value('C') or '')
-        if cell_types.get('C'+str(row)) == 'n' and re.fullmatch(r'\d+(?:\.0+)?', number):
+        if book['cells'].get('C'+str(row), {}).get('kind') == 'n' and re.fullmatch(r'\d+(?:\.0+)?', number):
             number = str(int(Decimal(number)))
             values['nº presup'] = number
         budget = value('H')
-        try:
-            decimal = Decimal(budget)
-            require(decimal.is_finite(), 'INVALID_AMOUNT')
-            budget_eur = str(decimal) if decimal*100 == (decimal*100).to_integral_value() else None
-        except (InvalidOperation, TypeError):
-            budget_eur = None
+        budget_eur = exact_budget(budget)
         rows.append({'source_row': row, 'event_date': date.isoformat(), 'schedule': value('E'),
                      'venue': value('F'), 'client_label': value('G'), 'quote_number': number,
                      'budget_eur': budget_eur, 'budget_text': budget, 'account_values': values,
