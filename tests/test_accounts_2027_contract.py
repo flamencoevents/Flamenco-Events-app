@@ -35,7 +35,7 @@ def fixture():
 
 
 def web_preflight_fixture():
-    return {'state': 'accounts_source_checked', 'event_id': 'TEST-EVENT',
+    return {'state': 'accounts_source_checked', 'event_id': 'TEST-EVENT', 'event_date': '2027-03-12',
             'quote_number': 'X26-P900099', 'version': 2,
             'pdf_sha256': hashlib.sha256(PDF).hexdigest(), 'size_bytes': len(PDF),
             'is_forecast': True, 'stored': False, 'production_writable': False,
@@ -158,9 +158,14 @@ class ContractRehearsalTests(unittest.TestCase):
         result = bridge.prepare(self.book, self.data, PDF, web_preflight=evidence)
         self.assertEqual(result['proposal'], normal['proposal'])
         self.assertTrue(result['local_web_preflight_matches'])
+        self.assertTrue(result['local_web_event_date_matches'])
+        legacy = dict(evidence)
+        del legacy['event_date']
+        older = bridge.prepare(self.book, self.data, PDF, web_preflight=legacy)
+        self.assertFalse(older['local_web_event_date_matches'])
         self.assertFalse(result['remote_origin_verified'])
         for key, changed in (('event_id', 'OTHER-EVENT'), ('quote_number', 'X26-P900100'),
-                             ('version', 1), ('pdf_sha256', '0' * 64), ('size_bytes', len(PDF)+1),
+                             ('version', 1), ('event_date', '2027-04-12'), ('pdf_sha256', '0' * 64), ('size_bytes', len(PDF)+1),
                              ('is_forecast', False), ('remote_committed', True),
                              ('checks', dict(evidence['checks'], stored_pdf_bytes=False))):
             with self.subTest(field=key), self.assertRaisesRegex(bridge.Blocked, '^WEB_PREFLIGHT_MISMATCH$'):

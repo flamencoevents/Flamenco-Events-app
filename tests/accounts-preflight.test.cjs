@@ -7,6 +7,7 @@ function fixture(options={}){
  const e=env({actorRole:'admin',document:true,scriptPayload:source,...options,
   scriptResponses:r=>r.operation==='preview'?source:{source_reference:source.source_reference,pdf_base64:pdf.toString('base64'),private_url:'PRIVATE_DRIVE_URL'}});
  Object.assign(e.tables.accepted_quote_terms[0],source,{enquiry_id:e.enquiryId});
+ e.tables.events[0].event_date='2027-03-12';
  e.tables.event_contracts=[{id:'test-contract',event_id:e.eventId,quotation_number:'9999926',document_id:'test-document',state:'draft'}];
  e.tables.event_documents.push({id:'test-document',event_id:e.eventId,kind:'contract',version:1,source_reference:source.source_reference,sha256:sha,storage_path:e.eventId+'/contract-v1-'+crypto.createHash('sha256').update(pdf.toString('base64')).digest('hex')+'.pdf'});
  return Object.assign(e,{source});
@@ -15,15 +16,23 @@ const ask=(e,patch={},opts)=>e.request('import-event-document',{operation:'accou
 const unchanged=e=>{assert.equal(e.writes.length,0);assert.equal(e.uploads.length,0);assert.equal(e.calls.length,0);};
 
 test('Administrative accounts preflight links signed source, exact revision, metadata and accepted amounts without writes',async()=>{
- const e=fixture(),r=await ask(e,{total_payable_eur:1,production_writable:true}),p=await r.json();
+ const e=fixture(),r=await ask(e,{total_payable_eur:1,production_writable:true,event_date:'2027-04-12'}),p=await r.json();
  assert.equal(r.status,200);assert.equal(p.state,'accounts_source_checked');assert.equal(p.pdf_sha256,sha);
- assert.equal(p.version,1);assert.equal(p.is_forecast,true);assert.equal(p.production_writable,false);assert.equal(p.remote_committed,false);
+ assert.equal(p.version,1);assert.equal(p.event_date,'2027-03-12');assert.equal(p.is_forecast,true);assert.equal(p.production_writable,false);assert.equal(p.remote_committed,false);
  assert.equal(p.checks.accepted_financial_values,true);assert.equal(p.checks.stored_pdf_bytes,true);for(const k of ['event_schedule','workbook','signature','commercial_closure','payments'])assert.equal(p.checks[k],false);
  const text=JSON.stringify(p);for(const secret of ['PRIVATE_DRIVE_URL',e.tables.event_documents[0].storage_path,'pdf_base64','source_reference','total_payable_eur'])assert.ok(!text.includes(secret));
  assert.deepEqual(e.downloads,[{bucket:'event-documents',path:e.tables.event_documents[0].storage_path}]);assert.ok(!p.pending.includes('stored_pdf_bytes'));
  assert.deepEqual(e.network.map(x=>JSON.parse(JSON.parse(x.init.body).payload).operation),['preview','contract_document']);unchanged(e);
  assert.equal(e.tables.event_contracts[0].state,'draft');
 });
+test('Accounts preflight rejects a missing or invalid persisted event date before reading PDFs',async()=>{
+ for(const date of [null,'2027-02-29','2027-03-12T00:00:00Z']){
+  const e=fixture();e.tables.events[0].event_date=date;
+  assert.equal((await ask(e,{event_date:'2027-03-12'})).status,409);
+  assert.equal(e.network.length,0);assert.equal(e.downloads.length,0);unchanged(e);
+ }
+});
+
 test('Only valid administrator sessions may request accounts preflight, regardless of body role claims',async()=>{
  for(const [options,opts,status] of [[{actorRole:'sales'},undefined,403],[{actorRole:'client'},undefined,403],[{invalidToken:true},undefined,401],[{}, {auth:false},401]]){
   const e=fixture(options);assert.equal((await ask(e,{role:'admin',authorize:true},opts)).status,status);assert.equal(e.network.length,0);assert.equal(e.downloads.length,0);unchanged(e);

@@ -30,7 +30,7 @@ def cents(value):
     return int(number)
 
 
-def match_web_preflight(evidence, event_id, number, revision, pdf_sha, size):
+def match_web_preflight(evidence, event_id, event_date, number, revision, pdf_sha, size):
     # Compare an offline copy of the web response. Its presence does not
     # authenticate the caller or prove that any remote operation occurred.
     expected = {'state': 'accounts_source_checked', 'event_id': event_id,
@@ -39,6 +39,8 @@ def match_web_preflight(evidence, event_id, number, revision, pdf_sha, size):
     required_checks = ('source_response_hmac', 'source_pdf_checksum', 'stored_document_metadata',
                        'accepted_financial_values', 'stored_pdf_bytes')
     require(isinstance(evidence, dict), 'WEB_PREFLIGHT_MISMATCH')
+    if 'event_date' in evidence:
+        expected['event_date'] = event_date
     checks = evidence.get('checks')
     require(all(evidence.get(k) == v for k, v in expected.items())
             and type(evidence.get('version')) is int and type(evidence.get('size_bytes')) is int
@@ -97,7 +99,7 @@ def prepare(book, envelope, pdf, *, web_pdf=None, web_preflight=None):
     require(event['quote_number'] == number and type(event['version']) is int and event['version'] == version and
             event['source_key'] == q['key'] and event['date'] == date, 'EVENT_SOURCE_MISMATCH')
     if web_preflight is not None:
-        match_web_preflight(web_preflight, event['id'], number, version, pdf_sha, len(pdf))
+        match_web_preflight(web_preflight, event['id'], date, number, version, pdf_sha, len(pdf))
     # The contract has no mandatory schedule field. Use only an explicit event
     # schedule; never infer one from duration/passes or invent a missing time.
     schedule = clean_text(event['schedule'])
@@ -134,6 +136,7 @@ def prepare(book, envelope, pdf, *, web_pdf=None, web_preflight=None):
         result['local_pdf_copies_match'] = True
     if web_preflight is not None:
         result['local_web_preflight_matches'] = True
+        result['local_web_event_date_matches'] = 'event_date' in web_preflight
     result['rehearsal_id'] = digest(result)
     return result
 

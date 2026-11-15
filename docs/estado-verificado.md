@@ -1869,3 +1869,27 @@ python3 -m unittest discover -s tests -p 'test_accounts_2027_trial.py' -k ambigu
 
 Solo se probaron archivos ficticios y locales. La integración
 autenticada y la escritura operativa siguen pendientes.
+
+## Fecha del evento en el cotejo web y XLSX · 15 noviembre 2026
+
+La comprobación web de solo lectura incluye la fecha guardada del
+evento. Rechaza una fecha ausente o inválida antes de consultar los PDF
+e ignora la fecha que se intente proporcionar desde el formulario.
+
+El ensayo local compara esa fecha con la que figura en el contrato
+antes de abrir el XLSX. Con el mismo evento, revisión y PDF, una fecha
+de otro mes provoca `WEB_PREFLIGHT_MISMATCH`. Las respuestas antiguas
+sin fecha siguen siendo legibles e indican explícitamente
+`local_web_event_date_matches=false`. Un archivo local no autentica
+su origen web.
+
+Preparado y verificado con dobles en MODO PRUEBA. Pasaron 17 pruebas de
+comprobación web y 24 de conciliación local. Reproducción:
+
+```sh
+node --test tests/accounts-preflight.test.cjs
+python3 -m unittest discover -s tests -p 'test_accounts_2027_contract.py'
+```
+
+Pendiente el despliegue de la función y el ensayo autenticado. Sin
+sesiones reales, envíos ni operaciones sobre el XLSX original.

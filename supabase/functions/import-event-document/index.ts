@@ -4,7 +4,7 @@ Deno.serve(route(async request=>{
  if(b.operation!==undefined&&!['preview','import','accounts_preview'].includes(b.operation))throw new Problem(422,'Operación documental no válida');
  if(!uuid(b.event_id)||!['quotation','contract'].includes(b.kind))throw new Problem(422,'Selecciona evento y tipo de documento');
  if(accounts&&b.kind!=='contract')throw new Problem(422,'La conciliación requiere el documento contractual');
- const ev=await db.from('events').select('id,enquiry_id,quote_terms_id,is_test').eq('id',b.event_id).single();
+ const ev=await db.from('events').select('id,enquiry_id,quote_terms_id,is_test,event_date').eq('id',b.event_id).single();
  if(ev.error||!ev.data?.quote_terms_id)throw new Problem(409,'El evento no tiene un presupuesto vinculado');
  const testMode=await runtime(db);
  if(accounts&&(testMode!==true||ev.data.is_test!==true))throw new Problem(409,'Conciliación disponible solo para eventos ficticios en MODO PRUEBA');
@@ -16,8 +16,13 @@ Deno.serve(route(async request=>{
  const [source_sheet,source_key]=reference.slice(prefix.length).split(':');
  if(!testMode&&source_sheet==='FE_App_Pruebas')throw new Problem(409,'Origen reservado a pruebas');
  const choice=selection({enquiry_id:ev.data.enquiry_id,quote_number:terms.data.quote_number,version:terms.data.version,source_sheet,source_key});
+ const eventDate=ev.data.event_date;
  let accountsDocument:any=null,accountsContract:any=null;
  if(accounts){
+  const timestamp=typeof eventDate==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(eventDate)
+   ?Date.parse(eventDate+'T00:00:00Z'):NaN;
+  if(!Number.isFinite(timestamp)||new Date(timestamp).toISOString().slice(0,10)!==eventDate)
+   throw new Problem(409,'El evento no conserva una fecha de calendario comprobable');
   if(terms.data.enquiry_id!==ev.data.enquiry_id||reference!==prefix+choice.source_sheet+':'+choice.source_key)throw new Problem(409,'La ficha económica pertenece a otro origen o solicitud');
   if(terms.data.billing_mode==='individual_full_invoice'||terms.data.tax_details?.payment_method==='efectivo100')throw new Problem(409,'Modalidad contractual pendiente de aprobación');
   const contract=await db.from('event_contracts').select('id,event_id,quotation_number,document_id,state').eq('event_id',ev.data.id).single();
@@ -54,7 +59,7 @@ Deno.serve(route(async request=>{
   if(storedBytes.length!==bytes.length||new TextDecoder().decode(storedBytes.slice(0,5))!=='%PDF-')throw new Problem(409,'El objeto privado no coincide con el PDF de origen');
   const storedChecksum=[...new Uint8Array(await crypto.subtle.digest('SHA-256',storedBytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
   if(storedChecksum!==checksum)throw new Problem(409,'Los bytes privados han cambiado respecto al PDF de origen');
-  return{state:'accounts_source_checked',event_id:ev.data.id,terms_id:ev.data.quote_terms_id,contract_id:accountsContract.id,document_id:accountsDocument.id,
+  return{state:'accounts_source_checked',event_id:ev.data.id,event_date:eventDate,terms_id:ev.data.quote_terms_id,contract_id:accountsContract.id,document_id:accountsDocument.id,
    quote_number:choice.quote_number,version:choice.version,pdf_sha256:checksum,size_bytes:bytes.length,
    is_forecast:true,stored:false,production_writable:false,remote_committed:false,
    checks:{source_response_hmac:true,source_pdf_checksum:true,stored_document_metadata:true,accepted_financial_values:true,stored_pdf_bytes:true,event_schedule:false,workbook:false,signature:false,commercial_closure:false,payments:false},
