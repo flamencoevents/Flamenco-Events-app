@@ -167,8 +167,9 @@ def read_book(path):
             cells[ref] = {'value': value, 'formula': formula is not None,
                                  'kind': c.get('t', 'n') if inline is None else 'inlineStr'}
         for i, expected in enumerate(HEADERS):
-            actual = cells.get(chr(65 + i) + '3', {}).get('value', '')
-            require(' '.join(actual.split()) == expected, 'HEADER_CHANGED')
+            header = cells.get(chr(65 + i) + '3', {})
+            require(not header.get('formula'), 'CALCULATED_HEADER')
+            require(' '.join(header.get('value', '').split()) == expected, 'HEADER_CHANGED')
         markers = [(int(ref[1:]), MONTHS.index(c['value']) + 1)
                    for ref, c in cells.items() if re.fullmatch(r'A\d+', ref) and c['value'] in MONTHS]
         links = [h.get('ref') for h in root.findall('m:hyperlinks/m:hyperlink', NS)]

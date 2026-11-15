@@ -1690,3 +1690,25 @@ python3 tests/run_accounts_2027_artifact_trial.py
 Modo prueba, temporales aislados y limpieza automática. El libro real
 quedó fuera. Sigue pendiente el enlace de extremo a extremo y la
 escritura operativa.
+
+## Cabeceras fijas en la copia de cuentas · 15 noviembre 2026
+
+El lector del XLSX comprueba que cada cabecera de A3:Q3 sea un valor
+fijo. Antes aceptaba una fórmula si su resultado guardado coincidía
+con la etiqueta esperada. La regresión reprodujo una copia aceptada con
+una fórmula en H3 que mostraba «PRESUPUESTO». Ahora el empaquetador
+devuelve `CALCULATED_HEADER` antes de crear la salida. El ensayo
+comprueba que el origen ficticio conserva sus bytes y que no quedan
+copias ni temporales de escritura.
+
+Pasaron las 41 pruebas locales del preparador y empaquetador.
+Reproducción:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_accounts_2027.py'
+python3 -m unittest discover -s tests -p 'test_accounts_2027_package.py'
+```
+
+Verificado con archivos sintéticos en MODO PRUEBA. La validación se
+aplica a las cabeceras y conserva las comprobaciones para fórmulas
+del resto de la hoja. El XLSX real quedó fuera del ensayo.

@@ -203,6 +203,26 @@ class PackagingTests(unittest.TestCase):
                 self.assertFalse(list(self.root.glob('.fe-copy-*')))
                 self.assertEqual(self.source.read_bytes(), original)
 
+    def test_calculated_budget_header_blocks_packaging(self):
+        sheet = 'xl/worksheets/sheet1.xml'
+        with zipfile.ZipFile(self.source) as archive:
+            parts = {name: archive.read(name) for name in archive.namelist()}
+        literal = b'<c r="H3" t="inlineStr"><is><t>PRESUPUESTO</t></is></c>'
+        calculated = b'<c r="H3" t="str"><f>V3</f><v>PRESUPUESTO</v></c>'
+        self.assertIn(literal, parts[sheet])
+        parts[sheet] = parts[sheet].replace(literal, calculated)
+        with zipfile.ZipFile(self.source, 'w') as archive:
+            for name, data in parts.items():
+                archive.writestr(name, data)
+
+        original = self.source.read_bytes()
+        self.req['workbook_sha256'] = hashlib.sha256(original).hexdigest()
+        with self.assertRaisesRegex(Blocked, 'CALCULATED_HEADER'):
+            pack.package(self.source, self.artifact, self.req, self.output)
+        self.assertFalse(self.output.exists())
+        self.assertFalse(list(self.root.glob('.fe-copy-*')))
+        self.assertEqual(self.source.read_bytes(), original)
+
     def test_changed_request_cannot_publish_under_previous_proposal(self):
         changed = copy.deepcopy(self.req)
         changed['contract']['sha256'] = 'c' * 64
