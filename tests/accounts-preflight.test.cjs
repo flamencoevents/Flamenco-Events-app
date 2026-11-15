@@ -1,5 +1,6 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const {env,payload}=require('./edge-harness.cjs');
+const {execFileSync}=require('node:child_process');
 const pdf=Buffer.from('%PDF-1.4\nTEST'),sha=crypto.createHash('sha256').update(pdf).digest('hex');
 function fixture(options={}){
  const source={...payload(),source_sheet:'FE_Cola',source_reference:'sheet:12djLXZ7he8Znhp8ngNn_VvBPiV9-gzWR1HGtGycV0RY:FE_Cola:9999926-v1',
@@ -26,6 +27,17 @@ test('Administrative accounts preflight links signed source, exact revision, met
  assert.deepEqual(e.downloads,[{bucket:'event-documents',path:e.tables.event_documents[0].storage_path}]);assert.ok(!p.pending.includes('stored_pdf_bytes'));
  assert.deepEqual(e.network.map(x=>JSON.parse(JSON.parse(x.init.body).payload).operation),['preview','contract_document']);unchanged(e);
  assert.equal(e.tables.event_contracts[0].state,'draft');
+});
+test('Web accounts evidence flows into the XLSX CLI and rejects one changed cent',async()=>{
+ const e=fixture(),response=await ask(e);
+ assert.equal(response.status,200);
+ const input=JSON.stringify({evidence:await response.json(),event_id:e.eventId,pdf_base64:pdf.toString('base64')});
+ const result=JSON.parse(execFileSync('python3',['tests/run_accounts_2027_web_contract.py'],{
+  input,encoding:'utf8',timeout:30000
+ }));
+ assert.deepEqual(result,{checked_date:true,checked_amounts:true,remote_origin_verified:false,differences:[],
+  amount_cents:10000,origin_unchanged:true,blocked_exit:2,blocked_reason:'WEB_PREFLIGHT_MISMATCH'});
+ unchanged(e);
 });
 test('Accounts preflight rejects a missing or invalid persisted event date before reading PDFs',async()=>{
  for(const date of [null,'2027-02-29','2027-03-12T00:00:00Z']){

@@ -1942,3 +1942,24 @@ python3 tests/run_accounts_2027_artifact_trial.py
 Preparado en GitHub. Pendiente el despliegue de la función y el ensayo
 autenticado. El cotejo local no acredita procedencia remota, firma,
 cobro ni cierre comercial. El XLSX real quedó fuera de las pruebas.
+
+## Ensayo conjunto de la respuesta web y la copia XLSX · 15 noviembre 2026
+
+Una nueva prueba ejecuta la función web del repositorio con servicios
+simulados, pasa su respuesta JSON efectiva al comando Python y audita
+la copia XLSX ficticia. El exportador se simula con la fixture
+existente. La prueba comprueba que coinciden la fecha y la huella de
+los importes, que se conservan los 10 000 céntimos previstos y que el
+archivo de origen permanece intacto. Un cambio de un céntimo con la
+misma respuesta y el mismo PDF se rechaza con
+`WEB_PREFLIGHT_MISMATCH` incluso si el libro indicado no existe.
+
+Reproducción en Node con Python 3 disponible:
+
+```sh
+node --test --test-name-pattern='flows into' tests/accounts-preflight.test.cjs
+```
+
+El ensayo enlaza el código web y local con datos ficticios y limpia los
+archivos temporales. No verifica procedencia remota ni usa sesiones,
+Drive o el libro real. La publicación de la función sigue pendiente.
