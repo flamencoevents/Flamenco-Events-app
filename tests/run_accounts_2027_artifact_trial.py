@@ -69,7 +69,18 @@ def main():
                 '</Relationships>')
 
         before = source.read_bytes()
-        prepared = bridge.prepare(bridge.read_book(source), fixture(), PDF)
+        envelope = root / 'contract.json'
+        source_pdf = root / 'origin.pdf'
+        web_pdf = root / 'web.pdf'
+        envelope.write_text(json.dumps(fixture()), encoding='utf-8')
+        source_pdf.write_bytes(PDF)
+        web_pdf.write_bytes(PDF)
+        command = [sys.executable, str(repo / 'tools/accounts_2027_contract.py'),
+                   str(source), str(envelope), str(source_pdf), '--web-pdf', str(web_pdf)]
+        prepared = json.loads(subprocess.check_output(command, text=True, timeout=30))
+        if (prepared['status'] != 'pending_review' or prepared['local_pdf_copies_match'] is not True
+                or prepared['remote_origin_verified'] is not False or prepared['production_writable'] is not False):
+            raise RuntimeError('The CLI did not reconcile the two fictitious PDF copies')
         (root / 'request.json').write_text(json.dumps(prepared['planner_request']))
         writer_env = dict(os.environ, FE_ACCOUNTS_PLANNER=str(planner),
                           FE_ACCOUNTS_PYTHON=sys.executable)

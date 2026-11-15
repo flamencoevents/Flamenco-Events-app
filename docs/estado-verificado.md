@@ -1660,3 +1660,33 @@ python3 tests/run_accounts_2027_artifact_trial.py
 Modo prueba. El libro real quedó fuera del ensayo. Siguen pendientes la
 validación de extremo a extremo con Drive y la ficha web y la escritura
 operativa.
+
+## Resultado guardado de fórmulas y ensayo con dos PDF · 15 noviembre 2026
+
+El verificador independiente compara el resultado guardado de cada
+fórmula fuera del destino junto con su expresión. Una regresión ficticia
+en V12 reprodujo que la auditoría aceptaba cambios de importe, ausencia
+del resultado y conversión de número a texto si la fórmula seguía igual.
+Ahora los rechaza. Representaciones numéricas equivalentes como 3 y 3,00
+siguen coincidiendo. El ensayo no implica recálculo en Excel.
+
+Se amplió el ensayo del exportador existente para preparar la propuesta
+mediante la consola de contratos con dos PDF locales, comprobar su
+coincidencia y usar esa misma propuesta en la exportación y el diario.
+La copia ficticia conservó el importe de 1060,01, el hipervínculo,
+la organización de sus hojas y la fórmula fuera de A:Q. El origen
+ficticio quedó idéntico. La coincidencia local de PDF no acredita
+procedencia en Drive o la web.
+
+Pasaron 39 pruebas locales del verificador y empaquetador, y el ensayo
+integrado con el runtime existente. Reproducción:
+
+```sh
+python3 -m unittest discover -s tests -p 'test_accounts_2027_verify.py'
+python3 -m unittest discover -s tests -p 'test_accounts_2027_package.py'
+python3 tests/run_accounts_2027_artifact_trial.py
+```
+
+Modo prueba, temporales aislados y limpieza automática. El libro real
+quedó fuera. Sigue pendiente el enlace de extremo a extremo y la
+escritura operativa.

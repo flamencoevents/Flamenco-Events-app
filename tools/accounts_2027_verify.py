@@ -40,12 +40,16 @@ def cell_record(cell, strings):
         with localcontext() as context:
             context.prec = max(context.prec, len(number.as_tuple().digits))
             text = str(number.normalize())
-    # Formula cache recalculation is not counted as changing the formula itself.
+    # Preserve the stored result independently of the formula expression.
+    # An external recalculation is outside this local preservation audit.
     if formula is not None:
+        cached_result = (kind, text)
         text, kind = None, 'formula'
     record = {'kind': kind, 'value': text, 'style': cell.get('s', '0'),
             'formula': xml_signature(formula) if formula is not None else None,
             'attributes': {k: v for k, v in cell.attrib.items() if k not in ('r', 's', 't')}}
+    if formula is not None:
+        record['formula_cache'] = cached_result
     if inline is not None and (len(inline) != 1 or inline[0].tag != '{' + NS['m'] + '}t'):
         record['rich_text'] = tuple(xml_signature(child) for child in inline)
     payload_tags = {f"{{{NS['m']}}}{tag}" for tag in ('v', 'is', 'f')}

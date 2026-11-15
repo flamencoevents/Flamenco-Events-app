@@ -67,6 +67,20 @@ class PreservationTests(unittest.TestCase):
         self.candidate['sheets']['Other']['cells']['H3'] = record(right)
         self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
 
+    def test_unrelated_formula_cached_result_is_preserved(self):
+        def record(payload, cell_type='n'):
+            c = audit.ET.fromstring(
+                f'<c xmlns="{audit.NS["m"]}" t="{cell_type}"><f>1+2</f>{payload}</c>')
+            return audit.cell_record(c, [])
+
+        before = record('<v>3.00</v>')
+        self.assertEqual(before, record('<v>3</v>'))
+        self.source['sheets'][audit.SHEET]['cells']['V12'] = before
+        for payload, cell_type in (('<v>3.01</v>', 'n'), ('', 'n'), ('<v>3</v>', 'str')):
+            with self.subTest(payload=payload, cell_type=cell_type):
+                self.candidate['sheets'][audit.SHEET]['cells']['V12'] = record(payload, cell_type)
+                self.assertIn('UNRELATED_CELLS_CHANGED', self.reasons())
+
     def test_extension_mixed_content_is_preserved(self):
         before = audit.ET.fromstring('<ext>Inicio<part/>original</ext>')
         after = audit.ET.fromstring('<ext>Inicio<part/>modificado</ext>')
