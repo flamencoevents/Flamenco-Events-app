@@ -18,6 +18,7 @@ Deno.serve(route(async request=>{
  const choice=selection({enquiry_id:ev.data.enquiry_id,quote_number:terms.data.quote_number,version:terms.data.version,source_sheet,source_key});
  const eventDate=ev.data.event_date;
  let accountsDocument:any=null,accountsContract:any=null;
+ let financialCents:number[]=[];
  if(accounts){
   const timestamp=typeof eventDate==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(eventDate)
    ?Date.parse(eventDate+'T00:00:00Z'):NaN;
@@ -37,6 +38,10 @@ Deno.serve(route(async request=>{
   for(const k of ['total_payable_eur','deposit_payable_eur','billing_mode'])if(current[k as keyof typeof current]!==terms.data[k])throw new Problem(409,'Las condiciones de origen han cambiado; requiere conciliación');
   const fiscalKeys=['base_eur','invoiced_base_eur','vat_eur','withholding_eur','rounding_eur','payment_method'];
   if(!current.tax_details||!terms.data.tax_details||fiscalKeys.some(k=>current.tax_details[k]!==terms.data.tax_details[k]))throw new Problem(409,'El detalle fiscal de origen no coincide con la versión aceptada');
+  if(current.deposit_payable_eur==null)throw new Problem(409,'La reserva prevista no está disponible para conciliar');
+  // Order shared with the offline XLSX rehearsal, in integer cents.
+  financialCents=[current.total_payable_eur,current.deposit_payable_eur,
+   ...fiscalKeys.slice(0,-1).map(k=>current.tax_details[k])].map(value=>Math.round(value*100));
   accountsDocument=doc.data;accountsContract=contract.data;
  }
  const file=await scriptRead(b.kind==='quotation'?'quotation_document':'contract_document',choice);
@@ -59,8 +64,10 @@ Deno.serve(route(async request=>{
   if(storedBytes.length!==bytes.length||new TextDecoder().decode(storedBytes.slice(0,5))!=='%PDF-')throw new Problem(409,'El objeto privado no coincide con el PDF de origen');
   const storedChecksum=[...new Uint8Array(await crypto.subtle.digest('SHA-256',storedBytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
   if(storedChecksum!==checksum)throw new Problem(409,'Los bytes privados han cambiado respecto al PDF de origen');
+  const financialSha=await hash(JSON.stringify(['fe-accounts-financial-v1',
+   ev.data.id,choice.quote_number,choice.version,checksum,...financialCents]));
   return{state:'accounts_source_checked',event_id:ev.data.id,event_date:eventDate,terms_id:ev.data.quote_terms_id,contract_id:accountsContract.id,document_id:accountsDocument.id,
-   quote_number:choice.quote_number,version:choice.version,pdf_sha256:checksum,size_bytes:bytes.length,
+   quote_number:choice.quote_number,version:choice.version,pdf_sha256:checksum,size_bytes:bytes.length,financial_sha256:financialSha,
    is_forecast:true,stored:false,production_writable:false,remote_committed:false,
    checks:{source_response_hmac:true,source_pdf_checksum:true,stored_document_metadata:true,accepted_financial_values:true,stored_pdf_bytes:true,event_schedule:false,workbook:false,signature:false,commercial_closure:false,payments:false},
    pending:['event_schedule','workbook_version_and_month','server_operation_journal','commercial_closure_rules']};

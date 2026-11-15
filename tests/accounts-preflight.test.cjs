@@ -18,6 +18,8 @@ const unchanged=e=>{assert.equal(e.writes.length,0);assert.equal(e.uploads.lengt
 test('Administrative accounts preflight links signed source, exact revision, metadata and accepted amounts without writes',async()=>{
  const e=fixture(),r=await ask(e,{total_payable_eur:1,production_writable:true,event_date:'2027-04-12'}),p=await r.json();
  assert.equal(r.status,200);assert.equal(p.state,'accounts_source_checked');assert.equal(p.pdf_sha256,sha);
+ const financial=['fe-accounts-financial-v1',e.eventId,'9999926',1,sha,10000,3000,10000,3000,0,0,0];
+ assert.equal(p.financial_sha256,crypto.createHash('sha256').update(JSON.stringify(financial)).digest('hex'));
  assert.equal(p.version,1);assert.equal(p.event_date,'2027-03-12');assert.equal(p.is_forecast,true);assert.equal(p.production_writable,false);assert.equal(p.remote_committed,false);
  assert.equal(p.checks.accepted_financial_values,true);assert.equal(p.checks.stored_pdf_bytes,true);for(const k of ['event_schedule','workbook','signature','commercial_closure','payments'])assert.equal(p.checks[k],false);
  const text=JSON.stringify(p);for(const secret of ['PRIVATE_DRIVE_URL',e.tables.event_documents[0].storage_path,'pdf_base64','source_reference','total_payable_eur'])assert.ok(!text.includes(secret));

@@ -100,6 +100,12 @@ def prepare(book, envelope, pdf, *, web_pdf=None, web_preflight=None):
             event['source_key'] == q['key'] and event['date'] == date, 'EVENT_SOURCE_MISMATCH')
     if web_preflight is not None:
         match_web_preflight(web_preflight, event['id'], date, number, version, pdf_sha, len(pdf))
+        if 'financial_sha256' in web_preflight:
+            # Match the web projection. Do not recalculate the saved economics.
+            financial = ['fe-accounts-financial-v1', event['id'], number, version, pdf_sha,
+                         amounts['total'], amounts['reserva'], amounts['base'], cents(c['facturada']),
+                         amounts['iva'], amounts['irpf'], cents(c.get('redondeoFiscal') or 0)]
+            require(web_preflight['financial_sha256'] == digest(financial), 'WEB_PREFLIGHT_MISMATCH')
     # The contract has no mandatory schedule field. Use only an explicit event
     # schedule; never infer one from duration/passes or invent a missing time.
     schedule = clean_text(event['schedule'])
@@ -137,6 +143,7 @@ def prepare(book, envelope, pdf, *, web_pdf=None, web_preflight=None):
     if web_preflight is not None:
         result['local_web_preflight_matches'] = True
         result['local_web_event_date_matches'] = 'event_date' in web_preflight
+        result['local_web_financial_matches'] = 'financial_sha256' in web_preflight
     result['rehearsal_id'] = digest(result)
     return result
 

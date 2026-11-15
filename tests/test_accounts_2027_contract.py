@@ -35,9 +35,13 @@ def fixture():
 
 
 def web_preflight_fixture():
+    pdf_sha = hashlib.sha256(PDF).hexdigest()
+    financial = ['fe-accounts-financial-v1', 'TEST-EVENT', 'X26-P900099', 2, pdf_sha,
+                 106001, 0, 100001, 100001, 21000, 15000, 0]
     return {'state': 'accounts_source_checked', 'event_id': 'TEST-EVENT', 'event_date': '2027-03-12',
             'quote_number': 'X26-P900099', 'version': 2,
-            'pdf_sha256': hashlib.sha256(PDF).hexdigest(), 'size_bytes': len(PDF),
+            'pdf_sha256': pdf_sha, 'size_bytes': len(PDF),
+            'financial_sha256': hashlib.sha256(json.dumps(financial, separators=(',', ':')).encode()).hexdigest(),
             'is_forecast': True, 'stored': False, 'production_writable': False,
             'remote_committed': False,
             'checks': {key: True for key in ('source_response_hmac', 'source_pdf_checksum',
@@ -171,6 +175,21 @@ class ContractRehearsalTests(unittest.TestCase):
             with self.subTest(field=key), self.assertRaisesRegex(bridge.Blocked, '^WEB_PREFLIGHT_MISMATCH$'):
                 bridge.prepare(Path('absent.xlsx'), self.data, PDF,
                                web_preflight=dict(evidence, **{key: changed}))
+
+    def test_web_preflight_rejects_financial_changes_even_when_the_pdf_matches(self):
+        evidence = web_preflight_fixture()
+        result = bridge.prepare(self.book, self.data, PDF, web_preflight=evidence)
+        self.assertTrue(result['local_web_financial_matches'])
+        legacy = dict(evidence)
+        del legacy['financial_sha256']
+        self.assertFalse(bridge.prepare(self.book, self.data, PDF, web_preflight=legacy)
+                         ['local_web_financial_matches'])
+        for key, changed in (('total', 1060.02), ('reserva', 10), ('facturada', 1000.02),
+                             ('iva', 211), ('irpf', 151), ('redondeoFiscal', -0.01)):
+            self.data = fixture()
+            self.change_quote(lambda quote: quote['calculo'].update({key: changed}))
+            with self.subTest(field=key), self.assertRaisesRegex(bridge.Blocked, '^WEB_PREFLIGHT_MISMATCH$'):
+                bridge.prepare(Path('absent.xlsx'), self.data, PDF, web_preflight=evidence)
 
     def test_numeric_overflow_in_saved_snapshot_is_rejected(self):
         with self.assertRaisesRegex(bridge.Blocked, '^INVALID_JSON_NUMBER$'):

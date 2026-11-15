@@ -1915,3 +1915,30 @@ node --test tests/accounts-events.test.cjs
 
 Verificado con dobles de consulta y DOM. Sin abrir el libro real,
 crear sesiones o modificar el catálogo remoto.
+
+## Huella de los importes de la ficha web · 15 noviembre 2026
+
+La comprobación web de solo lectura devuelve una huella de los importes
+que ya cotejó con la versión aceptada. Se calcula sobre una secuencia
+JSON en UTF-8 con el identificador de formato, evento, número, revisión,
+SHA-256 del PDF y siete enteros en céntimos. El orden de los importes es
+total, reserva prevista, base, base facturada, IVA, IRPF y redondeo fiscal.
+La respuesta incluye la huella, sin devolver esos importes.
+
+El comando local compara esa huella con el JSON del contrato antes de
+abrir el XLSX. Mismo PDF y misma revisión ya no bastan si cambia un
+importe. Las respuestas anteriores sin huella siguen siendo legibles
+e indican `local_web_financial_matches=false`.
+
+Pasaron 17 pruebas web con dobles, 25 de conciliación local y el ensayo
+con exportación y auditoría de un XLSX ficticio:
+
+```sh
+node --test tests/accounts-preflight.test.cjs
+python3 -m unittest discover -s tests -p 'test_accounts_2027_contract.py'
+python3 tests/run_accounts_2027_artifact_trial.py
+```
+
+Preparado en GitHub. Pendiente el despliegue de la función y el ensayo
+autenticado. El cotejo local no acredita procedencia remota, firma,
+cobro ni cierre comercial. El XLSX real quedó fuera de las pruebas.
