@@ -1578,3 +1578,17 @@ el fallo anterior y superadas 22 pruebas con
 `python3 -m unittest discover -s tests -p test_accounts_2027_contract.py`.
 GitHub confirmó CI y Pages de 6c5f135 (43650003413 y 43650002929).
 Ensayo local sin sesiones, envíos ni lectura o escritura del libro real.
+
+
+## Cotejo local de dos PDF ficticios · 15 noviembre 2026
+
+El ensayo contractual admite una segunda copia local con `--web-pdf`.
+Comprueba su SHA-256 frente al PDF de origen antes de abrir el XLSX.
+La prueba acepta bytes idénticos, conserva la misma propuesta y rechaza
+un PDF distinto del mismo tamaño. No acredita procedencia remota.
+Pasaron 23 pruebas con
+`python3 -m unittest discover -s tests -p test_accounts_2027_contract.py`.
+Para reproducir el cotejo por consola, usar el comando habitual con
+`--web-pdf copia-ficticia.pdf`. Sin sesiones ni acceso al XLSX real.
+
+GitHub confirmó pruebas y Pages de 06f21e9 (43654981197 y 43654981332).

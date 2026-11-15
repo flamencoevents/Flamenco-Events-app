@@ -51,7 +51,7 @@ def parsed(raw):
     return value
 
 
-def prepare(book, envelope, pdf):
+def prepare(book, envelope, pdf, *, web_pdf=None):
     """Prepare from a parsed workbook or open a path after validating the contract inputs."""
     require(envelope.get('test_mode') is True, 'FICTIONAL_ONLY')
     require(envelope.get('source_system') == 'whatsapp', 'WRONG_SOURCE')
@@ -76,6 +76,10 @@ def prepare(book, envelope, pdf):
     require(isinstance(pdf, bytes) and 5 < len(pdf) <= PDF_LIMIT and pdf.startswith(b'%PDF-'), 'INVALID_PDF_BYTES')
     pdf_sha = hashlib.sha256(pdf).hexdigest()
     require(envelope.get('expected_pdf_sha256') == pdf_sha, 'PDF_DIGEST_MISMATCH')
+    if web_pdf is not None:
+        require(isinstance(web_pdf, bytes) and 5 < len(web_pdf) <= PDF_LIMIT
+                and web_pdf.startswith(b'%PDF-'), 'INVALID_WEB_PDF_BYTES')
+        require(hashlib.sha256(web_pdf).hexdigest() == pdf_sha, 'WEB_PDF_DIGEST_MISMATCH')
     c, request, fields = q['calculo'], q['request'], q['fields']
     client_type, payment = request['tipo_cliente'], request.get('forma_cobro', 'habitual')
     require(client_type in ('empresa', 'particular', 'particular_base'), 'UNSUPPORTED_CLIENT_TYPE')
@@ -127,6 +131,8 @@ def prepare(book, envelope, pdf):
                                    if k in contract.get('cliente', {})},
               'pending': ['authenticated_source_read', 'commercial_sequence_verification', 'closure_rules',
                           'xlsx_copy_preservation', 'native_excel_review', 'operation_ledger', 'server_integration']}
+    if web_pdf is not None:
+        result['local_pdf_copies_match'] = True
     result['rehearsal_id'] = digest(result)
     return result
 
@@ -143,12 +149,14 @@ def main():
     p.add_argument('workbook')
     p.add_argument('envelope')
     p.add_argument('pdf')
+    p.add_argument('--web-pdf', help='Local copy of the fictitious PDF from the web')
     a = p.parse_args()
     try:
         envelope = parsed(read_bounded(a.envelope, SNAPSHOT_LIMIT, 'INVALID_SNAPSHOT').decode('utf-8'))
         require(envelope.get('test_mode') is True, 'FICTIONAL_ONLY')
         pdf = read_bounded(a.pdf, PDF_LIMIT, 'INVALID_PDF_BYTES')
-        result = prepare(Path(a.workbook), envelope, pdf)
+        web_pdf = read_bounded(a.web_pdf, PDF_LIMIT, 'INVALID_WEB_PDF_BYTES') if a.web_pdf else None
+        result = prepare(Path(a.workbook), envelope, pdf, web_pdf=web_pdf)
     except (Blocked, ValueError, TypeError, KeyError, AttributeError, IndexError, OSError,
             InvalidOperation, zipfile.BadZipFile, ET.ParseError) as exc:
         result = {'status': 'blocked', 'production_writable': False,

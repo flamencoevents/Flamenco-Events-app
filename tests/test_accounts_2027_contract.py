@@ -166,6 +166,17 @@ class ContractRehearsalTests(unittest.TestCase):
         self.data['quote_row'][2] = True
         self.blocked('QUEUE_IDENTITY_MISMATCH')
 
+    def test_local_web_copy_must_match_the_source_pdf_byte_for_byte(self):
+        baseline = bridge.prepare(self.book, self.data, PDF)
+        result = bridge.prepare(self.book, self.data, PDF, web_pdf=PDF)
+        self.assertTrue(result['local_pdf_copies_match'])
+        self.assertFalse(result['remote_origin_verified'])
+        self.assertEqual(result['proposal'], baseline['proposal'])
+        changed = PDF.replace(b'FICTITIOUS', b'ALTERNATE!')
+        self.assertEqual(len(changed), len(PDF))
+        with self.assertRaisesRegex(bridge.Blocked, '^WEB_PDF_DIGEST_MISMATCH$'):
+            bridge.prepare(Path('absent.xlsx'), self.data, PDF, web_pdf=changed)
+
     def test_pdf_bytes_digest_reference_and_size(self):
         self.blocked('INVALID_PDF_BYTES', b'NOT PDF')
         self.blocked('PDF_DIGEST_MISMATCH', PDF + b'changed')
