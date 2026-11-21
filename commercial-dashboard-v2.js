@@ -8,7 +8,7 @@ const el=id=>document.getElementById(id);
 const monthNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const docUrl=x=>{try{const u=new URL(x);return u.protocol==='https:'&&['docs.google.com','drive.google.com','www.canva.com'].includes(u.hostname)?u.href:null}catch{return null}};
 const docLink=(url,label)=>docUrl(url)?'<a href="'+safe(docUrl(url))+'" target="_blank" rel="noopener noreferrer">'+safe(label)+'</a>':'';
-let database=null,actor=null,role=null,active='inicio',calMonth=new Date().getMonth(),calYear=new Date().getFullYear(),yearClosed=calYear,closed=[],quotes=[],clientEvents=[],requests=[],selectedClient=null,portalTasks=[],portalPayments=[],portalContracts=[],portalChanges=[],portalMessages=[],portalDocuments=[],attachments=[],artistRoster=[],artistAssignments=[],verifiedArtistFees=[],quoteTerms=[];
+let database=null,actor=null,role=null,active='inicio',calMonth=new Date().getMonth(),calYear=new Date().getFullYear(),yearClosed=calYear,closed=[],quotes=[],clientEvents=[],requests=[],selectedClient=null,portalTasks=[],portalPayments=[],portalContracts=[],portalChanges=[],portalMessages=[],portalDocuments=[],attachments=[],artistRoster=[],artistAssignments=[],verifiedArtistFees=[],quoteTerms=[],reviewContacts=[];
 function init(db){database=db;const nav=el('fe-commercial-main-nav'),host=el('fe-commercial-dashboard');if(!db||!nav||!host)return;
 nav.innerHTML='<button data-fe-section="inicio">Inicio · Calendario</button><button data-fe-section="fechas">Fechas cerradas</button><button data-fe-section="presupuesto">Nuevo presupuesto</button><button data-fe-section="contrato">Nuevo contrato</button><button data-fe-section="enviados">Presupuestos enviados</button><button data-fe-section="clientes">Nuestros clientes</button><button data-fe-section="otras">Otras funciones</button>';
 nav.addEventListener('click',e=>{const b=e.target.closest('[data-fe-section]');if(b)show(b.dataset.feSection)});
@@ -24,6 +24,7 @@ const link=document.createElement('a');link.href=signed.data.signedUrl;link.targ
 finally{button.disabled=false}
 });
 host.addEventListener('change',e=>{if(e.target.id==='fe-year-closed'){yearClosed=Number(e.target.value);render()}});
+host.addEventListener('submit',prepareReviewRequest);
 host.addEventListener('submit',onSubmit);
 show('inicio');
 }
@@ -95,7 +96,7 @@ function artistAssignmentsMarkup(ref,quoteNumber){
 }
 function renderClosed(){let options=[2026,2027].map(y=>'<option value="'+y+'"'+(yearClosed===y?' selected':'')+'>'+y+'</option>').join('');
 let html='<h2>Fechas cerradas</h2><p class="fe-muted">Listado del libro de eventos con acceso a los documentos disponibles. La importación del libro no acredita por sí sola firma o cobro.</p><div class="fe-toolbar"><label>Año <select id="fe-year-closed">'+options+'</select></label><span class="fe-badge">'+allClosedInYear(yearClosed).length+' registros</span></div><div class="fe-list">';
-const arr=allClosedInYear(yearClosed);for(const x of arr){const links=[docLink(x.quotation_url,'Presupuesto'),docLink(x.contract_url,'Contrato'),docLink(x.source_link,'Libro original')].filter(Boolean).join(' · ');html+='<article class="fe-card"><h3>'+safe(x.venue||'Lugar sin identificar')+'</h3><p><b>'+dateHuman(x.event_date)+'</b> · '+safe(x.client_label||'Cliente sin indicar')+'</p><p class="fe-muted">N.º '+safe(x.quote_number||'—')+' · '+safe(x.schedule||'Sin horario')+'</p>'+(links?'<p>'+links+'</p>':'<p class="fe-muted">Sin enlaces de documentos en el catálogo actual</p>')+attachmentsMarkup({year:x.year,sourceRow:x.source_row})+artistAssignmentsMarkup({year:x.year,sourceRow:x.source_row},x.quote_number)+(root.FEBilling?.panel()||'')+'</article>'}return html+(arr.length?'':'<p>No hay eventos importados para este año.</p>')+'</div>'}
+const arr=allClosedInYear(yearClosed);for(const x of arr){const links=[docLink(x.quotation_url,'Presupuesto'),docLink(x.contract_url,'Contrato'),docLink(x.source_link,'Libro original')].filter(Boolean).join(' · ');html+='<article class="fe-card"><h3>'+safe(x.venue||'Lugar sin identificar')+'</h3><p><b>'+dateHuman(x.event_date)+'</b> · '+safe(x.client_label||'Cliente sin indicar')+'</p><p class="fe-muted">N.º '+safe(x.quote_number||'—')+' · '+safe(x.schedule||'Sin horario')+'</p>'+(links?'<p>'+links+'</p>':'<p class="fe-muted">Sin enlaces de documentos en el catálogo actual</p>')+reviewMarkup(x,{},true)+attachmentsMarkup({year:x.year,sourceRow:x.source_row})+artistAssignmentsMarkup({year:x.year,sourceRow:x.source_row},x.quote_number)+(root.FEBilling?.panel()||'')+'</article>'}return html+(arr.length?'':'<p>No hay eventos importados para este año.</p>')+'</div>'}
 function formatRequest(r){
  const date=r.event_date?dateHuman(r.event_date):'Por confirmar',service=String(r.event_description||'').trim(),notes=String(r.request_notes||'').trim();
  if(r.kind==='presupuesto')return [
@@ -118,14 +119,69 @@ const arr=quotes.filter(x=>x.commercial_status==='ENVIADO'&&!x.is_test);
 let html='<h2>Presupuestos enviados · No cerrados</h2><p class="fe-muted">Se muestran únicamente los presupuestos registrados como ENVIADO en el seguimiento comercial. La ausencia de una fila no equivale a que un presupuesto esté cerrado.</p><div class="fe-list">';
 for(const x of arr){html+='<article class="fe-card"><h3>'+safe(x.client_label||'Cliente por identificar')+'</h3><p>'+safe(x.venue||'Lugar pendiente')+' · '+dateHuman(x.event_date)+'</p><p>Presupuesto '+safe(x.quote_number||'—')+' · Enviado: '+dateHuman(x.sent_at?.slice(0,10))+'</p><p>'+safe(x.reminder_status||'Sin aviso')+(x.expires_at?' · Vence '+dateHuman(x.expires_at.slice(0,10)):'')+'</p>'+docLink(x.pdf_url,'Consultar presupuesto')+'</article>'}
 return html+(arr.length?'':'<p>No constan presupuestos abiertos sincronizados en el seguimiento comercial.</p>')+'</div>'}
+const bodasReviewUrl='https://www.bodas.net/musica/flamenco-events--e122203/opiniones';
+const googleReviewKey='fe-google-review-url';
+function reviewMarkup(event,contact={},historical=false){
+ const date=historical?(event.account_values?.calendar_end_date||event.event_date):event.event_date;
+ const today=new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Madrid'}).format(new Date());
+ const completed=event.status==='completed';
+ if(!completed&&(!date||date>=today||(!historical&&event.status!=='confirmed')))return '';
+ let googleUrl='';
+ try{googleUrl=root.localStorage.getItem(googleReviewKey)||''}catch{}
+ return '<details class="fe-card"><summary><b>Solicitar reseñas después del evento</b></summary>'+
+ '<form data-fe-review><div class="fe-fields">'+
+ '<label>Nombre del cliente<input name="recipient" value="'+safe(contact.contact_name||event.client_label||'')+'" maxlength="160"></label>'+
+ '<label>Idioma<select name="language"><option value="es">Español</option><option value="en">English</option></select></label>'+
+ '<label>Correo del cliente<input type="email" name="email" value="'+safe(contact.contact_email||'')+'"></label>'+
+ '<label>WhatsApp con prefijo internacional<input type="tel" name="phone" value="'+safe(contact.contact_phone||'')+'" placeholder="+34…"></label>'+
+ '<label>Enlace directo de reseña de Google<input type="url" name="google" value="'+safe(googleUrl)+'" placeholder="https://g.page/r/…/review" required></label></div>'+
+ '<p class="fe-muted">Se incluye también el enlace de Bodas.net. Revisa el destinatario y envía el mensaje desde la aplicación que se abra.</p>'+
+ (completed?'':'<label><input type="checkbox" required> Confirmo que el evento se celebró.</label>')+
+ '<button type="submit" value="email">Preparar correo</button> <button type="submit" value="whatsapp">Preparar WhatsApp</button>'+
+ '<p role="status"></p></form></details>';
+}
+function prepareReviewRequest(e){
+ const form=e.target.closest('[data-fe-review]');
+ if(!form)return;
+ e.preventDefault();
+ const status=form.querySelector('[role="status"]');
+ status.textContent='';
+ const {recipient,language,email,phone,google}=form.elements;
+ let url;
+ try{url=new URL(google.value.trim())}catch{status.textContent='Introduce un enlace de Google válido.';return}
+ const isReviewUrl=url.protocol==='https:'&&!url.port&&!url.username&&!url.password&&(
+  (url.hostname==='g.page'&&/^\/r\/[\w-]+\/review\/?$/.test(url.pathname))||
+  (url.hostname==='search.google.com'&&url.pathname==='/local/writereview'&&url.searchParams.get('placeid')));
+ if(!isReviewUrl){status.textContent='Pega el enlace directo del perfil de empresa de Google para escribir una reseña.';return}
+ const whatsapp=e.submitter?.value==='whatsapp';
+ const address=email.value.trim();
+ const number=phone.value.replace(/[\s().-]/g,'').replace(/^00/,'+');
+ if(whatsapp?!/^\+[1-9]\d{7,14}$/.test(number):!address){
+  status.textContent=whatsapp?'Introduce el WhatsApp del cliente con prefijo internacional.':'Introduce el correo del cliente.';
+  return;
+ }
+ try{root.localStorage.setItem(googleReviewKey,url.href)}catch{}
+ const name=recipient.value.trim();
+ const english=language.value==='en';
+ const subject=english?'Thank you for choosing Flamenco Events Agency':'Gracias por contar con Flamenco Events Agency';
+ const greeting=(english?'Hi':'Hola')+(name?' '+name:'')+(english?',':':');
+ const text=english?'Thank you for having us at your celebration. If you’d like to share your experience, you can leave us a review on either of these platforms:':
+  'Gracias por contar con nosotros para vuestra celebración. Si os apetece compartir vuestra experiencia, podéis dejarnos una reseña en cualquiera de estas plataformas:';
+ const body=[greeting,'',text,'','Bodas.net: '+bodasReviewUrl,'Google: '+url.href,'','Azahara · Flamenco Events Agency'].join('\n');
+ const href=whatsapp?'https://wa.me/'+number.slice(1)+'?text='+encodeURIComponent(body):
+  'mailto:'+encodeURIComponent(address).replace(/%40/g,'@')+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body.replace(/\n/g,'\r\n'));
+ if(whatsapp)root.open(href,'_blank','noopener,noreferrer');
+ else root.location.href=href;
+ status.textContent='Mensaje preparado. Revísalo y pulsa Enviar en '+(whatsapp?'WhatsApp.':'tu aplicación de correo.');
+}
 function renderClients(){
 const confirmed=clientEvents.filter(x=>x.status!=='cancelled'&&!x.is_test);
 let html='<h2>Nuestros clientes</h2><p class="fe-muted">Eventos del portal privado ya aceptados (incluye los pendientes de contrato y confirmación). No se muestran como reserva formal hasta que el estado lo acredite.</p>';
 html+='<div class="fe-list">';
 for(const ev of confirmed){html+='<article class="fe-card"><h3>'+safe(ev.title||'Evento')+'</h3><p>'+safe(ev.venue||'Lugar no registrado')+' · '+dateHuman(ev.event_date)+'</p><p><span class="fe-badge">'+safe(ev.status)+'</span></p><button type="button" data-fe-client="'+safe(ev.id)+'">Ver y actualizar ficha del cliente</button></article>'}
-html+=(confirmed.length?'':'<p>Aún no hay eventos de clientes reales vinculados al portal. La relación histórica importada aparece a continuación.</p>')+'</div>';const historical=closed.filter(x=>validClosed(x)).sort((a,b)=>String(b.event_date).localeCompare(String(a.event_date)));html+='<details class="fe-card"><summary><b>Eventos del libro de cuentas (2026–2027) · '+historical.length+'</b></summary><p class="fe-muted">No todos tienen cliente autenticado ni espacio privado asociado. Conservamos los documentos y no afirmamos que estén firmados.</p><div class="fe-list">'+historical.map(x=>'<article class="fe-card"><b>'+safe(x.venue||'Lugar sin identificar')+'</b><p>'+dateHuman(x.event_date)+' · '+safe(x.client_label||'Cliente sin indicar')+'</p><p>'+[docLink(x.quotation_url,'Presupuesto'),docLink(x.contract_url,'Contrato'),docLink(x.source_link,'Fuente')].filter(Boolean).join(' · ')+'</p><p class="fe-muted">Sin enlace a espacio cliente mientras no exista una vinculación validada.</p>'+attachmentsMarkup({year:x.year,sourceRow:x.source_row})+artistAssignmentsMarkup({year:x.year,sourceRow:x.source_row},x.quote_number)+(root.FEBilling?.panel()||'')+'</article>').join('')+'</div></details>';
+html+=(confirmed.length?'':'<p>Aún no hay eventos de clientes reales vinculados al portal. La relación histórica importada aparece a continuación.</p>')+'</div>';const historical=closed.filter(x=>validClosed(x)).sort((a,b)=>String(b.event_date).localeCompare(String(a.event_date)));html+='<details class="fe-card"><summary><b>Eventos del libro de cuentas (2026–2027) · '+historical.length+'</b></summary><p class="fe-muted">No todos tienen cliente autenticado ni espacio privado asociado. Conservamos los documentos y no afirmamos que estén firmados.</p><div class="fe-list">'+historical.map(x=>'<article class="fe-card"><b>'+safe(x.venue||'Lugar sin identificar')+'</b><p>'+dateHuman(x.event_date)+' · '+safe(x.client_label||'Cliente sin indicar')+'</p><p>'+[docLink(x.quotation_url,'Presupuesto'),docLink(x.contract_url,'Contrato'),docLink(x.source_link,'Fuente')].filter(Boolean).join(' · ')+'</p><p class="fe-muted">Sin enlace a espacio cliente mientras no exista una vinculación validada.</p>'+reviewMarkup(x,{},true)+attachmentsMarkup({year:x.year,sourceRow:x.source_row})+artistAssignmentsMarkup({year:x.year,sourceRow:x.source_row},x.quote_number)+(root.FEBilling?.panel()||'')+'</article>').join('')+'</div></details>';
 if(selectedClient){const ev=confirmed.find(x=>x.id===selectedClient);if(ev)html+='<section class="fe-card"><h2>Ficha privada · '+safe(ev.title||'Evento')+'</h2><p class="fe-muted">Vista de coordinación de los campos del espacio cliente. No se suplanta la sesión del cliente ni se permite acceder a sus mensajes personales como si fueras él.</p><form data-fe-event="'+safe(ev.id)+'"><div class="fe-fields"><label>Repertorio<textarea name="repertoire" maxlength="3000">'+safe(ev.repertoire||'')+'</textarea></label><label>Vestuario<textarea name="wardrobe" maxlength="3000">'+safe(ev.wardrobe||'')+'</textarea></label><label>Horarios y notas<textarea name="schedule_notes" maxlength="3000">'+safe(ev.schedule_notes||'')+'</textarea></label><label>Contacto in situ<input name="onsite_contact" maxlength="300" value="'+safe(ev.onsite_contact||'')+'"></label></div><p class="fe-details">'+docLink(ev.quotation_url,'Presupuesto')+docLink(ev.contract_url,'Contrato')+'</p><button type="submit">Guardar actualización de coordinación</button> <button type="button" class="fe-alt" data-fe-client="">Cerrar ficha</button><p id="fe-update-feedback" role="status"></p></form><p class="fe-muted">Las modificaciones guardadas en estos campos quedan disponibles para el cliente en su portal, según los permisos y funciones existentes.</p>'+
-(root.FEBilling?.panel()||'')+attachmentsMarkup({eventId:ev.id})+artistAssignmentsMarkup({eventId:ev.id},quoteTerms.find(t=>t.id===ev.quote_terms_id)?.quote_number||'Pendiente de consulta')+'<h3>Información adicional visible en el portal del cliente</h3>'+
+reviewMarkup(ev,reviewContacts.find(contact=>contact.id===ev.enquiry_id))+(root.FEBilling?.panel()||'')+attachmentsMarkup({eventId:ev.id})+artistAssignmentsMarkup({eventId:ev.id},quoteTerms.find(t=>t.id===ev.quote_terms_id)?.quote_number||'Pendiente de consulta')+'<h3>Información adicional visible en el portal del cliente</h3>'+
 '<p><b>Tareas:</b> '+(portalTasks.filter(x=>x.event_id===ev.id).map(x=>(x.completed?'✓ ':'○ ')+safe(x.title)).join(' · ')||'Sin tareas registradas')+'</p>'+
 '<p><b>Pagos programados:</b> '+(portalPayments.filter(x=>x.event_id===ev.id).map(x=>safe(x.label)+' · '+Number(x.amount_eur||0).toLocaleString('es-ES')+' € · '+safe(x.status)).join(' | ')||'Sin pagos registrados')+'</p>'+
 '<p><b>Contrato:</b> '+(portalContracts.filter(x=>x.event_id===ev.id).map(x=>safe(x.state)+(x.signed_at?' · firmado '+dateHuman(x.signed_at.slice(0,10)):'')).join(' · ')||'No consta contrato en el portal')+'</p>'+
@@ -188,10 +244,10 @@ if(form.dataset.feEvent){const id=form.dataset.feEvent,ev=clientEvents.find(x=>x
 catch(error){const n=form.querySelector('.fe-artist-feedback')||form.querySelector('.fe-upload-feedback')||el('fe-update-feedback')||el('fe-action-note');if(n)n.textContent='Error al guardar: '+(error.message||'Error de conexión');else alert('No se pudo guardar: '+error.message)}
 finally{button.disabled=false}
 }
-async function load(a,r){actor=a;role=r;if(!database||!a)return;const results=await Promise.all([
+async function load(a,r,contacts=[]){actor=a;role=r;reviewContacts=contacts;if(!database||!a)return;const results=await Promise.all([
 database.from('accounts_event_catalog').select('year,source_row,event_date,venue,client_label,schedule,quote_number,source_link,quotation_url,contract_url,account_values').in('year',[2026,2027]).limit(1000),
 database.from('fe_quote_followups').select('source_key,quote_number,client_label,venue,event_date,commercial_status,sent_at,expires_at,reminder_status,pdf_url,is_test').limit(1000),
-database.from('events').select('id,title,venue,event_date,performance,status,is_test,quotation_url,contract_url,wardrobe,repertoire,schedule_notes,onsite_contact,quote_terms_id').limit(1000),
+database.from('events').select('id,title,venue,event_date,performance,status,is_test,quotation_url,contract_url,wardrobe,repertoire,schedule_notes,onsite_contact,quote_terms_id,enquiry_id').limit(1000),
 database.from('commercial_document_requests').select('*').order('created_at',{ascending:false}).limit(300),
 database.from('event_tasks').select('event_id,title,completed').limit(1000),
 database.from('event_payment_schedule').select('event_id,label,amount_eur,status,due_on').limit(1000),
